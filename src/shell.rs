@@ -1,12 +1,12 @@
 use crate::{AppError, AppResult};
 use chrono::{NaiveDateTime, TimeDelta};
-use log::{debug, trace};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::PathBuf;
 use std::process::Stdio;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, Command};
+use tracing::{debug, trace};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ShellHistoryEntry {
@@ -19,10 +19,12 @@ pub struct ShellHistoryEntry {
     pub command: String,
 }
 
-fn parse_duration<S: AsRef<str>>(s: S) -> TimeDelta {
+#[tracing::instrument(level = "trace")]
+fn parse_duration<S: AsRef<str> + std::fmt::Debug>(s: S) -> TimeDelta {
     crate::serde_helpers::duration::parse_duration(s).unwrap_or_else(|_| TimeDelta::seconds(0))
 }
 
+#[tracing::instrument(level = "trace")]
 fn get_shell() -> String {
     match env::var("SHELL") {
         Ok(val) => val,
@@ -32,7 +34,8 @@ fn get_shell() -> String {
     }
 }
 
-async fn atuin_sync<S: AsRef<str>>(shell: S) -> AppResult<()> {
+#[tracing::instrument(level = "trace")]
+async fn atuin_sync<S: AsRef<str> + std::fmt::Debug>(shell: S) -> AppResult<()> {
     Command::new(shell.as_ref())
         .arg("-l")
         .arg("-c")
@@ -45,7 +48,8 @@ async fn atuin_sync<S: AsRef<str>>(shell: S) -> AppResult<()> {
     Ok(())
 }
 
-async fn atuin_history<S: AsRef<str>>(shell: S) -> AppResult<Child> {
+#[tracing::instrument(level = "trace")]
+async fn atuin_history<S: AsRef<str> + std::fmt::Debug>(shell: S) -> AppResult<Child> {
     Command::new(shell.as_ref())
         .arg("-l")
         .arg("-c")
@@ -56,7 +60,8 @@ async fn atuin_history<S: AsRef<str>>(shell: S) -> AppResult<Child> {
         .map_err(|e| e.into())
 }
 
-fn parse_line<S: AsRef<str>>(line: S) -> AppResult<Option<ShellHistoryEntry>> {
+#[tracing::instrument(level = "trace", skip(line))]
+fn parse_line<S: AsRef<str> + std::fmt::Debug>(line: S) -> AppResult<Option<ShellHistoryEntry>> {
     let sections = line.as_ref().split('\t').collect::<Vec<&str>>();
     if sections.len() < 3 {
         return Ok(None);
@@ -84,6 +89,7 @@ fn parse_line<S: AsRef<str>>(line: S) -> AppResult<Option<ShellHistoryEntry>> {
     }))
 }
 
+#[tracing::instrument(level = "debug")]
 pub async fn get_history() -> AppResult<Vec<ShellHistoryEntry>> {
     let shell = get_shell();
     atuin_sync(&shell).await?;

@@ -1,71 +1,34 @@
-use chrono::Local;
-use fern::colors::{Color, ColoredLevelConfig};
-use fern::{Dispatch, FormatCallback};
-use log::{LevelFilter, Record};
-use std::env;
-use std::fmt::Arguments;
+use tracing_indicatif::IndicatifLayer;
+use tracing_subscriber::filter::{EnvFilter, LevelFilter};
+use tracing_subscriber::fmt;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 
-static ESCAPE: &str = "\x1B[";
-static END: &str = "m";
-static RESET: &str = "0";
-static COLORS: ColoredLevelConfig = ColoredLevelConfig {
-    error: Color::Red,
-    warn: Color::Yellow,
-    info: Color::Green,
-    debug: Color::Cyan,
-    trace: Color::Magenta,
-};
+pub fn setup_logger() {
+    let indicatif_layer = IndicatifLayer::new();
 
-fn format(out: FormatCallback, message: &Arguments, record: &Record) {
-    out.finish(format_args!(
-        "[{}{}{}{} {} {}{}{}{}] {}",
-        ESCAPE,
-        COLORS.get_color(&record.level()).to_fg_str(),
-        END,
-        Local::now().format("%Y-%m-%d %H:%M:%S"),
-        record.level(),
-        record.target(),
-        ESCAPE,
-        RESET,
-        END,
-        message
-    ))
-}
+    let env_filter = EnvFilter::builder()
+        .with_default_directive(if cfg!(debug_assertions) {
+            LevelFilter::TRACE.into()
+        } else {
+            LevelFilter::INFO.into()
+        })
+        .with_env_var("DAILY_AI_LOG")
+        .from_env_lossy();
 
-pub fn setup_logger() -> Result<(), fern::InitError> {
-    let log_level = match env::var("DAILY_AI_LOG_LEVEL") {
-        Ok(level) => match level
-            .to_lowercase()
-            .chars()
-            .filter(|c| !c.is_whitespace())
-            .collect::<String>()
-            .as_str()
-        {
-            "error" => LevelFilter::Error,
-            "warn" => LevelFilter::Warn,
-            "info" => LevelFilter::Info,
-            "debug" => LevelFilter::Debug,
-            "trace" => LevelFilter::Trace,
-            _ => {
-                if cfg!(debug_assertions) {
-                    LevelFilter::max()
-                } else {
-                    LevelFilter::Info
-                }
-            }
-        },
-        Err(_) => {
-            if cfg!(debug_assertions) {
-                LevelFilter::max()
-            } else {
-                LevelFilter::Info
-            }
-        }
-    };
-    Dispatch::new()
-        .format(format)
-        .level(log_level)
-        .chain(std::io::stdout())
-        .apply()?;
-    Ok(())
+    let fmt = fmt::layer()
+        .with_ansi(true)
+        .with_target(true)
+        .with_file(true)
+        .with_line_number(true)
+        .with_thread_names(false)
+        .with_thread_ids(false)
+        .with_writer(indicatif_layer.get_stderr_writer())
+        .pretty();
+
+    tracing_subscriber::registry()
+        .with(fmt) // Direct fmt logs to stderr writer
+        .with(indicatif_layer)
+        .with(env_filter)
+        .init();
 }

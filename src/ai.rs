@@ -2,22 +2,26 @@ use crate::AppResult;
 use crate::git::diff::{get_diff_summary, get_file, get_patch};
 use async_openai::Client;
 use async_openai::config::{Config, OpenAIConfig};
-use async_openai::types::chat::{ReasoningEffort, ResponseFormatJsonSchema};
 use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
-    CreateResponseArgs, FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool,
-    InputContent, InputItem, InputMessage, InputParam, InputRole, Item, MessageItem, OutputItem,
-    OutputMessageContent, Reasoning, RefusalContent, ResponseTextParam,
-    TextResponseFormatConfiguration, Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
+    CreateResponse, FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool,
+    FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole, Item,
+    MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort, RefusalContent,
+    ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration, Tool,
+    ToolChoiceOptions, ToolChoiceParam, Truncation,
 };
 use git2::{Diff, Repository};
-use log::{debug, error, trace, warn};
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 use std::path::PathBuf;
+use tracing::{debug, error, trace, warn};
 
-pub fn get_lm_studio_client<S: AsRef<str>>(server: S, port: u16) -> Client<Box<dyn Config>> {
+#[tracing::instrument(level = "debug")]
+pub fn get_lm_studio_client<S: AsRef<str> + std::fmt::Debug>(
+    server: S,
+    port: u16,
+) -> Client<Box<dyn Config>> {
     let config = Box::new(OpenAIConfig::default().with_api_base(format!(
         "http://{}:{}/v1",
         server.as_ref(),
@@ -212,6 +216,7 @@ struct GetPatch {
     pub end_line: Option<usize>,
 }
 
+#[tracing::instrument(level = "debug", skip(client, diff, repo))]
 pub async fn generate_commit_message<'c, 'd, C: Config>(
     client: &'c Client<C>,
     diff: &Diff<'d>,
@@ -230,53 +235,68 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
             status: None,
         },
     )))];
+    input_items.push(InputItem::Item(Item::Message(MessageItem::Input(
+        InputMessage {
+            content: vec![InputContent::InputText(InputTextContent {
+                text: COMMIT_MESSAGE_PROMPT.to_string(),
+            })],
+            role: InputRole::System,
+            status: None,
+        },
+    ))));
+    let mut previous_response_id: Option<String> = None;
+    let tools = vec![
+        Tool::Function(FunctionTool {
+            name: "get_patch".to_string(),
+            description: Some("Retrieve a patch for a file".to_string()),
+            parameters: Some(schema_for!(GetPatch).as_value().to_owned()),
+            strict: None,
+        }),
+        Tool::Function(FunctionTool {
+            name: "get_file".to_string(),
+            description: Some("Retrieve the contents of a file".to_string()),
+            parameters: Some(schema_for!(GetFile).as_value().to_owned()),
+            strict: None,
+        }),
+    ];
 
     loop {
-        let request = CreateResponseArgs::default()
-            .model("openai/gpt-oss-20b")
-            .input(InputParam::Items(input_items.clone()))
-            .background(false)
-            .instructions(COMMIT_MESSAGE_PROMPT)
-            .parallel_tool_calls(false)
-            .reasoning(Reasoning {
+        let request = CreateResponse {
+            model: Some("openai/gpt-oss-20b".to_string()),
+            input: InputParam::Items(input_items.clone()),
+            background: Some(false),
+            instructions: Some(COMMIT_MESSAGE_PROMPT.to_string()),
+            parallel_tool_calls: Some(false),
+            reasoning: Some(Reasoning {
                 effort: Some(ReasoningEffort::Medium),
                 summary: None,
-            })
-            .store(true)
-            .stream(false)
-            .temperature(0.05)
-            .text(ResponseTextParam {
+            }),
+            store: Some(true),
+            stream: Some(false),
+            temperature: Some(0.05),
+            text: Some(ResponseTextParam {
                 format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
                     description: Some("Commit message with summary and optional body".to_string()),
                     schema: Some(schema_for!(CommitMessage).as_value().to_owned()),
                     name: "commit_message".to_string(),
-                    strict: Some(true),
+                    strict: None,
                 }),
                 verbosity: None,
-            })
-            .tool_choice(ToolChoiceParam::Mode(ToolChoiceOptions::Auto))
-            .tools(vec![
-                Tool::Function(FunctionTool {
-                    name: "get_patch".to_string(),
-                    description: Some("Retrieve a patch for a file".to_string()),
-                    parameters: Some(schema_for!(GetPatch).as_value().to_owned()),
-                    strict: Some(true),
-                }),
-                Tool::Function(FunctionTool {
-                    name: "get_file".to_string(),
-                    description: Some("Retrieve the contents of a file".to_string()),
-                    parameters: Some(schema_for!(GetFile).as_value().to_owned()),
-                    strict: Some(true),
-                }),
-            ])
-            .top_logprobs(0)
-            .top_p(0.1)
-            .truncation(Truncation::Disabled)
-            .build()?;
+            }),
+            tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
+            tools: Some(tools.clone()),
+            top_logprobs: Some(0),
+            top_p: Some(0.1),
+            truncation: Some(Truncation::Disabled),
+            previous_response_id: previous_response_id.clone(),
+            ..Default::default()
+        };
 
         let response = client.responses().create(request).await?;
+        debug!("AI Response: {:?}", response);
+        previous_response_id = Some(response.id.clone());
 
-        let function_calls: Vec<_> = response
+        let function_calls: Vec<FunctionToolCall> = response
             .output
             .iter()
             .filter_map(|item| {
@@ -304,7 +324,16 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
                     }
                 }
             }
-            return Ok(serde_json::from_str(&response_content)?);
+            let jd = &mut serde_json::Deserializer::from_str(&response_content);
+            match serde_path_to_error::deserialize(jd) {
+                Ok(cm) => return Ok(cm),
+                Err(e) => {
+                    error!("Failed to deserialize commit message: {}", e);
+                    error!("Response content was: {}", response_content);
+                    error!("Failed to parse JSON at path: {}", e.path());
+                    return Err(e.into_inner().into());
+                }
+            };
         }
 
         for call in function_calls {
@@ -313,7 +342,18 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
             match function_name {
                 "get_file" => {
                     debug!("Processing tool call: get_file with args {}", arguments);
-                    let args: GetFile = serde_json::from_str(arguments)?;
+                    let jd = &mut serde_json::Deserializer::from_str(arguments);
+                    let args: GetFile = match serde_path_to_error::deserialize(jd) {
+                        Ok(args) => {
+                            trace!("Parsed `get_file` arguments: {:?}", args);
+                            args
+                        }
+                        Err(e) => {
+                            error!("Failed to parse `get_file` arguments: {}", e);
+                            error!("Failed to parse JSON at path: {}", e.path());
+                            return Err(e.into_inner().into());
+                        }
+                    };
                     let content = get_file(repo, diff, &args.path, args.start_line, args.end_line)
                         .unwrap_or_default();
                     trace!("Retrieved file content: {}", content);
@@ -329,7 +369,18 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
                 }
                 "get_patch" => {
                     debug!("Processing tool call: get_patch with args {}", arguments);
-                    let args: GetPatch = serde_json::from_str(arguments)?;
+                    let jd = &mut serde_json::Deserializer::from_str(arguments);
+                    let args: GetPatch = match serde_path_to_error::deserialize(jd) {
+                        Ok(args) => {
+                            trace!("Parsed `get_patch` arguments: {:?}", args);
+                            args
+                        }
+                        Err(e) => {
+                            error!("Failed to parse `get_patch` arguments: {}", e);
+                            error!("Failed to parse JSON at path: {}", e.path());
+                            return Err(e.into_inner().into());
+                        }
+                    };
                     let content = get_patch(
                         diff,
                         &args.path,

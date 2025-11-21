@@ -21,9 +21,19 @@ tokio = { version = "1.48.0", features = [
   "rt-multi-thread",
   "io-util",
 ] }
-log = "0.4.28"
 git2 = "0.20.2"
-fern = { version = "0.7.1", features = ["colored", "chrono"] }
-log_err = "1.1.1"
-async-openai = "0.31.0-alpha.11"
+async-openai = { path = "../../PRs/async-openai/async-openai" }
+# async-openai = "0.31.0-alpha.11"
 schemars = "1.1.0"
+tracing = { version = "0.1.41", features = ["attributes", "std"] }
+tracing-subscriber = { version = "0.3.20", features = [
+  "env-filter",
+  "local-time",
+] }
+tracing-indicatif = "0.3.13"
+tracing-unwrap = { version = "1.0.1", features = ["log-location"] }
+serde_path_to_error = "0.1.20"
+# reqwest = "0.12.24"
+
+# [patch.crates-io]
+# async-openai = { git = "https://github.com/annie444/async-openai.git", branch = "main" }

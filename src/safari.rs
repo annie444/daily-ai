@@ -2,14 +2,13 @@ use crate::AppResult;
 use crate::entity::{history_items, history_visits};
 use crate::time_utils::{datetime_to_macos_time, macos_to_datetime, macos_yesterday, midnight};
 use chrono::NaiveDateTime;
-use log::LevelFilter;
-use log::{debug, trace};
 use sea_orm::{
     ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder,
 };
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::{Path, PathBuf};
+use tracing::{debug, trace};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SafariHistoryItem {
@@ -22,6 +21,7 @@ pub struct SafariHistoryItem {
     pub last_visited: NaiveDateTime,
 }
 
+#[tracing::instrument(level = "trace")]
 fn get_safari_history_db_path() -> PathBuf {
     if let Ok(curpath) = env::current_dir()
         && curpath.join("History.db").exists()
@@ -61,15 +61,17 @@ fn get_safari_history_db_path() -> PathBuf {
     }
 }
 
-async fn connect_to_db<P: AsRef<Path>>(db_path: P) -> AppResult<DatabaseConnection> {
-    let mut opt = ConnectOptions::new(format!("sqlite://{}", db_path.as_ref().display()));
-    opt.sqlx_logging(true)
-        .sqlx_logging_level(LevelFilter::Debug);
+#[tracing::instrument(level = "trace")]
+async fn connect_to_db<P: AsRef<Path> + std::fmt::Debug>(
+    db_path: P,
+) -> AppResult<DatabaseConnection> {
+    let opt = ConnectOptions::new(format!("sqlite://{}", db_path.as_ref().display()));
     trace!("Connecting to Safari History database");
     let db = Database::connect(opt).await?;
     Ok(db)
 }
 
+#[tracing::instrument(level = "debug")]
 pub async fn get_safari_history() -> AppResult<Vec<SafariHistoryItem>> {
     let db_path = get_safari_history_db_path();
     let db = connect_to_db(db_path).await?;

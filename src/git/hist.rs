@@ -5,8 +5,9 @@ use crate::shell::ShellHistoryEntry;
 use crate::time_utils::{unis_time_nsec_to_datetime, yesterday};
 use async_openai::{Client, config::Config};
 use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions};
-use log::{debug, info, trace};
+use tracing::{debug, info, trace};
 
+#[tracing::instrument(level = "trace")]
 fn get_status_opts() -> StatusOptions {
     let mut opts = StatusOptions::new();
     opts.include_untracked(true)
@@ -27,6 +28,7 @@ fn get_status_opts() -> StatusOptions {
     opts
 }
 
+#[tracing::instrument(level = "trace")]
 fn get_diff_opts() -> DiffOptions {
     let mut opts = DiffOptions::new();
     opts.reverse(false)
@@ -60,6 +62,7 @@ fn get_diff_opts() -> DiffOptions {
     opts
 }
 
+#[tracing::instrument(level = "trace", skip(client, repo))]
 async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> AppResult<()> {
     let mut opts = get_status_opts();
 
@@ -79,7 +82,6 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
         ) {
             // There are working-directory changes
             trace!("Working directory has changes in: {:?}", entry.path());
-            info!("Committing working directory changes...");
             working_dir_changes = true;
         }
         if s.intersects(
@@ -91,7 +93,6 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
         ) {
             // There are staged changes
             trace!("Staged changes in: {:?}", entry.path());
-            info!("Committing staged changes...");
             staged_changes = true;
         }
     }
@@ -100,6 +101,10 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
         return Ok(());
     }
     if staged_changes {
+        info!(
+            "Committing staged directory changes for {}...",
+            repo.path().display()
+        );
         let head = repo.head()?;
         let head_tree = head.peel_to_tree()?;
         let mut index = repo.index()?;
@@ -121,6 +126,10 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
         info!("Staged changes committed.");
     }
     if working_dir_changes {
+        info!(
+            "Committing working directory changes for {}...",
+            repo.path().display()
+        );
         let head = repo.head()?;
         let head_tree = head.peel_to_tree()?;
         let mut index = repo.index()?;
@@ -146,6 +155,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
     Ok(())
 }
 
+#[tracing::instrument(level = "debug", skip(client, shell_history))]
 pub async fn get_git_history<C: Config>(
     client: &Client<C>,
     shell_history: &Vec<ShellHistoryEntry>,

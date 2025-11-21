@@ -1,10 +1,10 @@
 use crate::AppResult;
 use git2::{Delta, Diff, DiffDelta, DiffFormat, DiffHunk, DiffLine, Patch, Repository};
-use log::error;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::{fmt::Write, path::PathBuf, str};
+use tracing::error;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub struct DiffFromTo {
@@ -12,10 +12,11 @@ pub struct DiffFromTo {
     pub to: PathBuf,
 }
 
-pub fn get_file(
+#[tracing::instrument(level = "debug", skip(repo, diff))]
+pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
     repo: &Repository,
     diff: &Diff,
-    path: &PathBuf,
+    path: P,
     start_line: Option<usize>,
     end_line: Option<usize>,
 ) -> Option<String> {
@@ -26,12 +27,12 @@ pub fn get_file(
         let matches_new = delta
             .new_file()
             .path()
-            .map(|p| p == path.as_path())
+            .map(|p| p == path.as_ref())
             .unwrap_or(false);
         let matches_old = delta
             .old_file()
             .path()
-            .map(|p| p == path.as_path())
+            .map(|p| p == path.as_ref())
             .unwrap_or(false);
         if matches_new || matches_old {
             chosen = Some(delta);
@@ -48,7 +49,7 @@ pub fn get_file(
     let text = match std::str::from_utf8(content) {
         Ok(s) => s,
         Err(e) => {
-            error!("Non-utf8 content for {:?}: {}", path, e);
+            error!("Non-utf8 content for {}: {}", path.as_ref().display(), e);
             return None;
         }
     };
@@ -95,6 +96,7 @@ pub struct DiffSummary {
 }
 
 impl DiffFromTo {
+    #[tracing::instrument(level = "trace", skip(delta))]
     pub fn from_delta(delta: &DiffDelta) -> Self {
         DiffFromTo {
             from: match delta.old_file().path() {
@@ -112,6 +114,7 @@ impl DiffFromTo {
 impl DiffWithPatch {
     /// Append a diff line to the accumulated patch buffer for a file, adding headers as needed.
     /// Call this repeatedly for all lines of a delta to build a full patch string.
+    #[tracing::instrument(level = "trace", skip(delta, hunk, line, buf, last_hunk))]
     pub fn append_line(
         delta: &DiffDelta,
         hunk: Option<DiffHunk>,
@@ -161,6 +164,7 @@ impl DiffWithPatch {
     }
 }
 
+#[tracing::instrument(level = "trace", skip(delta))]
 fn get_filename(delta: &DiffDelta) -> PathBuf {
     match delta.new_file().path() {
         Some(p) => p.to_path_buf(),
@@ -173,7 +177,11 @@ fn get_filename(delta: &DiffDelta) -> PathBuf {
 
 type PatchCollector = HashMap<PathBuf, (String, Option<(u32, u32, u32, u32)>)>;
 
-pub fn get_diff_summary<P: AsRef<Path>>(repo_path: P, diff: &Diff) -> AppResult<DiffSummary> {
+#[tracing::instrument(level = "debug", skip(diff))]
+pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
+    repo_path: P,
+    diff: &Diff,
+) -> AppResult<DiffSummary> {
     // Accumulate per-path patch strings and hunk state to avoid duplicating headers.
     let mut added_patches: PatchCollector = HashMap::new();
     let mut modified_patches: PatchCollector = HashMap::new();
@@ -255,6 +263,7 @@ pub fn get_diff_summary<P: AsRef<Path>>(repo_path: P, diff: &Diff) -> AppResult<
     Ok(summary)
 }
 
+#[tracing::instrument(level = "trace")]
 fn line_in_range(
     start: Option<u32>,
     end: Option<u32>,
@@ -278,9 +287,10 @@ fn line_in_range(
     false
 }
 
-pub fn get_patch(
+#[tracing::instrument(level = "debug", skip(diff))]
+pub fn get_patch<P: AsRef<Path> + std::fmt::Debug>(
     diff: &Diff,
-    path: &PathBuf,
+    path: &P,
     start_line: Option<u32>,
     end_line: Option<u32>,
 ) -> Option<String> {
@@ -288,12 +298,12 @@ pub fn get_patch(
         let matches_new = delta
             .new_file()
             .path()
-            .map(|p| p == path.as_path())
+            .map(|p| p == path.as_ref())
             .unwrap_or(false);
         let matches_old = delta
             .old_file()
             .path()
-            .map(|p| p == path.as_path())
+            .map(|p| p == path.as_ref())
             .unwrap_or(false);
 
         if !(matches_new || matches_old) {
