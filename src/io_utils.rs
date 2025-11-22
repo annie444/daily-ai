@@ -106,9 +106,8 @@ async fn write_patches<P: AsRef<Path> + std::fmt::Debug>(
     patches: Vec<DiffWithPatch>,
 ) -> AppResult<()> {
     for patch in patches {
-        let patch_path = patch.path.components().skip(2).collect::<PathBuf>();
-        debug!("Writing patch for {:?} to {:?}", patch.path, patch_path);
-        let patch_file = dir.as_ref().join(patch_path.with_extension("patch"));
+        let patch_file = dir.as_ref().join(patch.path.with_extension("patch"));
+        debug!("Writing patch to {:?}", patch_file);
         fs::create_dir_all(patch_file.parent().unwrap()).await?;
         write_file(&patch_file, patch.patch).await?;
     }
