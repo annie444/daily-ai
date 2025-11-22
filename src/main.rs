@@ -1,4 +1,5 @@
 pub(crate) mod ai;
+mod cli;
 mod context;
 pub(crate) mod entity;
 mod error;
@@ -11,12 +12,15 @@ pub(crate) mod time_utils;
 
 pub(crate) use error::{AppError, AppResult};
 
+use clap::Parser;
 use std::process::exit;
 use tracing::{error, info};
 use tracing_unwrap::ResultExt;
 
 #[tokio::main]
 async fn main() {
+    let args = cli::Cli::parse();
+
     logging::setup_logger();
 
     let client = ai::get_lm_studio_client("localhost", 1234);
@@ -50,5 +54,14 @@ async fn main() {
         safari_history,
         commit_history,
     };
-    info!("{}", serde_json::to_string(&combined_hist).unwrap_or_log());
+
+    let hist_str = serde_json::to_string_pretty(&combined_hist).unwrap_or_log();
+
+    if let Some(output) = &args.output {
+        tokio::fs::write(output, hist_str).await.unwrap_or_log();
+        info!("Summary written to {}.", output.display());
+    } else {
+        info!("Combined History:");
+        info!("{}", hist_str);
+    }
 }
