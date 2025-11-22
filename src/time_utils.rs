@@ -35,7 +35,7 @@ pub fn yesterday() -> NaiveDateTime {
 }
 
 #[tracing::instrument(level = "trace")]
-pub fn unis_time_nsec_to_datetime(secs: i64, nsecs: u32) -> NaiveDateTime {
+pub fn unix_time_nsec_to_datetime(secs: i64, nsecs: u32) -> NaiveDateTime {
     DateTime::from_timestamp(secs, nsecs).unwrap().naive_utc()
 }
 
@@ -50,7 +50,7 @@ pub fn macos_to_unix_time(macos_time: f64) -> (i64, u32) {
 #[tracing::instrument(level = "trace")]
 pub fn macos_to_datetime(macos_time: f64) -> chrono::NaiveDateTime {
     let (secs, nsecs) = macos_to_unix_time(macos_time);
-    DateTime::from_timestamp(secs, nsecs).unwrap().naive_utc()
+    DateTime::from_timestamp(secs, nsecs).unwrap().naive_local()
 }
 
 #[tracing::instrument(level = "trace")]

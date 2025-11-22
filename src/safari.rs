@@ -12,11 +12,9 @@ use tracing::{debug, trace};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SafariHistoryItem {
-    pub id: i64,
     pub url: String,
     pub title: Option<String>,
     pub visit_count: i64,
-    pub visit_count_score: i64,
     #[serde(with = "crate::serde_helpers::naive_datetime")]
     pub last_visited: NaiveDateTime,
 }
@@ -78,9 +76,10 @@ pub async fn get_safari_history() -> AppResult<Vec<SafariHistoryItem>> {
 
     trace!("Connected to Safari History database");
 
+    let yesterday = macos_yesterday();
     let history_items = history_items::Entity::find()
         .find_with_related(history_visits::Entity)
-        .filter(history_visits::Column::VisitTime.gt(macos_yesterday()))
+        .filter(history_visits::Column::VisitTime.gt(yesterday))
         .order_by_desc(history_visits::Column::VisitTime)
         .all(&db)
         .await?;
@@ -91,21 +90,16 @@ pub async fn get_safari_history() -> AppResult<Vec<SafariHistoryItem>> {
 
     trace!("Processing Safari history items");
 
+    let mid = midnight();
+    let mid_macos = datetime_to_macos_time(&mid);
+
     for (item, visits) in history_items {
         let safari_item = SafariHistoryItem {
-            id: item.id,
             url: item.url,
             title: visits.first().and_then(|visit| visit.title.clone()),
             visit_count: item.visit_count,
-            visit_count_score: item.visit_count_score,
-            last_visited: visits.first().map_or(midnight(), |visit| {
-                macos_to_datetime(
-                    visit
-                        .visit_time
-                        .to_string()
-                        .parse::<f64>()
-                        .unwrap_or(datetime_to_macos_time(&midnight())),
-                )
+            last_visited: visits.first().map_or(mid, |visit| {
+                macos_to_datetime(TryInto::<f64>::try_into(visit.visit_time).unwrap_or(mid_macos))
             }),
         };
         safari_history.push(safari_item);

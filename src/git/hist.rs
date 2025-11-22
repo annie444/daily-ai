@@ -2,7 +2,7 @@ use crate::AppResult;
 use crate::ai::generate_commit_message;
 use crate::git::diff::{DiffSummary, get_diff_summary};
 use crate::shell::ShellHistoryEntry;
-use crate::time_utils::{unis_time_nsec_to_datetime, yesterday};
+use crate::time_utils::{unix_time_nsec_to_datetime, yesterday};
 use async_openai::{Client, config::Config};
 use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions};
 use tracing::{debug, info, trace};
@@ -166,12 +166,16 @@ pub async fn get_git_history<C: Config>(
         if let Ok(repo) = Repository::open(&entry.directory) {
             check_repo_status(client, &repo).await?;
             let mut oldest_commit: (Option<Oid>, Option<Commit>) = (None, None);
+            debug!(
+                "Checking git history for repository in {:?}",
+                entry.directory
+            );
             for oid in repo.revwalk()?.flatten() {
                 debug!("Found git commit {} in {:?}", oid, entry.directory);
                 let commit = repo.find_commit(oid)?;
                 trace!("Found commit object: {:?}", commit);
                 let time = commit.time();
-                if unis_time_nsec_to_datetime(time.seconds(), 0) >= yesterday_dt {
+                if unix_time_nsec_to_datetime(time.seconds(), 0) >= yesterday_dt {
                     if let Some(prev_commit) = &oldest_commit.1
                         && commit.time().seconds() < prev_commit.time().seconds()
                     {

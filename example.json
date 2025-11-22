@@ -1878,12 +1878,3594 @@
     },
     {
       "date_time": "2025-11-21T16:35:27",
+      "duration": "53s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run -- --output example.json"
+    },
+    {
+      "date_time": "2025-11-21T16:36:37",
+      "duration": "17s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cat example.json"
+    },
+    {
+      "date_time": "2025-11-21T16:36:58",
+      "duration": "210ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "rm History.db"
+    },
+    {
+      "date_time": "2025-11-21T16:37:16",
       "duration": "0m",
       "host": "Work-MBP",
       "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
       "command": "cargo run -- --output example.json"
     }
   ],
-  "safari_history": [],
+  "safari_history": [
+    {
+      "id": 8102,
+      "url": "https://www.cloudflare.com/",
+      "title": "Connect, protect, and build everywhere | Cloudflare",
+      "visit_count": 42,
+      "visit_count_score": 140,
+      "last_visited": "2025-11-21T19:57:38"
+    },
+    {
+      "id": 8105,
+      "url": "https://dash.cloudflare.com/",
+      "title": "DNS | Settings | 160%2F29.9.229.69.in-addr.arpa | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 71,
+      "visit_count_score": 620,
+      "last_visited": "2025-11-21T20:13:25"
+    },
+    {
+      "id": 8118,
+      "url": "https://dash.cloudflare.com/login",
+      "title": "Cloudflare Dashboard | Manage Your Account",
+      "visit_count": 38,
+      "visit_count_score": 500,
+      "last_visited": "2025-11-21T19:57:41"
+    },
+    {
+      "id": 8121,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74",
+      "title": "Home | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 79,
+      "visit_count_score": 585,
+      "last_visited": "2025-11-21T20:13:25"
+    },
+    {
+      "id": 8222,
+      "url": "https://us06web.zoom.us/my/ben.rusholme",
+      "title": "",
+      "visit_count": 3,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T19:01:27"
+    },
+    {
+      "id": 13257,
+      "url": "https://regex101.com/",
+      "title": "regex101: build, test, and debug regex",
+      "visit_count": 42,
+      "visit_count_score": 1900,
+      "last_visited": "2025-11-21T20:46:28"
+    },
+    {
+      "id": 20834,
+      "url": "https://platform.openai.com/docs/overview",
+      "title": "API Reference - OpenAI API",
+      "visit_count": 14,
+      "visit_count_score": 920,
+      "last_visited": "2025-11-21T22:43:44"
+    },
+    {
+      "id": 40118,
+      "url": "https://platform.openai.com/overview",
+      "title": "OpenAI Platform",
+      "visit_count": 4,
+      "visit_count_score": 620,
+      "last_visited": "2025-11-21T22:43:44"
+    },
+    {
+      "id": 44182,
+      "url": "https://github.com/prometheus/node_exporter",
+      "title": "prometheus/node_exporter: Exporter for machine metrics",
+      "visit_count": 20,
+      "visit_count_score": 500,
+      "last_visited": "2025-11-21T01:47:28"
+    },
+    {
+      "id": 44886,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/v4/auth/session_expired",
+      "title": "Duo Security",
+      "visit_count": 28,
+      "visit_count_score": 1020,
+      "last_visited": "2025-11-22T00:03:46"
+    },
+    {
+      "id": 53510,
+      "url": "https://access.redhat.com/login?redirectTo=https%3A%2F%2Faccess.redhat.com%2Flabs%2Fcephpgc%2F",
+      "title": "Login - Red Hat Customer Portal",
+      "visit_count": 4,
+      "visit_count_score": 700,
+      "last_visited": "2025-11-21T02:37:54"
+    },
+    {
+      "id": 53514,
+      "url": "https://access.redhat.com/webassets/avalon/j/includes/session/scribe/?redirectTo=https%3A%2F%2Faccess.redhat.com%2Flabs%2Fcephpgc%2F",
+      "title": "Login - Red Hat Customer Portal",
+      "visit_count": 4,
+      "visit_count_score": 700,
+      "last_visited": "2025-11-21T02:37:59"
+    },
+    {
+      "id": 53515,
+      "url": "https://access.redhat.com/labs/cephpgc/",
+      "title": "Ceph Placement Groups (PGs) per Pool Calculator | Red Hat Customer Portal Labs",
+      "visit_count": 8,
+      "visit_count_score": 700,
+      "last_visited": "2025-11-21T02:38:00"
+    },
+    {
+      "id": 53516,
+      "url": "https://access.redhat.com/labs/cephpgc/manual/",
+      "title": "Ceph Placement Groups (PGs) per Pool Calculator | Red Hat Customer Portal Labs",
+      "visit_count": 9,
+      "visit_count_score": 885,
+      "last_visited": "2025-11-21T02:38:00"
+    },
+    {
+      "id": 53517,
+      "url": "https://access.redhat.com/labs/cephpgc/file/",
+      "title": "Ceph Placement Groups (PGs) per Pool Calculator | Red Hat Customer Portal Labs",
+      "visit_count": 7,
+      "visit_count_score": 880,
+      "last_visited": "2025-11-21T02:38:02"
+    },
+    {
+      "id": 55019,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/jpeg.gay/dns/records",
+      "title": "DNS | Records | jpeg.gay | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 51,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T20:13:35"
+    },
+    {
+      "id": 55046,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/jpeg.gay",
+      "title": "jpeg.gay | jpeg.gay | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 48,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T20:13:30"
+    },
+    {
+      "id": 58350,
+      "url": "https://docs.rs/tracing/latest/tracing/",
+      "title": "tracing - Rust",
+      "visit_count": 8,
+      "visit_count_score": 1610,
+      "last_visited": "2025-11-21T21:41:11"
+    },
+    {
+      "id": 61738,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html",
+      "title": "EnvFilter in tracing_subscriber::filter - Rust",
+      "visit_count": 14,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T21:45:57"
+    },
+    {
+      "id": 61742,
+      "url": "https://docs.rs/tracing-unwrap",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 260,
+      "last_visited": "2025-11-21T21:43:54"
+    },
+    {
+      "id": 61743,
+      "url": "https://docs.rs/tracing-unwrap/latest/tracing_unwrap/",
+      "title": "tracing_unwrap - Rust",
+      "visit_count": 3,
+      "visit_count_score": 260,
+      "last_visited": "2025-11-21T21:43:55"
+    },
+    {
+      "id": 64373,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/",
+      "title": "tracing_subscriber - Rust",
+      "visit_count": 9,
+      "visit_count_score": 440,
+      "last_visited": "2025-11-21T21:44:11"
+    },
+    {
+      "id": 64374,
+      "url": "https://github.com/tokio-rs/tracing/tree/master/tracing-subscriber",
+      "title": "tracing/tracing-subscriber at master · tokio-rs/tracing",
+      "visit_count": 10,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T21:43:36"
+    },
+    {
+      "id": 70743,
+      "url": "https://jinja.palletsprojects.com/en/stable/templates/",
+      "title": "Template Designer Documentation — Jinja Documentation (3.1.x)",
+      "visit_count": 52,
+      "visit_count_score": 1995,
+      "last_visited": "2025-11-21T21:10:11"
+    },
+    {
+      "id": 77395,
+      "url": "http://192.168.1.254/cgi-bin/home.ha",
+      "title": null,
+      "visit_count": 45,
+      "visit_count_score": 2122,
+      "last_visited": "2025-11-21T20:13:56"
+    },
+    {
+      "id": 77546,
+      "url": "http://192.168.1.254/",
+      "title": "",
+      "visit_count": 34,
+      "visit_count_score": 1675,
+      "last_visited": "2025-11-21T20:13:56"
+    },
+    {
+      "id": 78087,
+      "url": "http://192.168.1.254/cgi-bin/login.ha",
+      "title": "",
+      "visit_count": 37,
+      "visit_count_score": 1864,
+      "last_visited": "2025-11-21T20:14:20"
+    },
+    {
+      "id": 78107,
+      "url": "http://192.168.1.254/cgi-bin/firewall.ha",
+      "title": "Firewall Status",
+      "visit_count": 17,
+      "visit_count_score": 620,
+      "last_visited": "2025-11-21T20:13:58"
+    },
+    {
+      "id": 81561,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/",
+      "title": "Dashboards - Grafana",
+      "visit_count": 189,
+      "visit_count_score": 6345,
+      "last_visited": "2025-11-21T02:49:17"
+    },
+    {
+      "id": 82752,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/home/domains",
+      "title": "Account home | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 275,
+      "visit_count_score": 2929,
+      "last_visited": "2025-11-21T20:13:27"
+    },
+    {
+      "id": 82754,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/home",
+      "title": "Account home | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 68,
+      "visit_count_score": 2904,
+      "last_visited": "2025-11-21T20:13:25"
+    },
+    {
+      "id": 83031,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers",
+      "title": "Dashboards - Grafana",
+      "visit_count": 25,
+      "visit_count_score": 1640,
+      "last_visited": "2025-11-21T02:49:17"
+    },
+    {
+      "id": 83034,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=compute&var-host=neosops01.ipac.caltech.edu",
+      "title": "Linux Servers - Dashboards - Grafana",
+      "visit_count": 28,
+      "visit_count_score": 1480,
+      "last_visited": "2025-11-21T02:49:17"
+    },
+    {
+      "id": 86363,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/dashboards",
+      "title": "Dashboards - Grafana",
+      "visit_count": 39,
+      "visit_count_score": 1440,
+      "last_visited": "2025-11-21T02:58:41"
+    },
+    {
+      "id": 94770,
+      "url": "https://auth.openai.com/log-in",
+      "title": "Welcome back - OpenAI",
+      "visit_count": 10,
+      "visit_count_score": 420,
+      "last_visited": "2025-11-21T22:43:35"
+    },
+    {
+      "id": 94771,
+      "url": "https://auth.openai.com/log-in/password",
+      "title": "Enter your password - OpenAI",
+      "visit_count": 6,
+      "visit_count_score": 460,
+      "last_visited": "2025-11-21T22:43:36"
+    },
+    {
+      "id": 94788,
+      "url": "https://openai.com/api/",
+      "title": "API Platform | OpenAI",
+      "visit_count": 7,
+      "visit_count_score": 320,
+      "last_visited": "2025-11-21T22:43:20"
+    },
+    {
+      "id": 94789,
+      "url": "https://platform.openai.com/login",
+      "title": "OpenAI Platform",
+      "visit_count": 3,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T22:43:27"
+    },
+    {
+      "id": 95992,
+      "url": "https://crates.io/crates/tracing",
+      "title": "tracing - crates.io: Rust Package Registry",
+      "visit_count": 5,
+      "visit_count_score": 220,
+      "last_visited": "2025-11-21T21:41:14"
+    },
+    {
+      "id": 96006,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.Subscriber.html",
+      "title": "Subscriber in tracing_subscriber::fmt - Rust",
+      "visit_count": 10,
+      "visit_count_score": 310,
+      "last_visited": "2025-11-21T21:54:34"
+    },
+    {
+      "id": 96008,
+      "url": "https://docs.rs/tracing-subscriber/latest",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 120,
+      "last_visited": "2025-11-21T21:44:10"
+    },
+    {
+      "id": 96009,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/index.html",
+      "title": "tracing_subscriber - Rust",
+      "visit_count": 16,
+      "visit_count_score": 439,
+      "last_visited": "2025-11-21T21:54:57"
+    },
+    {
+      "id": 96033,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.SubscriberBuilder.html",
+      "title": "SubscriberBuilder in tracing_subscriber::fmt - Rust",
+      "visit_count": 9,
+      "visit_count_score": 340,
+      "last_visited": "2025-11-21T21:44:20"
+    },
+    {
+      "id": 96139,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/format/struct.FmtSpan.html",
+      "title": "FmtSpan in tracing_subscriber::fmt::format - Rust",
+      "visit_count": 6,
+      "visit_count_score": 245,
+      "last_visited": "2025-11-21T21:45:06"
+    },
+    {
+      "id": 96154,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/index.html",
+      "title": "tracing_subscriber::fmt - Rust",
+      "visit_count": 5,
+      "visit_count_score": 220,
+      "last_visited": "2025-11-21T21:55:02"
+    },
+    {
+      "id": 97691,
+      "url": "https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html",
+      "title": "Overriding Dependencies - The Cargo Book",
+      "visit_count": 7,
+      "visit_count_score": 182,
+      "last_visited": "2025-11-21T23:21:27"
+    },
+    {
+      "id": 105563,
+      "url": "https://atuin.sh/",
+      "title": "",
+      "visit_count": 8,
+      "visit_count_score": 640,
+      "last_visited": "2025-11-21T23:52:19"
+    },
+    {
+      "id": 105878,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore",
+      "title": "Grafana",
+      "visit_count": 9,
+      "visit_count_score": 650,
+      "last_visited": "2025-11-21T02:53:48"
+    },
+    {
+      "id": 106565,
+      "url": "https://jinja.palletsprojects.com/en/stable/templates/#for",
+      "title": "Template Designer Documentation — Jinja Documentation (3.1.x)",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T21:10:14"
+    },
+    {
+      "id": 110942,
+      "url": "https://developers.cloudflare.com/1.1.1.1/ip-addresses/",
+      "title": "IP addresses · Cloudflare 1.1.1.1 docs",
+      "visit_count": 7,
+      "visit_count_score": 620,
+      "last_visited": "2025-11-21T20:29:00"
+    },
+    {
+      "id": 112281,
+      "url": "http://192.168.1.254/cgi-bin/lanstatistics.ha",
+      "title": "Home Network Status",
+      "visit_count": 27,
+      "visit_count_score": 1890,
+      "last_visited": "2025-11-21T20:14:04"
+    },
+    {
+      "id": 115129,
+      "url": "http://192.168.1.254/cgi-bin/ipalloc.ha",
+      "title": "IP Allocation",
+      "visit_count": 50,
+      "visit_count_score": 2350,
+      "last_visited": "2025-11-21T20:14:20"
+    },
+    {
+      "id": 119977,
+      "url": "https://tanstack.com/",
+      "title": "TanStack | High Quality Open-Source Software for Web Developers",
+      "visit_count": 8,
+      "visit_count_score": 165,
+      "last_visited": "2025-11-21T06:25:51"
+    },
+    {
+      "id": 119980,
+      "url": "https://tanstack.com/start",
+      "title": "Maintainers | TanStack",
+      "visit_count": 4,
+      "visit_count_score": 165,
+      "last_visited": "2025-11-21T06:26:53"
+    },
+    {
+      "id": 119989,
+      "url": "https://tanstack.com/start/latest",
+      "title": "TanStack Start",
+      "visit_count": 5,
+      "visit_count_score": 165,
+      "last_visited": "2025-11-21T06:26:53"
+    },
+    {
+      "id": 120370,
+      "url": "https://lmstudio.ai/",
+      "title": "LM Studio - Local AI on your computer",
+      "visit_count": 18,
+      "visit_count_score": 645,
+      "last_visited": "2025-11-21T23:18:45"
+    },
+    {
+      "id": 129457,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+slurp&ie=UTF-8&oe=UTF-8",
+      "title": "ansible slurp - Google Search",
+      "visit_count": 15,
+      "visit_count_score": 500,
+      "last_visited": "2025-11-21T20:33:16"
+    },
+    {
+      "id": 129637,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+append+to+list&ie=UTF-8&oe=UTF-8",
+      "title": "ansible append to list - Google Search",
+      "visit_count": 6,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T21:06:29"
+    },
+    {
+      "id": 131383,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=cloudflare+dns+ipv6&ie=UTF-8&oe=UTF-8",
+      "title": "cloudflare dns ipv6 - Google Search",
+      "visit_count": 15,
+      "visit_count_score": 460,
+      "last_visited": "2025-11-21T20:28:58"
+    },
+    {
+      "id": 131471,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+split+filter&ie=UTF-8&oe=UTF-8",
+      "title": "ansible split filter - Google Search",
+      "visit_count": 9,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T20:42:40"
+    },
+    {
+      "id": 132029,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/160/29.9.229.69.in-addr.arpa",
+      "title": "pgconfig.com | pgconfig.com | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 7,
+      "visit_count_score": 260,
+      "last_visited": "2025-11-21T20:07:44"
+    },
+    {
+      "id": 132070,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/160%2F29.9.229.69.in-addr.arpa",
+      "title": "160%2F29.9.229.69.in-addr.arpa | 160%2F29.9.229.69.in-addr.arpa | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 6,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T20:07:48"
+    },
+    {
+      "id": 132799,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/pgconfig.com",
+      "title": "pgconfig.com | pgconfig.com | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 12,
+      "visit_count_score": 560,
+      "last_visited": "2025-11-21T20:07:41"
+    },
+    {
+      "id": 132801,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/pgconfig.com/",
+      "title": "pgconfig.com | pgconfig.com | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T20:02:57"
+    },
+    {
+      "id": 132904,
+      "url": "http://pgconfig.com/",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T20:04:01"
+    },
+    {
+      "id": 132905,
+      "url": "https://pgconfig.com/",
+      "title": "PostgreSQL Configuration API",
+      "visit_count": 14,
+      "visit_count_score": 770,
+      "last_visited": "2025-11-21T20:04:01"
+    },
+    {
+      "id": 137123,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph01.ipac.caltech.edu",
+      "title": "Linux Servers - Dashboards - Grafana",
+      "visit_count": 8,
+      "visit_count_score": 485,
+      "last_visited": "2025-11-21T01:36:45"
+    },
+    {
+      "id": 142064,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=openai+api&ie=UTF-8&oe=UTF-8",
+      "title": "openai api - Google Search",
+      "visit_count": 6,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T22:43:15"
+    },
+    {
+      "id": 142257,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/92LBIaJIz2/ceph-application-overview",
+      "title": "Dashboards - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T02:50:04"
+    },
+    {
+      "id": 142258,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/92LBIaJIz2/ceph-application-overview?orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=&var-cluster=&var-application=$__all&var-pool=$__all&refresh=30s",
+      "title": "Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T02:50:04"
+    },
+    {
+      "id": 142259,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/92LBIaJIz2/ceph-application-overview?orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=PBFA97CFB590B2093&var-cluster=&var-application=$__all&var-pool=$__all&refresh=30s",
+      "title": "Ceph - Application Overview - Dashboards - Grafana",
+      "visit_count": 5,
+      "visit_count_score": 285,
+      "last_visited": "2025-11-21T02:58:36"
+    },
+    {
+      "id": 142260,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/dn13KBeTv/ceph-cluster-advanced",
+      "title": "Dashboards - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T02:58:43"
+    },
+    {
+      "id": 142261,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/dn13KBeTv/ceph-cluster-advanced?var-interval=$__auto",
+      "title": "Dashboards - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T02:58:44"
+    },
+    {
+      "id": 142262,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/dn13KBeTv/ceph-cluster-advanced?var-interval=$__auto&orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=default&var-cluster=&refresh=1m",
+      "title": "Ceph Cluster - Advanced - Dashboards - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T02:58:44"
+    },
+    {
+      "id": 142298,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/edtb0oxdq/ceph-cluster",
+      "title": "Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T02:49:25"
+    },
+    {
+      "id": 142299,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/edtb0oxdq/ceph-cluster?var-interval=$__auto",
+      "title": "Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T02:49:25"
+    },
+    {
+      "id": 142300,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/edtb0oxdq/ceph-cluster?var-interval=$__auto&orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=&var-cluster=&refresh=30s",
+      "title": "Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T02:49:25"
+    },
+    {
+      "id": 142301,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/edtb0oxdq/ceph-cluster?var-interval=$__auto&orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=PBFA97CFB590B2093&var-cluster=&refresh=30s",
+      "title": "Ceph - Cluster - Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T02:49:25"
+    },
+    {
+      "id": 142312,
+      "url": "http://ceph.neosdev.ipac.caltech.edu/",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T01:34:13"
+    },
+    {
+      "id": 142313,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/",
+      "title": null,
+      "visit_count": 12,
+      "visit_count_score": 720,
+      "last_visited": "2025-11-21T01:34:13"
+    },
+    {
+      "id": 142637,
+      "url": "https://github.com/64bit/async-openai",
+      "title": "64bit/async-openai: Rust library for OpenAI",
+      "visit_count": 18,
+      "visit_count_score": 425,
+      "last_visited": "2025-11-21T23:12:25"
+    },
+    {
+      "id": 142639,
+      "url": "https://docs.rs/tracing-serde",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T22:20:14"
+    },
+    {
+      "id": 142640,
+      "url": "https://docs.rs/tracing-serde/latest/tracing_serde/",
+      "title": "tracing_serde - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T22:20:14"
+    },
+    {
+      "id": 142864,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.SubscriberBuilder.html#method.with_writer",
+      "title": "SubscriberBuilder in tracing_subscriber::fmt - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T21:53:59"
+    },
+    {
+      "id": 142873,
+      "url": "https://docs.rs/tracing/0.1.41",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T22:02:52"
+    },
+    {
+      "id": 142874,
+      "url": "https://docs.rs/tracing/0.1.41/tracing/",
+      "title": "tracing - Rust",
+      "visit_count": 5,
+      "visit_count_score": 260,
+      "last_visited": "2025-11-21T22:17:26"
+    },
+    {
+      "id": 143041,
+      "url": "https://crates.io/crates/async-openai",
+      "title": "async-openai - crates.io: Rust Package Registry",
+      "visit_count": 10,
+      "visit_count_score": 475,
+      "last_visited": "2025-11-21T22:38:37"
+    },
+    {
+      "id": 143042,
+      "url": "https://docs.rs/async-openai/0.30.1",
+      "title": "",
+      "visit_count": 3,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T22:38:57"
+    },
+    {
+      "id": 143043,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/",
+      "title": "async_openai - Rust",
+      "visit_count": 11,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T22:38:58"
+    },
+    {
+      "id": 143052,
+      "url": "https://platform.openai.com/docs/api-reference/responses",
+      "title": "API Reference - OpenAI API",
+      "visit_count": 17,
+      "visit_count_score": 460,
+      "last_visited": "2025-11-21T22:56:26"
+    },
+    {
+      "id": 143056,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/struct.Responses.html",
+      "title": "Responses in async_openai - Rust",
+      "visit_count": 24,
+      "visit_count_score": 600,
+      "last_visited": "2025-11-21T06:09:14"
+    },
+    {
+      "id": 143064,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.CreateResponse.html",
+      "title": "CreateResponse in async_openai::types::responses - Rust",
+      "visit_count": 16,
+      "visit_count_score": 630,
+      "last_visited": "2025-11-21T23:02:32"
+    },
+    {
+      "id": 143065,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.Input.html",
+      "title": "Input in async_openai::types::responses - Rust",
+      "visit_count": 14,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T22:50:34"
+    },
+    {
+      "id": 143067,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.InputItem.html",
+      "title": "InputItem in async_openai::types::responses - Rust",
+      "visit_count": 23,
+      "visit_count_score": 425,
+      "last_visited": "2025-11-21T22:50:41"
+    },
+    {
+      "id": 143068,
+      "url": "https://docs.rs/serde_json/1.0.145/x86_64-unknown-linux-gnu/serde_json/value/enum.Value.html",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T04:40:07"
+    },
+    {
+      "id": 143069,
+      "url": "https://docs.rs/serde_json/1.0.145/serde_json/value/enum.Value.html",
+      "title": "Value in serde_json::value - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T04:40:08"
+    },
+    {
+      "id": 143070,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.InputMessage.html",
+      "title": "InputMessage in async_openai::types::responses - Rust",
+      "visit_count": 21,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T22:50:55"
+    },
+    {
+      "id": 143071,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.InputMessageType.html",
+      "title": "InputMessageType in async_openai::types::responses - Rust",
+      "visit_count": 9,
+      "visit_count_score": 325,
+      "last_visited": "2025-11-21T22:42:56"
+    },
+    {
+      "id": 143073,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.InputContent.html",
+      "title": "InputContent in async_openai::types::responses - Rust",
+      "visit_count": 9,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T22:52:24"
+    },
+    {
+      "id": 143074,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.ContentType.html",
+      "title": "ContentType in async_openai::types::responses - Rust",
+      "visit_count": 6,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T22:52:21"
+    },
+    {
+      "id": 143088,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/index.html",
+      "title": "async_openai::types::responses - Rust",
+      "visit_count": 20,
+      "visit_count_score": 565,
+      "last_visited": "2025-11-21T23:05:49"
+    },
+    {
+      "id": 143089,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.PromptConfig.html",
+      "title": "PromptConfig in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T04:59:02"
+    },
+    {
+      "id": 143090,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.ReasoningConfig.html",
+      "title": "ReasoningConfig in async_openai::types::responses - Rust",
+      "visit_count": 5,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T04:59:05"
+    },
+    {
+      "id": 143097,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.TextConfig.html",
+      "title": "TextConfig in async_openai::types::responses - Rust",
+      "visit_count": 10,
+      "visit_count_score": 375,
+      "last_visited": "2025-11-21T23:02:39"
+    },
+    {
+      "id": 143098,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.TextResponseFormat.html",
+      "title": "TextResponseFormat in async_openai::types::responses - Rust",
+      "visit_count": 7,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T05:05:57"
+    },
+    {
+      "id": 143099,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/struct.ResponseFormatJsonSchema.html",
+      "title": "ResponseFormatJsonSchema in async_openai::types - Rust",
+      "visit_count": 6,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T05:06:19"
+    },
+    {
+      "id": 143101,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.Verbosity.html",
+      "title": "Verbosity in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T05:05:42"
+    },
+    {
+      "id": 143103,
+      "url": "https://docs.rs/schemars/latest/schemars/",
+      "title": "schemars - Rust",
+      "visit_count": 10,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T05:33:17"
+    },
+    {
+      "id": 143104,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/index.html",
+      "title": "async_openai - Rust",
+      "visit_count": 8,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T23:08:43"
+    },
+    {
+      "id": 143105,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/struct.Client.html#method.responses",
+      "title": "Client in async_openai - Rust",
+      "visit_count": 8,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T06:09:34"
+    },
+    {
+      "id": 143106,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.Response.html",
+      "title": "Response in async_openai::types::responses - Rust",
+      "visit_count": 13,
+      "visit_count_score": 385,
+      "last_visited": "2025-11-21T23:05:59"
+    },
+    {
+      "id": 143111,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.OutputContent.html",
+      "title": "OutputContent in async_openai::types::responses - Rust",
+      "visit_count": 9,
+      "visit_count_score": 385,
+      "last_visited": "2025-11-21T23:06:53"
+    },
+    {
+      "id": 143112,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.OutputMessage.html",
+      "title": "OutputMessage in async_openai::types::responses - Rust",
+      "visit_count": 9,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:07:22"
+    },
+    {
+      "id": 143113,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.OutputStatus.html",
+      "title": "OutputStatus in async_openai::types::responses - Rust",
+      "visit_count": 6,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T23:07:20"
+    },
+    {
+      "id": 143114,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.Content.html",
+      "title": "Content in async_openai::types::responses - Rust",
+      "visit_count": 7,
+      "visit_count_score": 250,
+      "last_visited": "2025-11-21T23:07:24"
+    },
+    {
+      "id": 143115,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.OutputText.html",
+      "title": "OutputText in async_openai::types::responses - Rust",
+      "visit_count": 5,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:07:33"
+    },
+    {
+      "id": 143435,
+      "url": "https://docs.rs/clap-verbosity-flag",
+      "title": "",
+      "visit_count": 3,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T23:57:16"
+    },
+    {
+      "id": 143436,
+      "url": "https://docs.rs/clap-verbosity-flag/latest/clap_verbosity_flag/",
+      "title": "clap_verbosity_flag - Rust",
+      "visit_count": 4,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T23:57:16"
+    },
+    {
+      "id": 143498,
+      "url": "https://auth.openai.com/mfa-challenge/6901121016a08191ac0ed981c9687803",
+      "title": "Verify your identity - OpenAI",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T22:43:38"
+    },
+    {
+      "id": 143514,
+      "url": "https://docs.rs/schemars/latest/schemars/derive.JsonSchema.html",
+      "title": "JsonSchema in schemars - Rust",
+      "visit_count": 11,
+      "visit_count_score": 360,
+      "last_visited": "2025-11-21T05:33:14"
+    },
+    {
+      "id": 143654,
+      "url": "https://platform.openai.com/docs/api-reference/introduction",
+      "title": "API Reference - OpenAI API",
+      "visit_count": 3,
+      "visit_count_score": 120,
+      "last_visited": "2025-11-21T22:43:52"
+    },
+    {
+      "id": 143663,
+      "url": "https://platform.openai.com/docs/api-reference/responses/create",
+      "title": "API Reference - OpenAI API",
+      "visit_count": 3,
+      "visit_count_score": 120,
+      "last_visited": "2025-11-21T22:56:29"
+    },
+    {
+      "id": 143832,
+      "url": "https://context7.com/",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 15,
+      "visit_count_score": 350,
+      "last_visited": "2025-11-21T06:29:26"
+    },
+    {
+      "id": 143834,
+      "url": "https://context7.com/sign-in?redirect_url=%2Fdashboard",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T06:29:25"
+    },
+    {
+      "id": 143838,
+      "url": "https://context7.com/dashboard",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 8,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T06:29:25"
+    },
+    {
+      "id": 143846,
+      "url": "https://context7.com/dashboard?tab=libraries",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T06:23:21"
+    },
+    {
+      "id": 143887,
+      "url": "https://docs.rs/tracing",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T21:41:10"
+    },
+    {
+      "id": 147430,
+      "url": "https://www.fedoraproject.org/",
+      "title": "Fedora Linux | The Fedora Project",
+      "visit_count": 4,
+      "visit_count_score": 360,
+      "last_visited": "2025-11-21T21:34:07"
+    },
+    {
+      "id": 147608,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/login?returnUrl=%2Fdashboard",
+      "title": "Ceph",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T01:34:14"
+    },
+    {
+      "id": 147613,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/dashboard",
+      "title": "Ceph",
+      "visit_count": 23,
+      "visit_count_score": 690,
+      "last_visited": "2025-11-21T02:46:49"
+    },
+    {
+      "id": 147620,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/services",
+      "title": "Ceph: Administration > Services",
+      "visit_count": 10,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T02:44:02"
+    },
+    {
+      "id": 147621,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/cephfs/fs",
+      "title": "Ceph: File > File Systems",
+      "visit_count": 60,
+      "visit_count_score": 510,
+      "last_visited": "2025-11-21T02:45:26"
+    },
+    {
+      "id": 149259,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/osd",
+      "title": "Ceph: Cluster > OSDs",
+      "visit_count": 9,
+      "visit_count_score": 300,
+      "last_visited": "2025-11-21T02:41:21"
+    },
+    {
+      "id": 149261,
+      "url": "https://ceph.neosdev.ipac.caltech.edu/#/pool",
+      "title": "Ceph: Cluster > Pools",
+      "visit_count": 33,
+      "visit_count_score": 495,
+      "last_visited": "2025-11-21T02:46:41"
+    },
+    {
+      "id": 149761,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Repository.html",
+      "title": "Repository in git2 - Rust",
+      "visit_count": 6,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T18:06:06"
+    },
+    {
+      "id": 149766,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Repository.html#method.reflog",
+      "title": "Repository in git2 - Rust",
+      "visit_count": 6,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T18:07:01"
+    },
+    {
+      "id": 149794,
+      "url": "https://docs.rs/chrono/0.4.42/chrono/struct.NaiveTime.html#associatedconstant.MIN",
+      "title": "NaiveTime in chrono - Rust",
+      "visit_count": 3,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T04:31:04"
+    },
+    {
+      "id": 149806,
+      "url": "https://users.rust-lang.org/t/how-do-i-make-raw-pointer-sync-ffi/70700/6",
+      "title": "How do I make raw pointer Sync (FFI)? - help - The Rust Programming Language Forum",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T04:31:04"
+    },
+    {
+      "id": 149808,
+      "url": "https://docs.rs/git2/0.20.2/git2/index.html",
+      "title": "git2 - Rust",
+      "visit_count": 10,
+      "visit_count_score": 425,
+      "last_visited": "2025-11-21T18:05:59"
+    },
+    {
+      "id": 149810,
+      "url": "https://docs.rs/git2/0.20.2/git2/index.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 8,
+      "visit_count_score": 325,
+      "last_visited": "2025-11-21T18:06:00"
+    },
+    {
+      "id": 149817,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Diff.html",
+      "title": "Diff in git2 - Rust",
+      "visit_count": 20,
+      "visit_count_score": 435,
+      "last_visited": "2025-11-21T04:08:07"
+    },
+    {
+      "id": 149818,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffFile.html",
+      "title": "DiffFile in git2 - Rust",
+      "visit_count": 15,
+      "visit_count_score": 400,
+      "last_visited": "2025-11-21T04:08:56"
+    },
+    {
+      "id": 149969,
+      "url": "https://lmstudio.ai/docs/developer",
+      "title": "LM Studio Developer Docs | LM Studio Docs",
+      "visit_count": 5,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:18:47"
+    },
+    {
+      "id": 149970,
+      "url": "https://lmstudio.ai/docs/developer/rest/endpoints",
+      "title": "REST API v0 | LM Studio Docs",
+      "visit_count": 3,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:18:51"
+    },
+    {
+      "id": 149979,
+      "url": "https://github.com/64bit/async-openai?tab=readme-ov-file",
+      "title": "64bit/async-openai: Rust library for OpenAI",
+      "visit_count": 2,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T06:33:57"
+    },
+    {
+      "id": 149980,
+      "url": "https://github.com/64bit/async-openai/tree/main/examples",
+      "title": "async-openai/examples at main · 64bit/async-openai",
+      "visit_count": 11,
+      "visit_count_score": 250,
+      "last_visited": "2025-11-21T06:12:08"
+    },
+    {
+      "id": 149987,
+      "url": "https://github.com/64bit/async-openai/tree/main",
+      "title": "64bit/async-openai: Rust library for OpenAI",
+      "visit_count": 10,
+      "visit_count_score": 260,
+      "last_visited": "2025-11-21T06:34:20"
+    },
+    {
+      "id": 149988,
+      "url": "https://github.com/frankfralick/openai-func-enums",
+      "title": "frankfralick/openai-func-enums: A set of Rust macros for working with OpenAI function/tool calls.",
+      "visit_count": 3,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T03:01:11"
+    },
+    {
+      "id": 149992,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/index.html",
+      "title": "async_openai::types - Rust",
+      "visit_count": 7,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T06:05:42"
+    },
+    {
+      "id": 149993,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Diff.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T01:06:01"
+    },
+    {
+      "id": 149994,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Diff.html?search=DiffOp",
+      "title": "\"DiffOp\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:40:49"
+    },
+    {
+      "id": 149995,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffOptions.html",
+      "title": "DiffOptions in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:40:51"
+    },
+    {
+      "id": 149996,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=patience+diff+algorithm&ie=UTF-8&oe=UTF-8",
+      "title": "patience diff algorithm - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:50:11"
+    },
+    {
+      "id": 149997,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffOptions.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:55:24"
+    },
+    {
+      "id": 149998,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffOptions.html?search=Diff",
+      "title": "\"Diff\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:55:27"
+    },
+    {
+      "id": 149999,
+      "url": "https://docs.rs/git2/0.20.2/git2/enum.DiffFormat.html",
+      "title": "DiffFormat in git2 - Rust",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:56:34"
+    },
+    {
+      "id": 150000,
+      "url": "https://github.com/rust-lang/git2-rs",
+      "title": "rust-lang/git2-rs: libgit2 bindings for Rust",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:56:52"
+    },
+    {
+      "id": 150001,
+      "url": "https://github.com/rust-lang/git2-rs/tree/master/examples",
+      "title": "git2-rs/examples at master · rust-lang/git2-rs",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:57:19"
+    },
+    {
+      "id": 150002,
+      "url": "https://github.com/rust-lang/git2-rs/blob/master/examples/diff.rs",
+      "title": "git2-rs/examples/diff.rs at master · rust-lang/git2-rs",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T00:57:22"
+    },
+    {
+      "id": 150003,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Diff.html?search=DiffDelta",
+      "title": "\"DiffDelta\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T01:08:20"
+    },
+    {
+      "id": 150004,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffDelta.html",
+      "title": "DiffDelta in git2 - Rust",
+      "visit_count": 24,
+      "visit_count_score": 370,
+      "last_visited": "2025-11-21T04:08:51"
+    },
+    {
+      "id": 150005,
+      "url": "https://docs.rs/git2/0.20.2/git2/enum.Delta.html",
+      "title": "Delta in git2 - Rust",
+      "visit_count": 6,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T01:21:55"
+    },
+    {
+      "id": 150006,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Diff.html?search=DiffHunk",
+      "title": "\"DiffHunk\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:08:25"
+    },
+    {
+      "id": 150007,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffHunk.html",
+      "title": "DiffHunk in git2 - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T01:22:04"
+    },
+    {
+      "id": 150008,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=git+Typechange&ie=UTF-8&oe=UTF-8",
+      "title": "git Typechange - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:18:43"
+    },
+    {
+      "id": 150009,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Tree.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:19:59"
+    },
+    {
+      "id": 150010,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Tree.html?search=Diff",
+      "title": "\"Diff\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:02"
+    },
+    {
+      "id": 150011,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffLine.html",
+      "title": "DiffLine in git2 - Rust",
+      "visit_count": 7,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T03:41:57"
+    },
+    {
+      "id": 150012,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffLine.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:29"
+    },
+    {
+      "id": 150013,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffLine.html?search=diff",
+      "title": "\"diff\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:32"
+    },
+    {
+      "id": 150014,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffStats.html",
+      "title": "DiffStats in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:35"
+    },
+    {
+      "id": 150015,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffStats.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:40"
+    },
+    {
+      "id": 150016,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffStats.html?search=diff",
+      "title": "\"diff\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:20:43"
+    },
+    {
+      "id": 150017,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffFlags.html",
+      "title": "DiffFlags in git2 - Rust",
+      "visit_count": 4,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T01:22:38"
+    },
+    {
+      "id": 150018,
+      "url": "https://docs.rs/git2/0.20.2/git2/enum.FileMode.html",
+      "title": "FileMode in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:21:32"
+    },
+    {
+      "id": 150019,
+      "url": "https://docs.rs/git2/0.20.2/git2/enum.DiffLineType.html",
+      "title": "DiffLineType in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:22:18"
+    },
+    {
+      "id": 150020,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosops01.ipac.caltech.edu",
+      "title": "Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:36:44"
+    },
+    {
+      "id": 150021,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu",
+      "title": "Linux Servers - Dashboards - Grafana",
+      "visit_count": 13,
+      "visit_count_score": 235,
+      "last_visited": "2025-11-21T01:56:16"
+    },
+    {
+      "id": 150022,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=21",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T01:54:14"
+    },
+    {
+      "id": 150023,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=bytes+iec+vs+si&ie=UTF-8&oe=UTF-8",
+      "title": "bytes iec vs si - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:38:27"
+    },
+    {
+      "id": 150024,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=22",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:38:50"
+    },
+    {
+      "id": 150025,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=23",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:39:11"
+    },
+    {
+      "id": 150026,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=33",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:39:30"
+    },
+    {
+      "id": 150027,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=31",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:43:48"
+    },
+    {
+      "id": 150028,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=node_vmstat_pgpgin+unit&ie=UTF-8&oe=UTF-8",
+      "title": "node_vmstat_pgpgin unit - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:44:03"
+    },
+    {
+      "id": 150029,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=node+exporter+node_vmstat_pgpgout&ie=UTF-8&oe=UTF-8",
+      "title": "node exporter node_vmstat_pgpgout - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:47:20"
+    },
+    {
+      "id": 150030,
+      "url": "https://github.com/search?q=repo%3Aprometheus%2Fnode_exporter%20pgpgout&type=code",
+      "title": "Code search results",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:47:37"
+    },
+    {
+      "id": 150031,
+      "url": "https://github.com/prometheus/node_exporter/blob/b306b639e1c81dfd6e142d5415a85b37c9f1c195/collector/fixtures/e2e-output.txt#L3386",
+      "title": "node_exporter/collector/fixtures/e2e-output.txt at b306b639e1c81dfd6e142d5415a85b37c9f1c195 · prometheus/node_exporter",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:47:50"
+    },
+    {
+      "id": 150032,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=linux+%2Fproc%2Fvmstat&ie=UTF-8&oe=UTF-8",
+      "title": "linux /proc/vmstat - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:47:58"
+    },
+    {
+      "id": 150033,
+      "url": "https://www.google.com/search?q=linux+%2Fproc%2Fvmstat+pgpgin&client=safari&sca_esv=7d89f7df8bf3943f&rls=en&sxsrf=AE3TifOcBuTv8wBa723bihmmF7LcdwFjAA%3A1763689677731&ei=zcQfacayLLHAkPIPsOHSgAs&ved=0ahUKEwiGzfCFkIKRAxUxIEQIHbCwFLAQ4dUDCBE&uact=5&oq=linux+%2Fproc%2Fvmstat+pgpgin&gs_lp=Egxnd3Mtd2l6LXNlcnAiGWxpbnV4IC9wcm9jL3Ztc3RhdCBwZ3BnaW4yBRAhGKABMgUQIRigATIFECEYoAEyBRAhGKABMgUQIRigAUjnBlCaAli_BHABeAGQAQCYAV6gAasBqgEBMrgBA8gBAPgBAfgBApgCA6ACuAHCAgoQABiwAxjWBBhHwgIGEAAYFhgewgILEAAYgAQYhgMYigXCAgUQABjvBcICCBAAGIAEGKIEwgIIEAAYogQYiQWYAwCIBgGQBgiSBwEzoAeOCrIHATK4B7IBwgcFMC4yLjHIBwg&sclient=gws-wiz-serp",
+      "title": "linux /proc/vmstat pgpgin - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:48:08"
+    },
+    {
+      "id": 150034,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22lkj%22%3A%7B%22datasource%22%3A%22PBFA97CFB590B2093%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22PBFA97CFB590B2093%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%2C%22compact%22%3Afalse%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:48:37"
+    },
+    {
+      "id": 150035,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22lkj%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22node_memory_PageTables_bytes%7Binstance%3D%5C%22neosceph01.ipac.caltech.edu%5C%22%7D%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22builder%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:49:21"
+    },
+    {
+      "id": 150036,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=linux+get+page+size&ie=UTF-8&oe=UTF-8",
+      "title": "linux get page size - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:49:54"
+    },
+    {
+      "id": 150037,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=35",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:50:48"
+    },
+    {
+      "id": 150038,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=32",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:51:23"
+    },
+    {
+      "id": 150039,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=40",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:53:43"
+    },
+    {
+      "id": 150040,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/bea0tk425oc1sa/linux-servers?orgId=1&from=now-6h&to=now&timezone=browser&var-project=ceph&var-host=neosceph05.ipac.caltech.edu&editPanel=36",
+      "title": "Edit panel - Linux Servers - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T01:55:24"
+    },
+    {
+      "id": 150041,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=get+pids+using+mount&ie=UTF-8&oe=UTF-8",
+      "title": "get pids using mount - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:17:32"
+    },
+    {
+      "id": 150042,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ceph+pg+calculator+redhat&ie=UTF-8&oe=UTF-8",
+      "title": "ceph pg calculator redhat - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:37:52"
+    },
+    {
+      "id": 150043,
+      "url": "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/auth?client_id=customer-portal&redirect_uri=https%3A%2F%2Faccess.redhat.com%2Fwebassets%2Favalon%2Fj%2Fincludes%2Fsession%2Fscribe%2F%3FredirectTo%3Dhttps%253A%252F%252Faccess.redhat.com%252Flabs%252Fcephpgc%252F&state=4a5b52cc-84a0-4175-be97-7bd3299d27d7&response_mode=fragment&response_type=code&scope=roles%20openid%20api.graphql%20api.ask_red_hat&nonce=3c63eb96-9dfa-46ab-b4ef-0453707e9387",
+      "title": "Log In | Red Hat IDP",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:37:57"
+    },
+    {
+      "id": 150044,
+      "url": "https://sso.redhat.com/auth/realms/redhat-external/login-actions/authenticate?session_code=sfVnRQaXW4-m2yEyaCAg-aPmgxHH51lEfyPkd4S_BBU&execution=a0a6af2c-d0f7-472f-8be2-24a733d45517&client_id=customer-portal&tab_id=-bHy_m5p6PE&client_data=eyJydSI6Imh0dHBzOi8vYWNjZXNzLnJlZGhhdC5jb20vd2ViYXNzZXRzL2F2YWxvbi9qL2luY2x1ZGVzL3Nlc3Npb24vc2NyaWJlLz9yZWRpcmVjdFRvPWh0dHBzJTNBJTJGJTJGYWNjZXNzLnJlZGhhdC5jb20lMkZsYWJzJTJGY2VwaHBnYyUyRiIsInJ0IjoiY29kZSIsInJtIjoiZnJhZ21lbnQiLCJzdCI6IjRhNWI1MmNjLTg0YTAtNDE3NS1iZTk3LTdiZDMyOTlkMjdkNyJ9",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:37:59"
+    },
+    {
+      "id": 150045,
+      "url": "https://access.redhat.com/webassets/avalon/j/includes/session/scribe/?redirectTo=https%3A%2F%2Faccess.redhat.com%2Flabs%2Fcephpgc%2F#state=4a5b52cc-84a0-4175-be97-7bd3299d27d7&session_state=9bba7dfb-104b-4494-85ba-ea508c0358d6&code=1c948152-12de-4d0b-b498-6e1e4364e344.9bba7dfb-104b-4494-85ba-ea508c0358d6.4473e33a-bfd4-4fd0-9ebf-82faab4c2f6c",
+      "title": "Login - Red Hat Customer Portal",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:37:59"
+    },
+    {
+      "id": 150046,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/edtb0oxdq/ceph-cluster?var-interval=$__auto&orgId=1&from=now-1h&to=now&timezone=browser&var-datasource=PBFA97CFB590B2093&var-cluster=&refresh=30s",
+      "title": "Ceph - Cluster - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:49:54"
+    },
+    {
+      "id": 150047,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/92LBIaJIz2/ceph-application-overview?orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=PBFA97CFB590B2093&var-cluster=&var-application=$__all&var-pool=$__all&refresh=30s&editPanel=59",
+      "title": "Edit panel - Ceph - Application Overview - Dashboards - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:50:23"
+    },
+    {
+      "id": 150048,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22%3A%7B%22datasource%22%3A%22PBFA97CFB590B2093%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22PBFA97CFB590B2093%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%2C%22compact%22%3Afalse%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:50:32"
+    },
+    {
+      "id": 150049,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22ceph_pool_stored%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22builder%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:50:38"
+    },
+    {
+      "id": 150050,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22ceph_pool_stored%20%2A%20on%28pool_id%29%20group_left%28instance,%20name,%20application%29%20ceph_pool_metadata%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22builder%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:51:24"
+    },
+    {
+      "id": 150051,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%28ceph_pool_stored%20%2A%20on%28pool_id%29%20group_left%28instance,%20name%29%20ceph_pool_metadata%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 3,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T02:56:09"
+    },
+    {
+      "id": 150052,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22u0v%22%3A%7B%22datasource%22%3A%22PBFA97CFB590B2093%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22PBFA97CFB590B2093%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%2C%22compact%22%3Afalse%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:53:49"
+    },
+    {
+      "id": 150053,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%28ceph_pool_stored%20%2A%20on%28pool_id%29%20group_left%28instance,%20name%29%20ceph_pool_metadata%29%20%2F%20ceph_pool_max_avail%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:54:24"
+    },
+    {
+      "id": 150054,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%28ceph_pool_stored%20%2A%20on%28pool_id%29%20group_left%28instance,%20name%29%20ceph_pool_metadata%29%20%2F%20on%28pool_id%29%20ceph_pool_max_avail%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:54:42"
+    },
+    {
+      "id": 150055,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=prometheus+divide+on+label&ie=UTF-8&oe=UTF-8",
+      "title": "prometheus divide on label - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:55:01"
+    },
+    {
+      "id": 150056,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22by%28pool_id%29%20sum%28ceph_pool_stored%20%2A%20on%28pool_id%29%20group_left%28instance,%20name%29%20ceph_pool_metadata%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:55:44"
+    },
+    {
+      "id": 150057,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%20by%28pool_id%29%20%28ceph_pool_stored%29%20%2A%20on%28pool_id%29%20ceph_pool_metadata%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22builder%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:56:22"
+    },
+    {
+      "id": 150058,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%20by%28pool_id%29%20%28ceph_pool_stored%20%2A%20on%28pool_id%29%20ceph_pool_metadata%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:56:34"
+    },
+    {
+      "id": 150059,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%20by%28pool_id%29%20%28ceph_pool_stored%20%2A%20on%28pool_id%29%20ceph_pool_metadata%29%20%2F%20on%28pool_id%29%20ceph_pool_max_avail%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 2,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T02:58:24"
+    },
+    {
+      "id": 150060,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/explore?schemaVersion=1&panes=%7B%22sbw%22:%7B%22datasource%22:%22PBFA97CFB590B2093%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%28ceph_pool_stored%20%2A%20on%28pool_id%29%20ceph_pool_metadata%29%20%2F%20sum%28ceph_pool_max_avail%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22PBFA97CFB590B2093%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22compact%22:false%7D%7D&orgId=1",
+      "title": "Explore - Prometheus - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:57:26"
+    },
+    {
+      "id": 150061,
+      "url": "https://grafana.neosdev.ipac.caltech.edu/d/dn13KBeTv/ceph-cluster-advanced?var-interval=30s&orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=default&var-cluster=&refresh=1m",
+      "title": "Ceph Cluster - Advanced - Dashboards - Grafana",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T02:59:42"
+    },
+    {
+      "id": 150062,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffFile.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T04:13:06"
+    },
+    {
+      "id": 150063,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffFile.html?search=DiffLine",
+      "title": "\"DiffLine\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T03:41:55"
+    },
+    {
+      "id": 150064,
+      "url": "https://docs.rs/git2/0.20.2/git2/index.html?search=DiffDelta",
+      "title": "\"DiffDelta\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T03:43:54"
+    },
+    {
+      "id": 150065,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Repository.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:02:52"
+    },
+    {
+      "id": 150066,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Repository.html?search=Diff",
+      "title": "\"Diff\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:02:54"
+    },
+    {
+      "id": 150067,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Deltas.html",
+      "title": "Deltas in git2 - Rust",
+      "visit_count": 14,
+      "visit_count_score": 150,
+      "last_visited": "2025-11-21T04:08:47"
+    },
+    {
+      "id": 150068,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=rust+iterate&ie=UTF-8&oe=UTF-8",
+      "title": "rust iterate - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:04:37"
+    },
+    {
+      "id": 150069,
+      "url": "https://www.google.com/search?q=rust+enumerate&client=safari&sca_esv=170749da7b18780d&rls=en&sxsrf=AE3TifMHrep0dPhLKGlilrUnCkcX6_hMJQ%3A1763697877109&ei=1eQfaa2_BvOjur8PyKSwIA&ved=0ahUKEwjt_dLLroKRAxXzke4BHUgSDAQQ4dUDCBE&uact=5&oq=rust+enumerate&gs_lp=Egxnd3Mtd2l6LXNlcnAiDnJ1c3QgZW51bWVyYXRlMgsQABiABBiRAhiKBTILEAAYgAQYkQIYigUyBRAAGIAEMgUQABiABDIKEAAYgAQYFBiHAjILEAAYgAQYkQIYigUyBRAAGIAEMgUQABiABDIGEAAYFhgeMgYQABgWGB5IqxJQ-QNYqhFwAngBkAEAmAFzoAHlBKoBAzguMbgBA8gBAPgBAZgCC6ACmgXCAgoQABiwAxjWBBhHwgIKECMYgAQYJxiKBcICChAAGIAEGEMYigXCAgsQLhiABBjRAxjHAcICERAAGIAEGJECGLEDGIMBGIoFwgILEAAYgAQYhgMYigWYAwCIBgGQBgiSBwM5LjKgB6MysgcDNy4yuAeUBcIHBzAuNi4zLjLIByo&sclient=gws-wiz-serp",
+      "title": "rust enumerate - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:04:44"
+    },
+    {
+      "id": 150070,
+      "url": "https://docs.rs/git2/0.20.2/src/git2/diff.rs.html#156-161",
+      "title": "diff.rs - source",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:06:09"
+    },
+    {
+      "id": 150071,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.DiffFile.html?search=Patch",
+      "title": "\"Patch\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:13:08"
+    },
+    {
+      "id": 150072,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Patch.html",
+      "title": "Patch in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:13:11"
+    },
+    {
+      "id": 150073,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.ToolChoice.html",
+      "title": "ToolChoice in async_openai::types::responses - Rust",
+      "visit_count": 7,
+      "visit_count_score": 220,
+      "last_visited": "2025-11-21T06:05:01"
+    },
+    {
+      "id": 150074,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.ToolDefinition.html",
+      "title": "ToolDefinition in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T05:10:08"
+    },
+    {
+      "id": 150075,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.Truncation.html",
+      "title": "Truncation in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T04:59:37"
+    },
+    {
+      "id": 150076,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.FileSearch.html",
+      "title": "FileSearch in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:09:36"
+    },
+    {
+      "id": 150077,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.Mcp.html",
+      "title": "Mcp in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:09:58"
+    },
+    {
+      "id": 150078,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.Function.html",
+      "title": "Function in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:10:12"
+    },
+    {
+      "id": 150079,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=openai+tool+definition+schema&ie=UTF-8&oe=UTF-8",
+      "title": "openai tool definition schema - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:11:19"
+    },
+    {
+      "id": 150080,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=rust+generate+json+schema&ie=UTF-8&oe=UTF-8",
+      "title": "rust generate json schema - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:19:43"
+    },
+    {
+      "id": 150081,
+      "url": "https://docs.rs/schemars",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:19:44"
+    },
+    {
+      "id": 150082,
+      "url": "https://docs.rs/schemars/latest/schemars/macro.json_schema.html",
+      "title": "json_schema in schemars - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:20:21"
+    },
+    {
+      "id": 150083,
+      "url": "https://docs.rs/schemars/latest/schemars/derive.JsonSchema.html#title-description",
+      "title": "JsonSchema in schemars - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:20:49"
+    },
+    {
+      "id": 150084,
+      "url": "https://doc.rust-lang.org/stable/rust-by-example/meta/doc.html#doc-comments",
+      "title": "Documentation - Rust By Example",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:32:20"
+    },
+    {
+      "id": 150085,
+      "url": "https://docs.rs/schemars/latest/schemars/macro.schema_for.html",
+      "title": "schema_for in schemars - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:33:39"
+    },
+    {
+      "id": 150086,
+      "url": "https://docs.rs/schemars/latest/schemars/struct.Schema.html",
+      "title": "Schema in schemars - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:34:00"
+    },
+    {
+      "id": 150087,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=skydance+owns+sky+news&ie=UTF-8&oe=UTF-8",
+      "title": "skydance owns sky news - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T05:54:42"
+    },
+    {
+      "id": 150088,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/struct.ToolsOutputs.html",
+      "title": "ToolsOutputs in async_openai::types - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:04:50"
+    },
+    {
+      "id": 150089,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/struct.FunctionCall.html",
+      "title": "FunctionCall in async_openai::types::responses - Rust",
+      "visit_count": 5,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T06:06:47"
+    },
+    {
+      "id": 150090,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/index.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:09:05"
+    },
+    {
+      "id": 150091,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/index.html?search=responses",
+      "title": "\"responses\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:09:08"
+    },
+    {
+      "id": 150092,
+      "url": "https://github.com/64bit/async-openai/tree/main/examples/responses-function-call",
+      "title": "async-openai/examples/responses-function-call at main · 64bit/async-openai",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:12:11"
+    },
+    {
+      "id": 150093,
+      "url": "https://github.com/64bit/async-openai/tree/main/examples/responses-function-call/src",
+      "title": "async-openai/examples/responses-function-call/src at main · 64bit/async-openai",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:12:13"
+    },
+    {
+      "id": 150094,
+      "url": "https://github.com/64bit/async-openai/blob/main/examples/responses-function-call/src/main.rs",
+      "title": "async-openai/examples/responses-function-call/src/main.rs at main · 64bit/async-openai",
+      "visit_count": 6,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T06:29:28"
+    },
+    {
+      "id": 150095,
+      "url": "https://context7.com/chat?utm_source=header",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 3,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T06:29:26"
+    },
+    {
+      "id": 150096,
+      "url": "https://context7.com/docs",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:22:52"
+    },
+    {
+      "id": 150097,
+      "url": "https://context7.com/docs/overview",
+      "title": "Intro - Context7 MCP",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:22:53"
+    },
+    {
+      "id": 150098,
+      "url": "https://clerk.context7.com/v1/oauth_callback?code=07cc2a1e20c60b85fcf2&state=ih3w4syquuybzyvrt28uzlrs0mbyic972h8j2x5k",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:23:05"
+    },
+    {
+      "id": 150099,
+      "url": "https://context7.com/dashboard?tab=members",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:23:23"
+    },
+    {
+      "id": 150100,
+      "url": "https://context7.com/dashboard?tab=rules",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:23:25"
+    },
+    {
+      "id": 150101,
+      "url": "https://context7.com/?tab=trending",
+      "title": "Context7 - Up-to-date documentation for LLMs and AI code editors",
+      "visit_count": 4,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T06:29:24"
+    },
+    {
+      "id": 150102,
+      "url": "https://context7.com/websites/tanstack_db",
+      "title": "TanStack DB (websites/tanstack_db) | Context7",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:24:13"
+    },
+    {
+      "id": 150103,
+      "url": "https://tanstack.com/db/latest",
+      "title": "TanStack DB",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:24:16"
+    },
+    {
+      "id": 150104,
+      "url": "https://tanstack.com/libraries",
+      "title": "All Libraries - TanStack",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:36"
+    },
+    {
+      "id": 150105,
+      "url": "https://tanstack.com/virtual",
+      "title": "All Libraries - TanStack",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:12"
+    },
+    {
+      "id": 150106,
+      "url": "https://tanstack.com/virtual/latest",
+      "title": "TanStack Virtual",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:22"
+    },
+    {
+      "id": 150107,
+      "url": "https://tanstack.com/virtual/latest/docs",
+      "title": "TanStack Virtual",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:14"
+    },
+    {
+      "id": 150108,
+      "url": "https://tanstack.com/virtual/latest/docs/introduction",
+      "title": "Introduction | TanStack Virtual Docs",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:14"
+    },
+    {
+      "id": 150109,
+      "url": "https://tanstack.com/pacer",
+      "title": "TanStack Virtual",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:24"
+    },
+    {
+      "id": 150110,
+      "url": "https://tanstack.com/pacer/latest",
+      "title": "TanStack Pacer",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:24"
+    },
+    {
+      "id": 150111,
+      "url": "https://tanstack.com/store",
+      "title": "TanStack Pacer",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:29"
+    },
+    {
+      "id": 150112,
+      "url": "https://tanstack.com/store/latest",
+      "title": "TanStack Store",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:29"
+    },
+    {
+      "id": 150113,
+      "url": "https://tanstack.com/devtools",
+      "title": "TanStack Store",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:33"
+    },
+    {
+      "id": 150114,
+      "url": "https://tanstack.com/devtools/latest",
+      "title": "TanStack Devtools",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:33"
+    },
+    {
+      "id": 150115,
+      "url": "https://react-charts.tanstack.com/",
+      "title": "React Charts - Simple, immersive & interactive charts for React",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:45"
+    },
+    {
+      "id": 150116,
+      "url": "https://tanstack.com/maintainers?viewMode=compact&groupBy=none&sortBy=none",
+      "title": "Maintainers | TanStack",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:25:56"
+    },
+    {
+      "id": 150117,
+      "url": "https://tanstack.com/maintainers?viewMode=compact&groupBy=core&sortBy=none",
+      "title": "Maintainers | TanStack",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:26:05"
+    },
+    {
+      "id": 150118,
+      "url": "https://github.com/jherr",
+      "title": "jherr (Jack Herrington)",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:26:47"
+    },
+    {
+      "id": 150119,
+      "url": "https://github.com/tannerlinsley",
+      "title": "tannerlinsley (Tanner Linsley)",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:26:34"
+    },
+    {
+      "id": 150120,
+      "url": "https://tanstack.com/start/latest/docs",
+      "title": "TanStack Start",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:26:55"
+    },
+    {
+      "id": 150121,
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview",
+      "title": "TanStack Start Overview | TanStack Start React Docs",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:26:55"
+    },
+    {
+      "id": 150122,
+      "url": "https://github.com/64bit/async-openai/blob/main/examples/responses-function-call/src/main.rs#L4",
+      "title": "async-openai/examples/responses-function-call/src/main.rs at main · 64bit/async-openai",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:30:40"
+    },
+    {
+      "id": 150123,
+      "url": "https://github.com/64bit/async-openai/blob/main/examples/responses-function-call/src/main.rs#L23",
+      "title": "async-openai/examples/responses-function-call/src/main.rs at main · 64bit/async-openai",
+      "visit_count": 4,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T06:34:22"
+    },
+    {
+      "id": 150124,
+      "url": "https://github.com/64bit/async-openai/blob/main/Cargo.toml",
+      "title": "async-openai/Cargo.toml at main · 64bit/async-openai",
+      "visit_count": 7,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:34:20"
+    },
+    {
+      "id": 150125,
+      "url": "https://github.com/64bit/async-openai/tree/main/async-openai",
+      "title": "async-openai/async-openai at main · 64bit/async-openai",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:34:17"
+    },
+    {
+      "id": 150126,
+      "url": "https://github.com/64bit/async-openai/blob/main/async-openai/Cargo.toml",
+      "title": "async-openai/async-openai/Cargo.toml at main · 64bit/async-openai",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:34:17"
+    },
+    {
+      "id": 150127,
+      "url": "https://github.com/64bit/async-openai/branches",
+      "title": "Branches · 64bit/async-openai",
+      "visit_count": 9,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:34:16"
+    },
+    {
+      "id": 150128,
+      "url": "https://github.com/64bit/async-openai/branches/active",
+      "title": "Branches · 64bit/async-openai",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T06:34:15"
+    },
+    {
+      "id": 150129,
+      "url": "https://docs.rs/crate/async-openai/0.31.0-alpha.11/target-redirect/async_openai/struct.Client.html",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:22:16"
+    },
+    {
+      "id": 150130,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/struct.Client.html",
+      "title": "Client in async_openai - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:22:17"
+    },
+    {
+      "id": 150131,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/index.html",
+      "title": "async_openai - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:12:35"
+    },
+    {
+      "id": 150132,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/index.html",
+      "title": "async_openai::types - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:12:39"
+    },
+    {
+      "id": 150133,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/index.html",
+      "title": "async_openai::types::responses - Rust",
+      "visit_count": 9,
+      "visit_count_score": 285,
+      "last_visited": "2025-11-21T23:24:06"
+    },
+    {
+      "id": 150134,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/index.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:22:41"
+    },
+    {
+      "id": 150135,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/index.html?search=Message",
+      "title": "\"Message\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:22:44"
+    },
+    {
+      "id": 150136,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/index.html?search=MessageItem",
+      "title": "\"MessageItem\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:22:45"
+    },
+    {
+      "id": 150137,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.MessageItem.html",
+      "title": "MessageItem in async_openai::types::responses - Rust",
+      "visit_count": 7,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:31:59"
+    },
+    {
+      "id": 150138,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.InputMessage.html",
+      "title": "InputMessage in async_openai::types::responses - Rust",
+      "visit_count": 8,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:31:58"
+    },
+    {
+      "id": 150139,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.InputContent.html",
+      "title": "InputContent in async_openai::types::responses - Rust",
+      "visit_count": 6,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:31:57"
+    },
+    {
+      "id": 150140,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.InputTextContent.html",
+      "title": "InputTextContent in async_openai::types::responses - Rust",
+      "visit_count": 6,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:27:19"
+    },
+    {
+      "id": 150141,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.CreateResponse.html",
+      "title": "CreateResponse in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:24:12"
+    },
+    {
+      "id": 150142,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.CreateResponseArgs.html",
+      "title": "CreateResponseArgs in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:30:32"
+    },
+    {
+      "id": 150143,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.CreateResponseArgs.html#method.reasoning",
+      "title": "CreateResponseArgs in async_openai::types::responses - Rust",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:31:18"
+    },
+    {
+      "id": 150144,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.Reasoning.html",
+      "title": "Reasoning in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:30:48"
+    },
+    {
+      "id": 150145,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.CreateResponseArgs.html#method.input",
+      "title": "CreateResponseArgs in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:31:20"
+    },
+    {
+      "id": 150146,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.CreateResponseArgs.html#method.text",
+      "title": "CreateResponseArgs in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T17:33:49"
+    },
+    {
+      "id": 150147,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.ResponseTextParam.html",
+      "title": "ResponseTextParam in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:31:52"
+    },
+    {
+      "id": 150148,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.ToolChoiceParam.html",
+      "title": "CreateResponseArgs in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:33:48"
+    },
+    {
+      "id": 150149,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.ToolChoiceFunction.html",
+      "title": "ToolChoiceFunction in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:33:07"
+    },
+    {
+      "id": 150150,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.ToolChoiceOptions.html",
+      "title": "ToolChoiceOptions in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:33:25"
+    },
+    {
+      "id": 150151,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.Tool.html",
+      "title": "Tool in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:34:06"
+    },
+    {
+      "id": 150152,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.FunctionTool.html",
+      "title": "FunctionTool in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T17:34:35"
+    },
+    {
+      "id": 150153,
+      "url": "https://docs.rs/git2/0.20.2/git2/index.html?search=Repos",
+      "title": "\"Repos\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T18:06:04"
+    },
+    {
+      "id": 150154,
+      "url": "https://docs.rs/git2/0.20.2/git2/struct.Repository.html#method.commit_signed",
+      "title": "Repository in git2 - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T18:06:28"
+    },
+    {
+      "id": 150155,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=clippy+allow+unused+structs&ie=UTF-8&oe=UTF-8",
+      "title": "clippy allow unused structs - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T18:40:42"
+    },
+    {
+      "id": 150156,
+      "url": "https://us06web.zoom.us/j/3826960849?_x_zm_rtaid=NcXc-ka6QMS5COGQM5NImw.1763751686836.3aa996182b1c7f6168e58bf76a87704f&_x_zm_rhtaid=380",
+      "title": "Join from Zoom Workplace app - Zoom",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:01:27"
+    },
+    {
+      "id": 150157,
+      "url": "https://us06web.zoom.us/j/3826960849?_x_zm_rtaid=NcXc-ka6QMS5COGQM5NImw.1763751686836.3aa996182b1c7f6168e58bf76a87704f&_x_zm_rhtaid=380#success",
+      "title": "Join from Zoom Workplace app - Zoom",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:01:28"
+    },
+    {
+      "id": 150158,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=syncoid&ie=UTF-8&oe=UTF-8",
+      "title": "syncoid - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:54:29"
+    },
+    {
+      "id": 150159,
+      "url": "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://discourse.practicalzfs.com/t/setting-up-syncoid-for-offsite-backup/1611&ved=2ahUKEwjV8KTzgoSRAxU2LUQIHYTxOZUQFnoECAwQAQ&usg=AOvVaw2h2VMiv8Vl2tTZbjD3DDen",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:54:32"
+    },
+    {
+      "id": 150160,
+      "url": "https://discourse.practicalzfs.com/t/setting-up-syncoid-for-offsite-backup/1611",
+      "title": "Setting up syncoid for offsite backup - OpenZFS / Sanoid - Practical ZFS",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:54:33"
+    },
+    {
+      "id": 150161,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af",
+      "title": "Network | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 2,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T20:01:54"
+    },
+    {
+      "id": 150162,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/home",
+      "title": "Account home | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 2,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T20:01:54"
+    },
+    {
+      "id": 150163,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/home/domains",
+      "title": "Account home | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 11,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T20:01:55"
+    },
+    {
+      "id": 150164,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu",
+      "title": "ipac.caltech.edu | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 3,
+      "visit_count_score": 150,
+      "last_visited": "2025-11-21T20:00:51"
+    },
+    {
+      "id": 150165,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/dns/settings",
+      "title": "DNS | Settings | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:57:59"
+    },
+    {
+      "id": 150166,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/security/settings",
+      "title": "Security | Settings | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:58:37"
+    },
+    {
+      "id": 150167,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/security/overview",
+      "title": "Security | Overview | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T19:58:43"
+    },
+    {
+      "id": 150168,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/",
+      "title": "ipac.caltech.edu | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 2,
+      "visit_count_score": 125,
+      "last_visited": "2025-11-21T20:00:51"
+    },
+    {
+      "id": 150169,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/network",
+      "title": "Network | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:01:42"
+    },
+    {
+      "id": 150170,
+      "url": "https://dash.cloudflare.com/3a6bf8b82f026be29d206c53e72623af/ipac.caltech.edu/traffic",
+      "title": "Traffic | Argo Smart Routing | ipac.caltech.edu | Infrared Processing & Analysis Center | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:01:14"
+    },
+    {
+      "id": 150171,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/160%2F29.9.229.69.in-addr.arpa/dns/records",
+      "title": "DNS | Records | 160%2F29.9.229.69.in-addr.arpa | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:08:15"
+    },
+    {
+      "id": 150172,
+      "url": "https://dash.cloudflare.com/ffaa1aac1f18343bc07d5f3fb75bac74/160%2F29.9.229.69.in-addr.arpa/dns/settings",
+      "title": "DNS | Settings | 160%2F29.9.229.69.in-addr.arpa | Annie.ehler.4@gmail.com's Account | Cloudflare",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:09:36"
+    },
+    {
+      "id": 150173,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=cloudflare+split+horizon+dns&ie=UTF-8&oe=UTF-8",
+      "title": "cloudflare split horizon dns - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:15:28"
+    },
+    {
+      "id": 150174,
+      "url": "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://community.cloudflare.com/t/does-cloudflare-support-split-horizon-dns/245795&ved=2ahUKEwjjnvXLh4SRAxUeIkQIHRgYNkcQFnoECCkQAQ&usg=AOvVaw2NeXTNSaGAVue2_K0dYx6b",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:15:34"
+    },
+    {
+      "id": 150175,
+      "url": "https://community.cloudflare.com/t/does-cloudflare-support-split-horizon-dns/245795",
+      "title": "Does Cloudflare Support Split Horizon DNS? - DNS & Network - Cloudflare Community",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:15:35"
+    },
+    {
+      "id": 150176,
+      "url": "https://www.reddit.com/r/sysadmin/comments/15tpemh/how_to_configure_splithorizon_dns_with_cloudflare/",
+      "title": "How to configure Split-Horizon DNS with CloudFlare & Windows AD? : r/sysadmin",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:15:38"
+    },
+    {
+      "id": 150177,
+      "url": "https://community.cloudflare.com/t/does-cloudflare-support-split-horizon-dns/245795/2",
+      "title": "Does Cloudflare Support Split Horizon DNS? - Application Performance / DNS & Network - Cloudflare Community",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:16:20"
+    },
+    {
+      "id": 150178,
+      "url": "https://community.cloudflare.com/t/does-cloudflare-support-split-horizon-dns/245795/3",
+      "title": "Does Cloudflare Support Split Horizon DNS? - Application Performance / DNS & Network - Cloudflare Community",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:16:22"
+    },
+    {
+      "id": 150179,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=show+systemd-resolved+config&ie=UTF-8&oe=UTF-8",
+      "title": "show systemd-resolved config - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:26:42"
+    },
+    {
+      "id": 150180,
+      "url": "https://unix.stackexchange.com/questions/328131/how-to-troubleshoot-dns-with-systemd-resolved",
+      "title": "How to troubleshoot DNS with systemd-resolved? - Unix & Linux Stack Exchange",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:26:43"
+    },
+    {
+      "id": 150181,
+      "url": "https://serverfault.com/questions/1008355/adding-a-new-dns-server-with-systemd-resolved",
+      "title": "networking - Adding a new DNS server with systemd-resolved - Server Fault",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:27:35"
+    },
+    {
+      "id": 150182,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/slurp_module.html",
+      "title": "ansible.builtin.slurp module – Slurps a file from remote nodes — Ansible Community Documentation",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:33:50"
+    },
+    {
+      "id": 150183,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/index.html",
+      "title": "Ansible.Builtin — Ansible Community Documentation",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T20:54:27"
+    },
+    {
+      "id": 150184,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/b64decode_filter.html#ansible-collections-ansible-builtin-b64decode-filter",
+      "title": "ansible.builtin.b64decode filter – Decode a Base64 string — Ansible Community Documentation",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:34:05"
+    },
+    {
+      "id": 150185,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/regex_replace_filter.html#ansible-collections-ansible-builtin-regex-replace-filter",
+      "title": "ansible.builtin.regex_replace filter – replace a string via regex — Ansible Community Documentation",
+      "visit_count": 4,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:34:34"
+    },
+    {
+      "id": 150186,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/regex_search_filter.html#ansible-collections-ansible-builtin-regex-search-filter",
+      "title": "ansible.builtin.regex_search filter – extract regex match from string — Ansible Community Documentation",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:34:29"
+    },
+    {
+      "id": 150187,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/split_filter.html",
+      "title": "ansible.builtin.split filter – split a string into a list — Ansible Community Documentation",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:42:43"
+    },
+    {
+      "id": 150188,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=python+regex+set+global+flag+in+pattern&ie=UTF-8&oe=UTF-8",
+      "title": "python regex set global flag in pattern - Google Search",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:48:59"
+    },
+    {
+      "id": 150189,
+      "url": "https://stackoverflow.com/questions/11686516/python-regexp-global-flag",
+      "title": "regex - Python RegExp global flag - Stack Overflow",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:48:46"
+    },
+    {
+      "id": 150190,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+regex+set+global+flag&ie=UTF-8&oe=UTF-8",
+      "title": "ansible regex set global flag - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:54:20"
+    },
+    {
+      "id": 150191,
+      "url": "https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/regex_findall_filter.html#ansible-collections-ansible-builtin-regex-findall-filter",
+      "title": "ansible.builtin.regex_findall filter – extract all regex matches from string — Ansible Community Documentation",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:54:35"
+    },
+    {
+      "id": 150192,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=regex+for+ipv4+and+ipv6&ie=UTF-8&oe=UTF-8",
+      "title": "regex for ipv4 and ipv6 - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T20:55:04"
+    },
+    {
+      "id": 150193,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+check+if+variable+is+string&ie=UTF-8&oe=UTF-8",
+      "title": "ansible check if variable is string - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:05:05"
+    },
+    {
+      "id": 150194,
+      "url": "https://www.google.com/search?q=ansible+check+if+variable+is+a+list&client=safari&sca_esv=16a5b3c49c9a2e73&rls=en&sxsrf=AE3TifO6jGMDMwcwVgiIyW7SNZLosUC21A%3A1763759105087&ei=AdQgafqQBcvykPIPg7Kj8A0&ved=0ahUKEwi6lbbXkoSRAxVLOUQIHQPZCN4Q4dUDCBE&uact=5&oq=ansible+check+if+variable+is+a+list&gs_lp=Egxnd3Mtd2l6LXNlcnAiI2Fuc2libGUgY2hlY2sgaWYgdmFyaWFibGUgaXMgYSBsaXN0MgQQIxgnMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjILEAAYgAQYhgMYigVIsxVQsQdY9RNwAngBkAEAmAGGAaABiwSqAQM1LjG4AQPIAQD4AQGYAgigArMEwgIKEAAYsAMY1gQYR8ICCBAAGKIEGIkFmAMAiAYBkAYIkgcDNy4xoAflLbIHAzUuMbgHrATCBwcwLjIuNS4xyAcd&sclient=gws-wiz-serp",
+      "title": "ansible check if variable is a list - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:05:18"
+    },
+    {
+      "id": 150195,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=jinja+check+if+item+is+last+item+in+list&ie=UTF-8&oe=UTF-8",
+      "title": "jinja check if item is last item in list - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:10:04"
+    },
+    {
+      "id": 150196,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=ansible+delete+directory&ie=UTF-8&oe=UTF-8",
+      "title": "ansible delete directory - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:27:56"
+    },
+    {
+      "id": 150197,
+      "url": "https://stackoverflow.com/questions/38200732/ansible-how-to-delete-files-and-folders-inside-a-directory",
+      "title": "Ansible: How to delete files and folders inside a directory? - Stack Overflow",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:28:02"
+    },
+    {
+      "id": 150198,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=using+tracing+crate+in+cli&ie=UTF-8&oe=UTF-8",
+      "title": "using tracing crate in cli - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:37:17"
+    },
+    {
+      "id": 150199,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=tracing-indicatif&ie=UTF-8&oe=UTF-8",
+      "title": "tracing-indicatif - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:38:24"
+    },
+    {
+      "id": 150200,
+      "url": "https://docs.rs/tracing-indicatif",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:38:26"
+    },
+    {
+      "id": 150201,
+      "url": "https://docs.rs/tracing-indicatif/latest/tracing_indicatif/",
+      "title": "tracing_indicatif - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:38:26"
+    },
+    {
+      "id": 150202,
+      "url": "https://docs.rs/indicatif/latest/indicatif/index.html",
+      "title": "indicatif - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:38:30"
+    },
+    {
+      "id": 150203,
+      "url": "https://www.google.com/search?q=rust+tracing&client=safari&sca_esv=16a5b3c49c9a2e73&rls=en&sxsrf=AE3TifMZJ5CzWdY6B19aciNvpNQ8vmb7Sw%3A1763761036481&ei=jNsgafWOHaGZkPIPh5CRQQ&oq=using+tracing+crate+in+cli&gs_lp=Egxnd3Mtd2l6LXNlcnAiGnVzaW5nIHRyYWNpbmcgY3JhdGUgaW4gY2xpKgIIADIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYR0jgDVAAWABwAngBkAEAmAEAoAEAqgEAuAEByAEAmAICoAIJmAMAiAYBkAYIkgcBMqAHALIHALgHAMIHBTAuMS4xyAcE&sclient=gws-wiz-serp",
+      "title": "rust tracing - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:41:09"
+    },
+    {
+      "id": 150204,
+      "url": "https://github.com/tokio-rs/tracing/tree/master/tracing-log",
+      "title": "tracing/tracing-log at master · tokio-rs/tracing",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:43:39"
+    },
+    {
+      "id": 150205,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.SubscriberBuilder.html#method.compact",
+      "title": "SubscriberBuilder in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:44:23"
+    },
+    {
+      "id": 150206,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.Builder.html",
+      "title": "Builder in tracing_subscriber::filter - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:46:47"
+    },
+    {
+      "id": 150207,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.Builder.html#method.from_env",
+      "title": "Builder in tracing_subscriber::filter - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:49:06"
+    },
+    {
+      "id": 150208,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.Builder.html#method.with_env_var",
+      "title": "Builder in tracing_subscriber::filter - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:49:09"
+    },
+    {
+      "id": 150209,
+      "url": "https://docs.rs/tracing-indicatif/latest/tracing_indicatif/writer/index.html",
+      "title": "tracing_indicatif::writer - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:50:58"
+    },
+    {
+      "id": 150210,
+      "url": "https://docs.rs/tracing-indicatif/latest/tracing_indicatif/struct.IndicatifLayer.html",
+      "title": "IndicatifLayer in tracing_indicatif - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:51:10"
+    },
+    {
+      "id": 150211,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.SubscriberBuilder.html#method.pretty",
+      "title": "SubscriberBuilder in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:54:06"
+    },
+    {
+      "id": 150212,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.SubscriberBuilder.html#method.finish",
+      "title": "SubscriberBuilder in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:54:20"
+    },
+    {
+      "id": 150213,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.Subscriber.html#impl-Subscriber-for-Subscriber%3CN,+E,+F,+W%3E",
+      "title": "Subscriber in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:54:49"
+    },
+    {
+      "id": 150214,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/fn.layer.html",
+      "title": "layer in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:55:11"
+    },
+    {
+      "id": 150215,
+      "url": "https://docs.rs/tracing-subscriber/latest/tracing_subscriber/fmt/struct.Layer.html",
+      "title": "Layer in tracing_subscriber::fmt - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:55:13"
+    },
+    {
+      "id": 150216,
+      "url": "https://github.com/emersonford/tracing-indicatif/tree/main/examples",
+      "title": "tracing-indicatif/examples at main · emersonford/tracing-indicatif",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:57:02"
+    },
+    {
+      "id": 150217,
+      "url": "https://github.com/emersonford/tracing-indicatif/blob/main/examples/progress_bar.rs",
+      "title": "tracing-indicatif/examples/progress_bar.rs at main · emersonford/tracing-indicatif",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T21:57:10"
+    },
+    {
+      "id": 150218,
+      "url": "https://docs.rs/tracing/0.1.41/tracing/attr.instrument.html",
+      "title": "instrument in tracing - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:03:07"
+    },
+    {
+      "id": 150219,
+      "url": "https://docs.rs/tracing/latest/tracing/struct.Level.html",
+      "title": "Level in tracing - Rust",
+      "visit_count": 4,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T23:12:03"
+    },
+    {
+      "id": 150220,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=tracing+default+level+for+insturment&ie=UTF-8&oe=UTF-8",
+      "title": "tracing default level for instrument - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:04:10"
+    },
+    {
+      "id": 150221,
+      "url": "https://docs.rs/tracing-core/0.1.34/x86_64-unknown-linux-gnu/src/tracing_core/metadata.rs.html#221",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:04:39"
+    },
+    {
+      "id": 150222,
+      "url": "https://docs.rs/tracing-core/0.1.34/src/tracing_core/metadata.rs.html#221",
+      "title": "metadata.rs - source",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:04:40"
+    },
+    {
+      "id": 150223,
+      "url": "https://docs.rs/tracing-core/0.1.34/x86_64-unknown-linux-gnu/src/tracing_core/metadata.rs.html#505",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:05:04"
+    },
+    {
+      "id": 150224,
+      "url": "https://docs.rs/tracing-core/0.1.34/src/tracing_core/metadata.rs.html#505",
+      "title": "metadata.rs - source",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:05:04"
+    },
+    {
+      "id": 150225,
+      "url": "https://docs.rs/tracing/0.1.41/tracing/#in-libraries",
+      "title": "tracing - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:17:51"
+    },
+    {
+      "id": 150226,
+      "url": "https://docs.rs/tracing/0.1.41/tracing/#crate-feature-flags",
+      "title": "tracing - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:17:53"
+    },
+    {
+      "id": 150227,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=debug+serde+with+tracing&ie=UTF-8&oe=UTF-8",
+      "title": "debug serde with tracing - Google Search",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:20:29"
+    },
+    {
+      "id": 150228,
+      "url": "https://www.google.com/search?q=get+location+of+serde+error&client=safari&sca_esv=16a5b3c49c9a2e73&rls=en&sxsrf=AE3TifMfCf5WrqwZrjN8CLPjgz0ycpe-dw%3A1763763568889&ei=cOUgaf-INq3PkPIPmY-IyAc&ved=0ahUKEwj_gPeno4SRAxWtJ0QIHZkHAnkQ4dUDCBE&uact=5&oq=get+location+of+serde+error&gs_lp=Egxnd3Mtd2l6LXNlcnAiG2dldCBsb2NhdGlvbiBvZiBzZXJkZSBlcnJvcjIFECEYoAEyBRAhGKABMgUQIRigATIFECEYoAFIqVZQhRVYsFVwB3gBkAEAmAFzoAG_EqoBBDMxLjK4AQPIAQD4AQGYAiigAtIUqAIUwgIKEAAYsAMY1gQYR8ICBBAjGCfCAgoQIxiABBgnGIoFwgILEAAYgAQYkQIYigXCAgoQABiABBhDGIoFwgIKEC4YgAQYQxiKBcICERAAGIAEGJECGLEDGIMBGIoFwgIOEC4YgAQYxwEYjgUYrwHCAgoQABiABBgUGIcCwgIHECMYJxjqAsICDRAjGIAEGCcYigUY6gLCAhcQABiABBiRAhi0AhjnBhiKBRjqAtgBAcICEBAuGAMYtAIY6gIYjwHYAQHCAhAQABgDGLQCGOoCGI8B2AEBwgIWEC4YgAQYsQMY0QMYQxiDARjHARiKBcICCxAAGIAEGLEDGIMBwgIQEAAYgAQYsQMYQxiDARiKBcICERAuGIAEGLEDGMcBGI4FGK8BwgIIEC4YgAQYsQPCAhEQLhiABBixAxjRAxiDARjHAcICCBAAGIAEGLEDwgIFEAAYgATCAgsQLhiABBixAxjUAsICDhAuGIAEGLEDGMcBGK8BwgIFEC4YgATCAgcQABiABBgKwgIaEC4YgAQYsQMY1AIYlwUY3AQY3gQY4ATYAQHCAggQABiABBjJA8ICCxAAGIAEGJIDGIoFwgIGEAAYFhgewgIIEAAYFhgKGB7CAgUQIRifBcICBRAAGO8FwgIIEAAYogQYiQXCAggQABiABBiiBMICBRAhGKsCmAMK8QXlHatdtcp5mYgGAZAGCLoGBggBEAEYAZIHBDM2LjSgB_mAArIHBDI5LjS4B58UwgcLMS4xOS44LjExLjHIB9kB&sclient=gws-wiz-serp",
+      "title": "get location of serde error - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:20:48"
+    },
+    {
+      "id": 150229,
+      "url": "https://stackoverflow.com/questions/78313517/how-can-i-get-serde-to-emit-the-fields-that-failed-to-parse-in-the-error-output",
+      "title": "rust - How can I get serde to emit the fields that failed to parse in the error output? - Stack Overflow",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:21:28"
+    },
+    {
+      "id": 150230,
+      "url": "https://docs.rs/serde_path_to_error/",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:21:34"
+    },
+    {
+      "id": 150231,
+      "url": "https://docs.rs/serde_path_to_error/latest/serde_path_to_error/",
+      "title": "serde_path_to_error - Rust",
+      "visit_count": 6,
+      "visit_count_score": 225,
+      "last_visited": "2025-11-21T22:26:41"
+    },
+    {
+      "id": 150232,
+      "url": "https://docs.rs/serde_path_to_error/latest/serde_path_to_error/struct.Deserializer.html",
+      "title": "Deserializer in serde_path_to_error - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:21:23"
+    },
+    {
+      "id": 150233,
+      "url": "https://github.com/dtolnay/path-to-error",
+      "title": "dtolnay/path-to-error: Find out path at which a deserialization error occurred",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:21:39"
+    },
+    {
+      "id": 150234,
+      "url": "https://docs.rs/serde_path_to_error/latest/serde_path_to_error/struct.Error.html",
+      "title": "Error in serde_path_to_error - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:26:44"
+    },
+    {
+      "id": 150235,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=this+error&ie=UTF-8&oe=UTF-8",
+      "title": "this error - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:34:24"
+    },
+    {
+      "id": 150236,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=async+openai&ie=UTF-8&oe=UTF-8",
+      "title": "async openai - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:38:34"
+    },
+    {
+      "id": 150237,
+      "url": "https://docs.rs/crate/async-openai/0.31.0-alpha.11/target-redirect/async_openai/",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:12:30"
+    },
+    {
+      "id": 150238,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/",
+      "title": "async_openai - Rust",
+      "visit_count": 4,
+      "visit_count_score": 200,
+      "last_visited": "2025-11-21T23:12:30"
+    },
+    {
+      "id": 150239,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:12:32"
+    },
+    {
+      "id": 150240,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/?search=Input",
+      "title": "\"Input\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:41:51"
+    },
+    {
+      "id": 150241,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/?search=InputItem",
+      "title": "\"InputItem\" Search - Rust",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:41:52"
+    },
+    {
+      "id": 150242,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.InputItem.html",
+      "title": "InputItem in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:24:38"
+    },
+    {
+      "id": 150243,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.Item.html",
+      "title": "Item in async_openai::types::responses - Rust",
+      "visit_count": 7,
+      "visit_count_score": 210,
+      "last_visited": "2025-11-21T23:33:15"
+    },
+    {
+      "id": 150244,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.FunctionCallOutputItemParam.html",
+      "title": "FunctionCallOutputItemParam in async_openai::types::responses - Rust",
+      "visit_count": 4,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:33:17"
+    },
+    {
+      "id": 150245,
+      "url": "https://docs.rs/crate/async-openai/0.30.1/target-redirect/async_openai/types/responses/enum.Item.html",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:42:26"
+    },
+    {
+      "id": 150246,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/?search=Item",
+      "title": "\"Item\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:42:27"
+    },
+    {
+      "id": 150247,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/realtime/struct.Item.html",
+      "title": "Item in async_openai::types::realtime - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:42:28"
+    },
+    {
+      "id": 150248,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/realtime/struct.Item.html?search=",
+      "title": "\"\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:42:30"
+    },
+    {
+      "id": 150249,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/realtime/struct.Item.html?search=Input",
+      "title": "\"Input\" Search - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:43:03"
+    },
+    {
+      "id": 150250,
+      "url": "https://auth.openai.com/api/accounts/authorize?issuer=https%3A%2F%2Fauth.openai.com&client_id=app_2SKx67EdpoN0G6j64rFvigXD&audience=https%3A%2F%2Fapi.openai.com%2Fv1&redirect_uri=https%3A%2F%2Fplatform.openai.com%2Fauth%2Fcallback&device_id=a137374a-d159-45cc-8959-60eec341f5ef&max_age=0&scope=openid%20profile%20email%20offline_access&response_type=code&response_mode=query&state=LUt3TV9aR2ZDQWFEaGs3dXhlYkZaaGlDQ3ktQTEteEM0M1hsUGFSV0I4Ng%3D%3D&nonce=LVV%2BR09jdG1obktoMVIybnh6dC1PMmtqOW9qUDVqfnZXLmoybkxROUNJRg%3D%3D&code_challenge=HFzMHDGEb927F6q3_emNLwfEr8D3aX5lyfPGriebHqo&code_challenge_method=S256&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjEuMjEuMCJ9",
+      "title": null,
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:43:31"
+    },
+    {
+      "id": 150251,
+      "url": "https://auth.openai.com/api/oauth/oauth2/auth?audience=https%3A%2F%2Fapi.openai.com%2Fv1&auth0Client=eyJuYW1lIjoiYXV0aDAtc3BhLWpzIiwidmVyc2lvbiI6IjEuMjEuMCJ9&client_id=app_2SKx67EdpoN0G6j64rFvigXD&code_challenge=HFzMHDGEb927F6q3_emNLwfEr8D3aX5lyfPGriebHqo&code_challenge_method=S256&device_id=a137374a-d159-45cc-8959-60eec341f5ef&issuer=https%3A%2F%2Fauth.openai.com&login_verifier=YIYnexFqJSokb9jn1w8tZNu4hUXQCw1JhoG2KeEKvWiP7BOQmT2wi5X1faFbiHLPxoFnQfInxSAAd6rYGeUxyjOPMRTreM_1qbUZmQvviTdNadE2m-JBI27HTrjTK72NvLF6QD-smYYODIab92FQW0kPwMPMthRKzLiF31OTNvGjsx7ongPh0T0nOqd5NqGb46VzbNj0QI1kRE9g2lipES-Buno4cu7J8phTJtrjs_v8QD0ynsvhLKU26wLLT3eVmC8rZas5utfUq5UqpU6198EfMhKdefxHGeEGoK-JZOE0zecO-jeXrxWMelZpYT0-QbnfLuQyFVAavAzlaSfj0GYZk-mguluSyMvm5dU2Pma2iKkIZJHv6UAV03Mq6WR8B9EUD9cfSbMxV1jSjKO1RlUw5XhySTncPQ7CsdcWPvkRC0SewHPFUNyirPzQBmstShKGJkmNbqvh9j4MzuyxQbMf0OooAtzC3p8gXw6IX7bCbIJ72VSReBJHhzOsT2dE4fR4ZW8_slb6eE6bwbVTG9H8U4ieuJAamsJlR1ZT57SalD6_FG3gdx2HiKF6aTLG-L8FxelHT_G79XCRO43drAfs9kMMj0cLeJ9UI1qaaH0jYFYNc-gaVARTK08fwB7dG4s5wmWBNvyav4SFqkxjkQqiCRg9jspkEpcepiuD9xFrtHKkx9RzC7i04gRzIBsmdnUF5LzwORxEv0gR3IkUZ9qzjGD4b1RpyVp-JrHLlLWc_rACG0SkTIkr_2MBkx_oQOZMOZgtiTJTpzAL0Nf_W0sTU_C1TRfKVasYArGt25YElhcSKkarpZgnBDCdj6DC8RTZW2aS5LLMcXH_qHO6ARKp6twew_jbc0L7y4QIlrD9jaKBL-6siBoJJhkzRpDg2IeOi-5bUPPDH9_mlWm6xwAJuRCmybXJWRKDyNuXvFgGjR7F6aERkYcvqvvQ0H2Dz1EMuH843llFDbCvDFIcKklKhRNpNqZFQhXKZUNxxTxGUTT66eaUMiSuzF6R_A1nTkE1y_WiGwNtEBr3kcO8nVdZ4w4Py-5isT9TdC4tR8AvM1oabwrcNQ01WagatmZUTs0741sAXEk4MeHhN_vb2PNb8jFWnS2kZvxvYQfU0Jiqy6RdmVBQGh8uKUsdTV4H9a9gW9G5v33mO0fTZracSOsNVVe50qIRzKM6qTIkprqBYD5mebdVGIBuUbApl1b7Rd8QDoVDHDY8DdfF-7Y1CCvlVI3VA1jPYFc1f87B0zgcCTiUiGVWrRzOQQilxe1fiMhhiOUdbwuJ5wFTzuE44AMlHeftnZ9m-98xo7tbsSBIQvgf4osoG9URw9Scu082LMisaNIfnnkk7LO94fHlkeq5ICesJ4K76VZuFTZZGE4tuS8zHClmUibZ30GqHRBg32lpqr8IaczHZcE23LeI8Z2QOc4JF0TVS_J773CaX_x_V-1uJZF32juqsjgbkjsw-WsXD5GVizxpiLwxNy3Fa7RScsssgC8LnzE-jdo1lI6bKYCNPZXHQiyWPxh70qSClY3sHlLBbf4dDXg4VE5vXpG84nb0YdURMgVU3uev2LzeKeki7fqYr0SCMwiqEeJtQ_dp8LIPGy5oABb1Bf5w2KLXLJ8Ipm3WUwJH7S_ZGeMOEf9g61dOj3BqjGSN3-eVxYtwdPqXCG-KWg1LzERGS8y2gzsievIXmVX8TvWZFU5F0Buhtxwli6pZu5sRw1b8CmXTG8aqmkB8dv1QwOxjqo5uHlYR-9sGQNbOaw7TTT8NfXCNin8CF5sZBir1va2wDN9xHemcVZ7reNKo3iDig1bwv0S6jtRws-yUSUfQQrgi99bNk_X3ARJEq6FzEVxuIknLl0PX0Lp1y6stJiYN9RQh6zmjoYni5LdjgDBLLSl7CmtjzKtuBMgvQgdw_MHE4zrgvKjQClM8vhgoFLyU0j8DXexRZH_G64myHm5p7b-QSHUDZfME5XoHtXvSbIfyxe3Lb0ji1tCeTTYMxxoCnzKox1KWdYUgIvwqP3XU8aIbP_7iTPDuCDAc8fAtiqpyIVyC6L_SX3emg4afnIKzXxm9QKq7XElf0veqbCB3DKo5jCwgZPiNv8lD4i3NXmKdHepXDpSL8UO5IpS8WWaNZ54RsKYtOVYcfsL6oYrnqx9YFgouBscgn1mJzfDgwTX-58c53_YDy6cv7wxahOom5WHuLDST1vdl-LThiT3PpIwwMgWzg-kKC_TeGIId4n6S1MxZipKlY4g7zR0C8FBdqAEPXfSJcyfI8SC7uY_FudJLlTwiNV_ol5WCGmuepMStzhhc7bWfH_Y9ew%3D%3D&max_age=0&nonce=LVV%2BR09jdG1obktoMVIybnh6dC1PMmtqOW9qUDVqfnZXLmoybkxROUNJRg%3D%3D&redirect_uri=https%3A%2F%2Fplatform.openai.com%2Fauth%2Fcallback&response_mode=query&response_type=code&scope=openid+profile+email+offline_access&state=LUt3TV9aR2ZDQWFEaGs3dXhlYkZaaGlDQ3ktQTEteEM0M1hsUGFSV0I4Ng%3D%3D",
+      "title": null,
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:43:39"
+    },
+    {
+      "id": 150252,
+      "url": "https://platform.openai.com/auth/callback?code=ac_YCBNMV3bRJtXHRgvMhXFtwddenL1k6kRO4JoTXttZ5s.GXpmVGqfaUzji2g5Rp22FwhvOsKsLAgBfBIIgL2RN8I&scope=openid+profile+email+offline_access&state=LUt3TV9aR2ZDQWFEaGs3dXhlYkZaaGlDQ3ktQTEteEM0M1hsUGFSV0I4Ng%3D%3D",
+      "title": "OpenAI Platform",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:43:44"
+    },
+    {
+      "id": 150253,
+      "url": "https://platform.openai.com/docs/guides/function-calling?api-mode=responses",
+      "title": "Function calling - OpenAI API",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:44:07"
+    },
+    {
+      "id": 150254,
+      "url": "https://platform.openai.com/docs/guides/function-calling",
+      "title": "Function calling - OpenAI API",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T22:56:49"
+    },
+    {
+      "id": 150255,
+      "url": "https://docs.rs/async-openai/0.30.1/async_openai/types/responses/enum.Annotation.html",
+      "title": "Annotation in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:07:29"
+    },
+    {
+      "id": 150256,
+      "url": "https://github.com/64bit/async-openai/fork",
+      "title": "Fork 64bit/async-openai",
+      "visit_count": 11,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:09:53"
+    },
+    {
+      "id": 150257,
+      "url": "https://github.com/annie444/async-openai",
+      "title": "annie444/async-openai: Rust library for OpenAI",
+      "visit_count": 8,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:16:48"
+    },
+    {
+      "id": 150258,
+      "url": "https://github.com/64bit/async-openai/pulls",
+      "title": "Pull requests · 64bit/async-openai",
+      "visit_count": 2,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:41:52"
+    },
+    {
+      "id": 150259,
+      "url": "https://github.com/64bit/async-openai/pull/452",
+      "title": "String errors by moldhouse · Pull Request #452 · 64bit/async-openai",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:12:08"
+    },
+    {
+      "id": 150260,
+      "url": "https://docs.rs/async-openai",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:12:26"
+    },
+    {
+      "id": 150261,
+      "url": "https://docs.rs/async-openai/latest/async_openai/",
+      "title": "async_openai - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:12:27"
+    },
+    {
+      "id": 150262,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.Response.html",
+      "title": "Response in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:12:55"
+    },
+    {
+      "id": 150263,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.OutputItem.html",
+      "title": "OutputItem in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:12:59"
+    },
+    {
+      "id": 150264,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.OutputMessage.html",
+      "title": "OutputMessage in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:13:02"
+    },
+    {
+      "id": 150265,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.OutputMessageContent.html",
+      "title": "OutputMessageContent in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:13:06"
+    },
+    {
+      "id": 150266,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.OutputTextContent.html",
+      "title": "OutputTextContent in async_openai::types::responses - Rust",
+      "visit_count": 3,
+      "visit_count_score": 160,
+      "last_visited": "2025-11-21T23:24:04"
+    },
+    {
+      "id": 150267,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/src/async_openai/types/responses/response.rs.html#1523-1529",
+      "title": "response.rs - source",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:13:16"
+    },
+    {
+      "id": 150268,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=serde+use+default+if+not+exists&ie=UTF-8&oe=UTF-8",
+      "title": "serde use default if not exists - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:14:12"
+    },
+    {
+      "id": 150269,
+      "url": "https://github.com/annie444/async-openai/compare/64bit%3Aasync-openai%3Amain...main?expand=1",
+      "title": "Comparing 64bit:main...annie444:main · 64bit/async-openai",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:16:53"
+    },
+    {
+      "id": 150270,
+      "url": "https://github.com/64bit/async-openai/compare/main...annie444:async-openai:main?expand=1",
+      "title": "Comparing 64bit:main...annie444:main · 64bit/async-openai",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:16:53"
+    },
+    {
+      "id": 150271,
+      "url": "https://lmstudio.ai/docs/developer/openai-compat/responses",
+      "title": "Responses | LM Studio Docs",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:19:02"
+    },
+    {
+      "id": 150272,
+      "url": "https://github.com/64bit/async-openai/pull/create?base=64bit%3Amain&head=annie444%3Amain&head_repo=async-openai",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:20:36"
+    },
+    {
+      "id": 150273,
+      "url": "https://github.com/64bit/async-openai/pull/490",
+      "title": "Handling non-OpenAI APIs by annie444 · Pull Request #490 · 64bit/async-openai",
+      "visit_count": 6,
+      "visit_count_score": 185,
+      "last_visited": "2025-11-21T23:43:25"
+    },
+    {
+      "id": 150274,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=cargo+patch+crate+with+git&ie=UTF-8&oe=UTF-8",
+      "title": "cargo patch crate with git - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:21:25"
+    },
+    {
+      "id": 150275,
+      "url": "https://github.com/annie444/async-openai.git?branch=main#aef49c33",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:23:15"
+    },
+    {
+      "id": 150276,
+      "url": "https://github.com/annie444/async-openai?branch=main#aef49c33",
+      "title": "annie444/async-openai: Rust library for OpenAI",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:23:16"
+    },
+    {
+      "id": 150277,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.InputParam.html",
+      "title": "InputParam in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:24:18"
+    },
+    {
+      "id": 150278,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/struct.FunctionToolCall.html",
+      "title": "FunctionToolCall in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:32:21"
+    },
+    {
+      "id": 150279,
+      "url": "https://docs.rs/async-openai/0.31.0-alpha.11/async_openai/types/responses/enum.FunctionCallOutput.html",
+      "title": "FunctionCallOutput in async_openai::types::responses - Rust",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:33:24"
+    },
+    {
+      "id": 150280,
+      "url": "https://github.com/copilot/tasks/pull/PR_kwDOIad5mM606pAs?session_id=884257e0-ce83-44ab-9e57-e46c291a886a",
+      "title": "Handling non-OpenAI APIs · GitHub Copilot",
+      "visit_count": 5,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:43:26"
+    },
+    {
+      "id": 150281,
+      "url": "https://api-a3b78b57.duosecurity.com/oauth/v1/authorize?client_id=DI8V8YS0W900FSPY3PLA&nonce=DhNGhFNA2RsIWwSnJiR0RA&request=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiaHR0cHM6Ly9hcGktYTNiNzhiNTcuZHVvc2VjdXJpdHkuY29tIl0sImNsaWVudF9pZCI6IkRJOFY4WVMwVzkwMEZTUFkzUExBIiwiZHVvX3VuYW1lIjoiYWVobGVyQGNhbHRlY2guZWR1IiwiZXhwIjoxNzYzNzY5MjMxLCJpc3MiOiJESThWOFlTMFc5MDBGU1BZM1BMQSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vY2FsdGVjaC4xcGFzc3dvcmQuY29tL2FwaS92Mi9hdXRoL2R1by9uYXRpdmUvcmVkaXJlY3QiLCJyZXNwb25zZV90eXBlIjoiY29kZSIsInNjb3BlIjoib3BlbmlkIiwic3RhdGUiOiI4eWkyazNESWRldEFWSFdvdjNpYlc2SUVqelkxOHM0X2N6aWtRemNmX05jIiwidXNlX2R1b19jb2RlX2F0dHJpYnV0ZSI6dHJ1ZX0.55G97JbwLFO7gZrmvAMGAT8nqzTDENgByZJqbqbbvuUa-eHTyU3IqwmKkqVL32bwKZLwsHrdkZJaRURFzGynMQ&response_type=code&state=bvkuxearafldfhhe2janxakq6a",
+      "title": "",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:54"
+    },
+    {
+      "id": 150282,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/frameless/v4/auth?sid=frameless-e96f4d25-b538-49a6-9343-d617f184601a&tx=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiaHR0cHM6Ly9hcGktYTNiNzhiNTcuZHVvc2VjdXJpdHkuY29tIl0sImNsaWVudF9pZCI6IkRJOFY4WVMwVzkwMEZTUFkzUExBIiwiZHVvX3VuYW1lIjoiYWVobGVyQGNhbHRlY2guZWR1IiwiZXhwIjoxNzYzNzY5MjMxLCJpc3MiOiJESThWOFlTMFc5MDBGU1BZM1BMQSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vY2FsdGVjaC4xcGFzc3dvcmQuY29tL2FwaS92Mi9hdXRoL2R1by9uYXRpdmUvcmVkaXJlY3QiLCJyZXNwb25zZV90eXBlIjoiY29kZSIsInNjb3BlIjoib3BlbmlkIiwic3RhdGUiOiI4eWkyazNESWRldEFWSFdvdjNpYlc2SUVqelkxOHM0X2N6aWtRemNmX05jIiwidXNlX2R1b19jb2RlX2F0dHJpYnV0ZSI6dHJ1ZX0.55G97JbwLFO7gZrmvAMGAT8nqzTDENgByZJqbqbbvuUa-eHTyU3IqwmKkqVL32bwKZLwsHrdkZJaRURFzGynMQ&req-trace-group=bbec16c39479a77b53fbff20",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:54"
+    },
+    {
+      "id": 150283,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/v4/preauth/healthcheck?sid=frameless-e96f4d25-b538-49a6-9343-d617f184601a",
+      "title": "Duo Security",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:54"
+    },
+    {
+      "id": 150284,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/v4/return?sid=frameless-e96f4d25-b538-49a6-9343-d617f184601a",
+      "title": null,
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:55"
+    },
+    {
+      "id": 150285,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/frameless/v4/auth?sid=frameless-e96f4d25-b538-49a6-9343-d617f184601a&tx=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiaHR0cHM6Ly9hcGktYTNiNzhiNTcuZHVvc2VjdXJpdHkuY29tIl0sImNsaWVudF9pZCI6IkRJOFY4WVMwVzkwMEZTUFkzUExBIiwiZHVvX3VuYW1lIjoiYWVobGVyQGNhbHRlY2guZWR1IiwiZXhwIjoxNzYzNzY5MjMxLCJpc3MiOiJESThWOFlTMFc5MDBGU1BZM1BMQSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vY2FsdGVjaC4xcGFzc3dvcmQuY29tL2FwaS92Mi9hdXRoL2R1by9uYXRpdmUvcmVkaXJlY3QiLCJyZXNwb25zZV90eXBlIjoiY29kZSIsInNjb3BlIjoib3BlbmlkIiwic3RhdGUiOiI4eWkyazNESWRldEFWSFdvdjNpYlc2SUVqelkxOHM0X2N6aWtRemNmX05jIiwidXNlX2R1b19jb2RlX2F0dHJpYnV0ZSI6dHJ1ZX0.55G97JbwLFO7gZrmvAMGAT8nqzTDENgByZJqbqbbvuUa-eHTyU3IqwmKkqVL32bwKZLwsHrdkZJaRURFzGynMQ",
+      "title": "",
+      "visit_count": 2,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:55"
+    },
+    {
+      "id": 150286,
+      "url": "https://api-a3b78b57.duosecurity.com/frame/v4/auth/prompt?sid=frameless-e96f4d25-b538-49a6-9343-d617f184601a",
+      "title": "Duo Security",
+      "visit_count": 1,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:48:55"
+    },
+    {
+      "id": 150287,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=clap+args+from+enum&ie=UTF-8&oe=UTF-8",
+      "title": "clap args from enum - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:56:20"
+    },
+    {
+      "id": 150288,
+      "url": "https://www.google.com/search?client=safari&rls=en&q=clap+verbosity+flag+tracing&ie=UTF-8&oe=UTF-8",
+      "title": "clap verbosity flag tracing - Google Search",
+      "visit_count": 3,
+      "visit_count_score": 100,
+      "last_visited": "2025-11-21T23:57:15"
+    }
+  ],
   "commit_history": []
 }
