@@ -4,7 +4,7 @@ use crate::git::diff::{DiffSummary, get_diff_summary};
 use crate::shell::ShellHistoryEntry;
 use crate::time_utils::{unix_time_nsec_to_datetime, yesterday};
 use async_openai::{Client, config::Config};
-use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions};
+use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions, Tree};
 use tracing::{debug, info, trace};
 
 #[tracing::instrument(level = "trace")]
@@ -62,6 +62,23 @@ fn get_diff_opts() -> DiffOptions {
     opts
 }
 
+fn head_tree_and_parents<'b, 'a: 'b>(
+    repo: &'a Repository,
+) -> AppResult<(Tree<'b>, Vec<Commit<'b>>)> {
+    if let Ok(head) = repo.head()
+        && let Some(oid) = head.target()
+    {
+        let parent = repo.find_commit(oid)?;
+        let tree = parent.tree()?;
+        return Ok((tree, vec![parent]));
+    }
+    // Unborn HEAD: create an empty tree and no parents.
+    let builder = repo.treebuilder(None)?;
+    let empty_tree_id = builder.write()?;
+    let empty_tree = repo.find_tree(empty_tree_id)?;
+    Ok((empty_tree, Vec::new()))
+}
+
 #[tracing::instrument(level = "trace", skip(client, repo))]
 async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> AppResult<()> {
     let mut opts = get_status_opts();
@@ -105,15 +122,13 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
             "Committing staged directory changes for {}...",
             repo.path().display()
         );
-        let head = repo.head()?;
-        let head_tree = head.peel_to_tree()?;
+        let (head_tree, parents) = head_tree_and_parents(repo)?;
         let mut index = repo.index()?;
         let diff =
             repo.diff_tree_to_index(Some(&head_tree), Some(&index), Some(&mut get_diff_opts()))?;
         let tree_id = index.write_tree()?;
         let tree = repo.find_tree(tree_id)?;
         let commit_message = generate_commit_message(client, &diff, repo).await?;
-        let parent_commit = head.peel_to_commit()?;
         let sig = repo.signature()?;
         repo.commit(
             Some("HEAD"),
@@ -121,7 +136,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
             &sig,
             commit_message.to_string().as_str(),
             &tree,
-            &[&parent_commit],
+            &parents.iter().collect::<Vec<&Commit>>(),
         )?;
         info!("Staged changes committed.");
     }
@@ -130,8 +145,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
             "Committing working directory changes for {}...",
             repo.path().display()
         );
-        let head = repo.head()?;
-        let head_tree = head.peel_to_tree()?;
+        let (head_tree, parents) = head_tree_and_parents(repo)?;
         let mut index = repo.index()?;
         index.add_all(["*"].iter(), git2::IndexAddOption::DEFAULT, None)?;
         index.write()?;
@@ -140,7 +154,6 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
         let commit_message = generate_commit_message(client, &diff, repo).await?;
         let tree_id = index.write_tree()?;
         let tree = repo.find_tree(tree_id)?;
-        let parent_commit = head.peel_to_commit()?;
         let sig = repo.signature()?;
         repo.commit(
             Some("HEAD"),
@@ -148,7 +161,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
             &sig,
             commit_message.to_string().as_str(),
             &tree,
-            &[&parent_commit],
+            &parents.iter().collect::<Vec<&Commit>>(),
         )?;
         info!("Working directory changes committed.");
     }
@@ -170,7 +183,21 @@ pub async fn get_git_history<C: Config>(
                 "Checking git history for repository in {:?}",
                 entry.directory
             );
-            for oid in repo.revwalk()?.flatten() {
+            let mut revwalk = match repo.revwalk() {
+                Ok(rw) => rw,
+                Err(e) => {
+                    debug!("Revwalk unavailable for {:?}: {}", entry.directory, e);
+                    continue;
+                }
+            };
+            if let Err(e) = revwalk.push_head() {
+                debug!(
+                    "No HEAD to walk (likely unborn branch) for {:?}: {}",
+                    entry.directory, e
+                );
+                continue;
+            }
+            for oid in revwalk.flatten() {
                 debug!("Found git commit {} in {:?}", oid, entry.directory);
                 let commit = repo.find_commit(oid)?;
                 trace!("Found commit object: {:?}", commit);
