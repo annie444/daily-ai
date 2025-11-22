@@ -1,0 +1,1896 @@
+{
+  "shell_history": [
+    {
+      "date_time": "2025-11-20T16:27:56",
+      "duration": "242ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add cargo add async-openai"
+    },
+    {
+      "date_time": "2025-11-20T16:28:00",
+      "duration": "920ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add async-openai"
+    },
+    {
+      "date_time": "2025-11-20T16:28:08",
+      "duration": "20s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T16:28:31",
+      "duration": "524ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T16:28:33",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T17:10:23",
+      "duration": "32ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git status"
+    },
+    {
+      "date_time": "2025-11-20T17:10:26",
+      "duration": "33ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git status -sb"
+    },
+    {
+      "date_time": "2025-11-20T17:33:41",
+      "duration": "54m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ssh neosops02"
+    },
+    {
+      "date_time": "2025-11-20T17:50:05",
+      "duration": "6m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ssh neosceph05"
+    },
+    {
+      "date_time": "2025-11-20T17:56:44",
+      "duration": "26m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ssh neosops02"
+    },
+    {
+      "date_time": "2025-11-20T17:58:04",
+      "duration": "36ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cd ~/Projects/IPAC/isg-standard-rhel9/"
+    },
+    {
+      "date_time": "2025-11-20T17:58:05",
+      "duration": "11s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/IPAC/isg-standard-rhel9",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T17:58:20",
+      "duration": "25m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/IPAC/isg-standard-rhel9",
+      "command": "ssh neosing01"
+    },
+    {
+      "date_time": "2025-11-20T18:12:41",
+      "duration": "43ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cd ~/Projects/NEOS/neos-ansible/"
+    },
+    {
+      "date_time": "2025-11-20T18:12:43",
+      "duration": "6m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:18:55",
+      "duration": "47s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:19:47",
+      "duration": "35ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "activate"
+    },
+    {
+      "date_time": "2025-11-20T18:19:56",
+      "duration": "336ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just cmd --help"
+    },
+    {
+      "date_time": "2025-11-20T18:20:24",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just cmd compute 'umount -lf /mnt/ceph/nvme/side01/stack1/prod/quad3'"
+    },
+    {
+      "date_time": "2025-11-20T18:20:34",
+      "duration": "11s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:21:03",
+      "duration": "19s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook playbooks/monitoring/exporters.yml -t node,alloy,logs"
+    },
+    {
+      "date_time": "2025-11-20T18:21:25",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:23:02",
+      "duration": "3m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook playbooks/monitoring/exporters.yml -t node,alloy,logs"
+    },
+    {
+      "date_time": "2025-11-20T18:23:58",
+      "duration": "37ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cd ~/Projects/NEOS/neos-ansible/"
+    },
+    {
+      "date_time": "2025-11-20T18:24:00",
+      "duration": "30ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "activate"
+    },
+    {
+      "date_time": "2025-11-20T18:24:19",
+      "duration": "3s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just cmd dev 'umount -lf /mnt/ceph/nvme/side01/stack1/prod/quad3'"
+    },
+    {
+      "date_time": "2025-11-20T18:24:26",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-20T18:24:28",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/IPAC/isg-standard-rhel9",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-20T18:26:28",
+      "duration": "17s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:26:54",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook playbooks/monitoring/exporters.yml"
+    },
+    {
+      "date_time": "2025-11-20T18:26:59",
+      "duration": "10s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:27:12",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook playbooks/monitoring/exporters.yml -t restart"
+    },
+    {
+      "date_time": "2025-11-20T18:28:10",
+      "duration": "18m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ssh neosceph01"
+    },
+    {
+      "date_time": "2025-11-20T18:29:40",
+      "duration": "51ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "cd ~/Projects/NEOS/neos-ceph/"
+    },
+    {
+      "date_time": "2025-11-20T18:29:41",
+      "duration": "6m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:35:50",
+      "duration": "35ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph",
+      "command": "cd scripts/"
+    },
+    {
+      "date_time": "2025-11-20T18:35:52",
+      "duration": "446ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph/scripts",
+      "command": "./config_to_opts.py -i ceph-config.toml"
+    },
+    {
+      "date_time": "2025-11-20T18:35:56",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph/scripts",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:37:27",
+      "duration": "124ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph/scripts",
+      "command": "./config_to_opts.py -i ceph-config.toml"
+    },
+    {
+      "date_time": "2025-11-20T18:38:19",
+      "duration": "3s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph/scripts",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:38:32",
+      "duration": "33ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ceph/scripts",
+      "command": "cd ~/Projects/NEOS/neos-ansible/"
+    },
+    {
+      "date_time": "2025-11-20T18:38:32",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T18:41:04",
+      "duration": "7m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook playbooks/ceph/configure-ceph.yml -t configure"
+    },
+    {
+      "date_time": "2025-11-20T18:48:15",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-20T19:32:31",
+      "duration": "37m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T20:13:40",
+      "duration": "497ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T20:13:43",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T21:19:53",
+      "duration": "970ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add schemars"
+    },
+    {
+      "date_time": "2025-11-20T21:20:58",
+      "duration": "54m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T21:57:01",
+      "duration": "44ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cd ~/Projects/scratch/rust-tests/"
+    },
+    {
+      "date_time": "2025-11-20T21:57:02",
+      "duration": "22s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T21:57:29",
+      "duration": "306ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-20T22:15:41",
+      "duration": "555ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T22:15:43",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-20T22:15:51",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-20T22:27:10",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-20T22:27:18",
+      "duration": "11m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T09:19:32",
+      "duration": "34m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T09:53:50",
+      "duration": "3s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T10:05:02",
+      "duration": "26m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:31:23",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:31:36",
+      "duration": "34ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ls"
+    },
+    {
+      "date_time": "2025-11-21T10:31:39",
+      "duration": "27ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "rm ]"
+    },
+    {
+      "date_time": "2025-11-21T10:31:48",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:34:12",
+      "duration": "23ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "export SAFARI_HISTORY_DB_PATH ~/Projects/OpenSource/CLIs/daily-ai/History.db"
+    },
+    {
+      "date_time": "2025-11-21T10:34:21",
+      "duration": "26ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "set -gx SAFARI_HISTORY_DB_PATH ~/Projects/OpenSource/CLIs/daily-ai/History.db"
+    },
+    {
+      "date_time": "2025-11-21T10:34:35",
+      "duration": "25ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "export SAFARI_HISTORY_DB_PATH=\"$HOME/Projects/OpenSource/CLIs/daily-ai/History.db\""
+    },
+    {
+      "date_time": "2025-11-21T10:34:40",
+      "duration": "25ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "echo $SAFARI_HISTORY_DB_PATH"
+    },
+    {
+      "date_time": "2025-11-21T10:34:43",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:35:00",
+      "duration": "497ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:35:02",
+      "duration": "19s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:35:22",
+      "duration": "3s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:35:32",
+      "duration": "34ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "ls"
+    },
+    {
+      "date_time": "2025-11-21T10:35:48",
+      "duration": "3m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:38:52",
+      "duration": "214ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T10:39:01",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi src/entity/history_client_versions.rs"
+    },
+    {
+      "date_time": "2025-11-21T10:41:04",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T10:41:12",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi src/git/diff.rs"
+    },
+    {
+      "date_time": "2025-11-21T10:42:35",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T10:42:43",
+      "duration": "872ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo clippy"
+    },
+    {
+      "date_time": "2025-11-21T10:42:48",
+      "duration": "6s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:43:27",
+      "duration": "269ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git add ."
+    },
+    {
+      "date_time": "2025-11-21T10:43:58",
+      "duration": "35ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git status"
+    },
+    {
+      "date_time": "2025-11-21T10:44:06",
+      "duration": "30ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git rm --cached -r ."
+    },
+    {
+      "date_time": "2025-11-21T10:44:09",
+      "duration": "14s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi .gitignore"
+    },
+    {
+      "date_time": "2025-11-21T10:44:26",
+      "duration": "36ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git add ."
+    },
+    {
+      "date_time": "2025-11-21T10:45:39",
+      "duration": "41s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git commit --help"
+    },
+    {
+      "date_time": "2025-11-21T10:46:33",
+      "duration": "40s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "git commit"
+    },
+    {
+      "date_time": "2025-11-21T10:47:15",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:47:37",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "gh repo create annie444/daily-ai --push --public --source ."
+    },
+    {
+      "date_time": "2025-11-21T10:47:47",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:48:25",
+      "duration": "5s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:48:37",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T10:50:36",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T10:52:24",
+      "duration": "10m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T11:02:35",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T11:36:09",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T12:14:32",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "ssh homelab01"
+    },
+    {
+      "date_time": "2025-11-21T12:14:37",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "ssh homelab02"
+    },
+    {
+      "date_time": "2025-11-21T12:14:41",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "ssh beelink"
+    },
+    {
+      "date_time": "2025-11-21T12:14:44",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "ssh pi5"
+    },
+    {
+      "date_time": "2025-11-21T12:17:03",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-21T12:17:06",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-21T12:17:12",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/IPAC/isg-standard-rhel9",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-21T12:17:28",
+      "duration": "37ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cd ~/Projects/HomeLab/homelab_ansible/"
+    },
+    {
+      "date_time": "2025-11-21T12:17:37",
+      "duration": "31ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cd ~/Projects/HomeLab/homelab_ansible/"
+    },
+    {
+      "date_time": "2025-11-21T12:17:40",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": ":q"
+    },
+    {
+      "date_time": "2025-11-21T12:17:42",
+      "duration": "38s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T12:18:22",
+      "duration": "31ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "activate"
+    },
+    {
+      "date_time": "2025-11-21T12:18:23",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T12:18:54",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman run --rm -it registry.fedoraproject.org/fedora-bootc:43"
+    },
+    {
+      "date_time": "2025-11-21T12:19:08",
+      "duration": "47ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cd ~/Projects/HomeLab/homelab_ansible/"
+    },
+    {
+      "date_time": "2025-11-21T12:19:09",
+      "duration": "29ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "activate"
+    },
+    {
+      "date_time": "2025-11-21T12:19:23",
+      "duration": "362ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman run --rm -d registry.fedoraproject.org/fedora-bootc:43"
+    },
+    {
+      "date_time": "2025-11-21T12:19:27",
+      "duration": "100ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman ps"
+    },
+    {
+      "date_time": "2025-11-21T12:19:40",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman rm -f priceless_kalam common-fedora43 common-fedora42 hungry_shannon"
+    },
+    {
+      "date_time": "2025-11-21T12:19:52",
+      "duration": "7s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman exec -it condescending_benz bash"
+    },
+    {
+      "date_time": "2025-11-21T12:20:07",
+      "duration": "546ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman stop condescending_benz"
+    },
+    {
+      "date_time": "2025-11-21T12:20:11",
+      "duration": "114ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman rm -f condescending_benz"
+    },
+    {
+      "date_time": "2025-11-21T12:20:28",
+      "duration": "59m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T12:21:32",
+      "duration": "346ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman run --rm -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cap-add SYS_ADMIN --name bct registry.fedoraproject.org/fedora-bootc:43"
+    },
+    {
+      "date_time": "2025-11-21T12:21:35",
+      "duration": "112ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman ps"
+    },
+    {
+      "date_time": "2025-11-21T12:21:42",
+      "duration": "21m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "podman exec -it bct bash"
+    },
+    {
+      "date_time": "2025-11-21T12:43:36",
+      "duration": "144ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "cd ~/Projects/NEOS/neos-ansible/"
+    },
+    {
+      "date_time": "2025-11-21T12:43:43",
+      "duration": "347ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just reset-test"
+    },
+    {
+      "date_time": "2025-11-21T12:43:46",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "cat justfile"
+    },
+    {
+      "date_time": "2025-11-21T12:43:52",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:45:12",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T12:45:16",
+      "duration": "15s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:45:33",
+      "duration": "34s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:46:09",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T12:46:13",
+      "duration": "4m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:51:05",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T12:51:21",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:52:50",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T12:52:56",
+      "duration": "8s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T12:53:06",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:01:32",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:03:28",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:03:49",
+      "duration": "45s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:04:37",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:07:19",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:07:22",
+      "duration": "963ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:07:28",
+      "duration": "3m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:11:10",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:11:18",
+      "duration": "15s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:11:34",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:11:39",
+      "duration": "216ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test -vvv"
+    },
+    {
+      "date_time": "2025-11-21T13:11:48",
+      "duration": "30ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "activate"
+    },
+    {
+      "date_time": "2025-11-21T13:11:54",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook test.yml -vvv"
+    },
+    {
+      "date_time": "2025-11-21T13:12:02",
+      "duration": "5s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:12:09",
+      "duration": "615ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook test.yml -vvv"
+    },
+    {
+      "date_time": "2025-11-21T13:12:12",
+      "duration": "26s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:12:40",
+      "duration": "576ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook test.yml -vvv"
+    },
+    {
+      "date_time": "2025-11-21T13:13:10",
+      "duration": "25ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "echo -e '1.1.1.1\\\\\\n1.0.0.1\\\\\\n2606:4700:4700::1111\\\\\\n2606:4700:4700::1001\\n'"
+    },
+    {
+      "date_time": "2025-11-21T13:13:20",
+      "duration": "25ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "echo -e '1.1.1.1\\\\\\r1.0.0.1\\\\\\r2606:4700:4700::1111\\\\\\r2606:4700:4700::1001\\r'"
+    },
+    {
+      "date_time": "2025-11-21T13:13:41",
+      "duration": "25ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "printf '1.1.1.1\\\\\\n1.0.0.1\\\\\\n2606:4700:4700::1111\\\\\\n2606:4700:4700::1001\\n'"
+    },
+    {
+      "date_time": "2025-11-21T13:13:58",
+      "duration": "26ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "printf \"1.1.1.1\\\\\\n1.0.0.1\\\\\\n2606:4700:4700::1111\\\\\\n2606:4700:4700::1001\\n\""
+    },
+    {
+      "date_time": "2025-11-21T13:14:13",
+      "duration": "22s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:14:42",
+      "duration": "56s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:15:44",
+      "duration": "565ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "ansible-playbook test.yml -vvv"
+    },
+    {
+      "date_time": "2025-11-21T13:15:54",
+      "duration": "14s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "bash"
+    },
+    {
+      "date_time": "2025-11-21T13:15:59",
+      "duration": "596us",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "echo -e \"something_before \\\\\\n1.1.1.1 \\\\\\n1.0.0.1 \\\\\\n2606:4700:4700::1111 \\\\\\n2606:4700:4700::1001\\n\""
+    },
+    {
+      "date_time": "2025-11-21T13:16:05",
+      "duration": "414us",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "printf 'something_before \\\\\\n1.1.1.1 \\\\\\n1.0.0.1 \\\\\\n2606:4700:4700::1111 \\\\\\n2606:4700:4700::1001\\n'"
+    },
+    {
+      "date_time": "2025-11-21T13:16:08",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "exit"
+    },
+    {
+      "date_time": "2025-11-21T13:16:10",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:16:16",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:18:23",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:18:28",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:18:35",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:18:41",
+      "duration": "5s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:18:48",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:18:54",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "bash"
+    },
+    {
+      "date_time": "2025-11-21T13:18:57",
+      "duration": "430us",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "printf 'something_before \\\\\\n1.1.1.1 \\\\\\n1.0.0.1 \\\\\\n2606:4700:4700::1111 \\\\\\n2606:4700:4700::1001\\n'"
+    },
+    {
+      "date_time": "2025-11-21T13:18:59",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "exit"
+    },
+    {
+      "date_time": "2025-11-21T13:19:01",
+      "duration": "51s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "vi test.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:19:54",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "just test"
+    },
+    {
+      "date_time": "2025-11-21T13:20:13",
+      "duration": "42ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible",
+      "command": "cd extensions/"
+    },
+    {
+      "date_time": "2025-11-21T13:20:18",
+      "duration": "27s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "molecule test -s integration_common"
+    },
+    {
+      "date_time": "2025-11-21T13:20:22",
+      "duration": "98ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman ps -a"
+    },
+    {
+      "date_time": "2025-11-21T13:20:27",
+      "duration": "747ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman stop bct"
+    },
+    {
+      "date_time": "2025-11-21T13:20:31",
+      "duration": "94ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman rm bct"
+    },
+    {
+      "date_time": "2025-11-21T13:20:35",
+      "duration": "172ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman ps -a"
+    },
+    {
+      "date_time": "2025-11-21T13:21:12",
+      "duration": "10s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "molecule create -s integration_common"
+    },
+    {
+      "date_time": "2025-11-21T13:21:27",
+      "duration": "116ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman ps -a"
+    },
+    {
+      "date_time": "2025-11-21T13:21:34",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "podman exec -it common-fedora43 bash"
+    },
+    {
+      "date_time": "2025-11-21T13:22:54",
+      "duration": "11s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:23:12",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "molecule test -s integration_common"
+    },
+    {
+      "date_time": "2025-11-21T13:26:03",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:26:16",
+      "duration": "59ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "cat ansible.cfg"
+    },
+    {
+      "date_time": "2025-11-21T13:28:35",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:30:20",
+      "duration": "2s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "molecule test -s integration_common"
+    },
+    {
+      "date_time": "2025-11-21T13:30:33",
+      "duration": "53ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "cat /Users/annieehler/.ansible/tmp/molecule.IO93.integration_common/inventory"
+    },
+    {
+      "date_time": "2025-11-21T13:30:36",
+      "duration": "38ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "ls -la /Users/annieehler/.ansible/tmp/molecule.IO93.integration_common/inventory"
+    },
+    {
+      "date_time": "2025-11-21T13:30:40",
+      "duration": "48ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "cat /Users/annieehler/.ansible/tmp/molecule.IO93.integration_common/inventory/ansible_inventory.yml"
+    },
+    {
+      "date_time": "2025-11-21T13:30:45",
+      "duration": "23s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:31:12",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/HomeLab/homelab_ansible/extensions",
+      "command": "molecule test -s integration_common"
+    },
+    {
+      "date_time": "2025-11-21T13:34:14",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/NEOS/neos-ansible",
+      "command": "exit"
+    },
+    {
+      "date_time": "2025-11-21T13:35:04",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T13:35:34",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:37:31",
+      "duration": "241ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing"
+    },
+    {
+      "date_time": "2025-11-21T13:37:35",
+      "duration": "155ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing -F async-await,log"
+    },
+    {
+      "date_time": "2025-11-21T13:37:47",
+      "duration": "830ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-subscriber"
+    },
+    {
+      "date_time": "2025-11-21T13:38:00",
+      "duration": "169ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-subscriber -F local-time"
+    },
+    {
+      "date_time": "2025-11-21T13:38:42",
+      "duration": "995ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-indicatif"
+    },
+    {
+      "date_time": "2025-11-21T13:39:13",
+      "duration": "184ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-subscriber -F local-time.env-filter"
+    },
+    {
+      "date_time": "2025-11-21T13:39:15",
+      "duration": "181ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-subscriber -F local-time,env-filter"
+    },
+    {
+      "date_time": "2025-11-21T13:39:23",
+      "duration": "19m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T13:58:35",
+      "duration": "927ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-unwrap"
+    },
+    {
+      "date_time": "2025-11-21T13:58:40",
+      "duration": "196ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add tracing-unwrap -F log-location"
+    },
+    {
+      "date_time": "2025-11-21T13:58:41",
+      "duration": "16m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T14:14:56",
+      "duration": "16s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T14:16:18",
+      "duration": "22s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T14:16:49",
+      "duration": "13s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T14:18:31",
+      "duration": "3m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi Cargo.toml"
+    },
+    {
+      "date_time": "2025-11-21T14:22:04",
+      "duration": "925ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add serde_path_to_error"
+    },
+    {
+      "date_time": "2025-11-21T14:22:06",
+      "duration": "7m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T14:30:07",
+      "duration": "17s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T14:31:13",
+      "duration": "241ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo add reqwest"
+    },
+    {
+      "date_time": "2025-11-21T14:31:32",
+      "duration": "42s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T14:32:17",
+      "duration": "15s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T14:34:01",
+      "duration": "9s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi src/error.rs"
+    },
+    {
+      "date_time": "2025-11-21T14:34:12",
+      "duration": "15s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi src/error.rs"
+    },
+    {
+      "date_time": "2025-11-21T14:34:32",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi src/error.rs"
+    },
+    {
+      "date_time": "2025-11-21T14:35:44",
+      "duration": "15s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T14:38:47",
+      "duration": "1m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T14:40:23",
+      "duration": "24m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:04:55",
+      "duration": "6s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T15:05:20",
+      "duration": "29ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "rm -rf /Users/annieehler/Projects/scratch/rust-tests/.git"
+    },
+    {
+      "date_time": "2025-11-21T15:05:22",
+      "duration": "13s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T15:06:39",
+      "duration": "16m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi error.log"
+    },
+    {
+      "date_time": "2025-11-21T15:10:12",
+      "duration": "38ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/scratch/rust-tests",
+      "command": "cd ~/Projects/OpenSource/PRs/"
+    },
+    {
+      "date_time": "2025-11-21T15:10:13",
+      "duration": "36ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs",
+      "command": "ls"
+    },
+    {
+      "date_time": "2025-11-21T15:10:17",
+      "duration": "3s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs",
+      "command": "git clone git@github.com:annie444/async-openai.git"
+    },
+    {
+      "date_time": "2025-11-21T15:10:24",
+      "duration": "44ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs",
+      "command": "cd async-openai/"
+    },
+    {
+      "date_time": "2025-11-21T15:10:26",
+      "duration": "10s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:10:45",
+      "duration": "30ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git remote list"
+    },
+    {
+      "date_time": "2025-11-21T15:10:55",
+      "duration": "35ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git remote"
+    },
+    {
+      "date_time": "2025-11-21T15:10:59",
+      "duration": "5s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:11:12",
+      "duration": "60ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "gh repo set-default --help"
+    },
+    {
+      "date_time": "2025-11-21T15:11:39",
+      "duration": "695ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "gh repo set-default 64bit/async-openai"
+    },
+    {
+      "date_time": "2025-11-21T15:11:43",
+      "duration": "13s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:13:24",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:15:32",
+      "duration": "42ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git add -A"
+    },
+    {
+      "date_time": "2025-11-21T15:15:35",
+      "duration": "40ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git status -sb"
+    },
+    {
+      "date_time": "2025-11-21T15:16:35",
+      "duration": "239ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git commit -m \"Non-OpenAI APIs that implement a simmilar interface don't always include the `output[].content[].annotations` path\""
+    },
+    {
+      "date_time": "2025-11-21T15:16:37",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git push"
+    },
+    {
+      "date_time": "2025-11-21T15:23:04",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:23:22",
+      "duration": "15m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:38:55",
+      "duration": "4s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:39:03",
+      "duration": "13s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T15:39:38",
+      "duration": "61ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "rg 'input_tokens_details'"
+    },
+    {
+      "date_time": "2025-11-21T15:39:49",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "vi async-openai/src/types/responses/response.rs"
+    },
+    {
+      "date_time": "2025-11-21T15:42:19",
+      "duration": "44ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git add -A"
+    },
+    {
+      "date_time": "2025-11-21T15:42:47",
+      "duration": "255ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git commit -m \"The LM Studio API doesn't always output token information\""
+    },
+    {
+      "date_time": "2025-11-21T15:42:49",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/PRs/async-openai",
+      "command": "git push"
+    },
+    {
+      "date_time": "2025-11-21T15:42:57",
+      "duration": "392ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:43:10",
+      "duration": "6s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "rm -rf target/"
+    },
+    {
+      "date_time": "2025-11-21T15:43:42",
+      "duration": "21s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:44:11",
+      "duration": "14s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T15:44:29",
+      "duration": "31ms",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "rm Cargo.lock"
+    },
+    {
+      "date_time": "2025-11-21T15:44:33",
+      "duration": "19s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:44:53",
+      "duration": "49s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T15:45:48",
+      "duration": "13s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo build"
+    },
+    {
+      "date_time": "2025-11-21T15:46:06",
+      "duration": "3m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run"
+    },
+    {
+      "date_time": "2025-11-21T15:50:14",
+      "duration": "10m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T16:01:05",
+      "duration": "5s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run -- --help"
+    },
+    {
+      "date_time": "2025-11-21T16:01:17",
+      "duration": "45s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T16:02:04",
+      "duration": "1s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run -- --help"
+    },
+    {
+      "date_time": "2025-11-21T16:02:31",
+      "duration": "0m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run -- --output example.json"
+    }
+  ],
+  "safari_history": [],
+  "commit_history": []
+}

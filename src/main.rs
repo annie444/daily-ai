@@ -14,6 +14,8 @@ pub(crate) use error::{AppError, AppResult};
 
 use clap::Parser;
 use std::process::exit;
+use tokio::fs::OpenOptions;
+use tokio::io::AsyncWriteExt;
 use tracing::{error, info};
 use tracing_unwrap::ResultExt;
 
@@ -58,7 +60,16 @@ async fn main() {
     let hist_str = serde_json::to_string_pretty(&combined_hist).unwrap_or_log();
 
     if let Some(output) = &args.output {
-        tokio::fs::write(output, hist_str).await.unwrap_or_log();
+        let mut file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(output)
+            .await
+            .unwrap_or_log();
+        file.write(hist_str.as_bytes()).await.unwrap_or_log();
+        file.flush().await.unwrap_or_log();
+        file.sync_all().await.unwrap_or_log();
         info!("Summary written to {}.", output.display());
     } else {
         info!("Combined History:");
