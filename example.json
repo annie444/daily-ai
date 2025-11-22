@@ -1,41 +1,6 @@
 {
   "shell_history": [
     {
-      "date_time": "2025-11-20T16:27:56",
-      "duration": "242ms",
-      "host": "Work-MBP",
-      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
-      "command": "cargo add cargo add async-openai"
-    },
-    {
-      "date_time": "2025-11-20T16:28:00",
-      "duration": "920ms",
-      "host": "Work-MBP",
-      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
-      "command": "cargo add async-openai"
-    },
-    {
-      "date_time": "2025-11-20T16:28:08",
-      "duration": "20s",
-      "host": "Work-MBP",
-      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
-      "command": "vi"
-    },
-    {
-      "date_time": "2025-11-20T16:28:31",
-      "duration": "524ms",
-      "host": "Work-MBP",
-      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
-      "command": "vi"
-    },
-    {
-      "date_time": "2025-11-20T16:28:33",
-      "duration": "0m",
-      "host": "Work-MBP",
-      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
-      "command": "vi"
-    },
-    {
       "date_time": "2025-11-20T17:10:23",
       "duration": "32ms",
       "host": "Work-MBP",
@@ -1885,6 +1850,34 @@
     },
     {
       "date_time": "2025-11-21T16:02:31",
+      "duration": "12s",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "cargo run -- --output example.json"
+    },
+    {
+      "date_time": "2025-11-21T16:03:03",
+      "duration": "26m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi example.json"
+    },
+    {
+      "date_time": "2025-11-21T16:29:52",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T16:32:32",
+      "duration": "2m",
+      "host": "Work-MBP",
+      "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
+      "command": "vi"
+    },
+    {
+      "date_time": "2025-11-21T16:35:27",
       "duration": "0m",
       "host": "Work-MBP",
       "directory": "/Users/annieehler/Projects/OpenSource/CLIs/daily-ai",
