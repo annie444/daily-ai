@@ -114,45 +114,30 @@ impl DiffFromTo {
 impl DiffWithPatch {
     /// Append a diff line to the accumulated patch buffer for a file, adding headers as needed.
     /// Call this repeatedly for all lines of a delta to build a full patch string.
-    #[tracing::instrument(level = "trace", skip(delta, hunk, line, buf, last_hunk))]
+    #[tracing::instrument(level = "trace", skip(hunk, line, buf, last_hunk))]
     pub fn append_line(
-        delta: &DiffDelta,
         hunk: Option<DiffHunk>,
         line: &DiffLine,
         buf: &mut String,
         last_hunk: &mut Option<(u32, u32, u32, u32)>,
     ) {
-        if buf.is_empty() {
-            let old_path = delta
-                .old_file()
-                .path()
-                .map(|p| format!("a/{}", p.display()))
-                .unwrap_or_else(|| "a/unknown".to_string());
-            let new_path = delta
-                .new_file()
-                .path()
-                .map(|p| format!("b/{}", p.display()))
-                .unwrap_or_else(|| "b/unknown".to_string());
-            let _ = writeln!(buf, "--- {}", old_path);
-            let _ = writeln!(buf, "+++ {}", new_path);
-        }
-
         if let Some(h) = hunk {
             let range = (h.old_start(), h.old_lines(), h.new_start(), h.new_lines());
             if last_hunk.as_ref() != Some(&range) {
                 *last_hunk = Some(range);
-                let _ = writeln!(
-                    buf,
-                    "@@ -{},{} +{},{} @@",
-                    h.old_start(),
-                    h.old_lines(),
-                    h.new_start(),
-                    h.new_lines()
-                );
             }
         }
 
-        let origin = line.origin();
+        match line.origin() {
+            '+' | '-' | ' ' => match write!(buf, "{}", line.origin()) {
+                Ok(_) => {}
+                Err(e) => {
+                    error!("Error writing diff line origin: {}", e);
+                }
+            },
+            _ => {}
+        };
+
         let content = match str::from_utf8(line.content()) {
             Ok(content) => content,
             Err(e) => {
@@ -160,7 +145,12 @@ impl DiffWithPatch {
                 ""
             }
         };
-        let _ = write!(buf, "{}{}", origin, content);
+        match write!(buf, "{}", content) {
+            Ok(_) => {}
+            Err(e) => {
+                error!("Error writing diff line content: {}", e);
+            }
+        };
     }
 }
 
@@ -207,7 +197,7 @@ pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
                 let (buf, last_hunk) = added_patches
                     .entry(path.clone())
                     .or_insert_with(|| (String::new(), None));
-                DiffWithPatch::append_line(&delta, hunk, &line, buf, last_hunk);
+                DiffWithPatch::append_line(hunk, &line, buf, last_hunk);
             }
             Delta::Deleted => {
                 summary.deleted.insert(path);
@@ -216,7 +206,7 @@ pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
                 let (buf, last_hunk) = modified_patches
                     .entry(path.clone())
                     .or_insert_with(|| (String::new(), None));
-                DiffWithPatch::append_line(&delta, hunk, &line, buf, last_hunk);
+                DiffWithPatch::append_line(hunk, &line, buf, last_hunk);
             }
             Delta::Renamed => {
                 summary.renamed.insert(DiffFromTo::from_delta(&delta));
@@ -228,7 +218,7 @@ pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
                 let (buf, last_hunk) = untracked_patches
                     .entry(path.clone())
                     .or_insert_with(|| (String::new(), None));
-                DiffWithPatch::append_line(&delta, hunk, &line, buf, last_hunk);
+                DiffWithPatch::append_line(hunk, &line, buf, last_hunk);
             }
             Delta::Typechange => {
                 summary.typechange.insert(path);

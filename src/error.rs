@@ -20,6 +20,10 @@ pub enum AppError {
     SerdeJsonSer(#[from] serde_json::Error),
     #[error("AI Client Error: {0}")]
     AIClient(#[from] async_openai::error::OpenAIError),
+    #[error("Uneable to write to buffer: {0}")]
+    BufferWrite(#[from] std::fmt::Error),
+    #[error("Unable to parse string to UTF-8: {0}")]
+    Utf8Parse(#[from] std::str::Utf8Error),
 }
 
 pub type AppResult<T> = Result<T, AppError>;
