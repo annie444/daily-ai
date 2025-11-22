@@ -31,8 +31,7 @@ pub struct Cli {
     #[arg(short, long, default_value_t = 1)]
     pub days: u32,
 
-    /// Output format: "text" or "json"
-    #[arg(short, long, value_enum, default_value_t = OutputFormat::Text)]
+    #[arg(short, long, value_enum, default_value_t = OutputFormat::Json)]
     pub format: OutputFormat,
 
     /// Output file to write the summary to
@@ -41,8 +40,12 @@ pub struct Cli {
     pub output: Option<PathBuf>,
 }
 
+/// Output format for the collected history
 #[derive(ValueEnum, Clone, Debug)]
 pub enum OutputFormat {
-    Text,
+    /// Output a JSON file containing all collected changes
     Json,
+    /// Output the collected changes as a series of JSON files (one for shell history, and one for
+    /// browsing history) and patch files for each git repository
+    Dir,
 }

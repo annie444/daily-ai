@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::AppResult;
 use crate::ai::generate_commit_message;
 use crate::git::diff::{DiffSummary, get_diff_summary};
@@ -173,11 +175,20 @@ pub async fn get_git_history<C: Config>(
     client: &Client<C>,
     shell_history: &Vec<ShellHistoryEntry>,
 ) -> AppResult<Vec<DiffSummary>> {
+    let mut visited = HashSet::new();
     let yesterday_dt = yesterday();
     let mut git_history = Vec::new();
     for entry in shell_history {
+        if visited.contains(&entry.directory) {
+            continue;
+        }
+        visited.insert(entry.directory.clone());
         if let Ok(repo) = Repository::open(&entry.directory) {
             check_repo_status(client, &repo).await?;
+            // Refresh state in case check_repo_status created new commits
+            if let Err(e) = repo.index().and_then(|mut idx| idx.read(true)) {
+                debug!("Failed to refresh index for {:?}: {}", entry.directory, e);
+            }
             let mut oldest_commit: (Option<Oid>, Option<Commit>) = (None, None);
             debug!(
                 "Checking git history for repository in {:?}",

@@ -1,9 +1,10 @@
 pub(crate) mod ai;
-mod cli;
+pub(crate) mod cli;
 mod context;
 pub(crate) mod entity;
 mod error;
 pub(crate) mod git;
+mod io_utils;
 mod logging;
 pub(crate) mod safari;
 pub(crate) mod serde_helpers;
@@ -14,8 +15,6 @@ pub(crate) use error::{AppError, AppResult};
 
 use clap::Parser;
 use std::process::exit;
-use tokio::fs::OpenOptions;
-use tokio::io::AsyncWriteExt;
 use tracing::{error, info};
 use tracing_unwrap::ResultExt;
 
@@ -60,17 +59,9 @@ async fn main() {
     let hist_str = serde_json::to_string_pretty(&combined_hist).unwrap_or_log();
 
     if let Some(output) = &args.output {
-        let mut file = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .open(output)
+        io_utils::write_output(output, &args.format, &combined_hist)
             .await
             .unwrap_or_log();
-        file.write(hist_str.as_bytes()).await.unwrap_or_log();
-        file.flush().await.unwrap_or_log();
-        file.sync_all().await.unwrap_or_log();
-        info!("Summary written to {}.", output.display());
     } else {
         info!("Combined History:");
         info!("{}", hist_str);
