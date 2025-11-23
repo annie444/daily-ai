@@ -5,6 +5,8 @@ use std::path::PathBuf;
 
 pub static APP_NAME: &str = "dailyai";
 
+#[allow(dead_code)]
+#[derive(Debug)]
 pub enum DirType {
     Data,
     Config,
@@ -53,12 +55,6 @@ impl DirType {
         } else {
             Err(AppError::DirNotFound(self.to_string()))
         }
-    }
-
-    pub fn ensure_dir(&self) -> AppResult<PathBuf> {
-        let dir = self.get_dir()?;
-        std::fs::create_dir_all(&dir)?;
-        Ok(dir)
     }
 
     pub async fn ensure_dir_async(&self) -> AppResult<PathBuf> {

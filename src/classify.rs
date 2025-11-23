@@ -1,7 +1,9 @@
 use crate::AppResult;
+use crate::ai::label_urls::label_url_cluster;
 use crate::dirs::DirType;
 use crate::error::AppError;
 use crate::safari::SafariHistoryItem;
+use async_openai::{Client, config::Config};
 use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::models::bert::{BertModel, Config as BertConfig};
@@ -270,15 +272,19 @@ impl BertEmbedder {
     }
 }
 
-async fn build_cluster_output(
+async fn build_cluster_output<C: Config>(
+    client: &Client<C>,
     grouped: HashMap<usize, Vec<SafariHistoryItem>>,
 ) -> AppResult<BrowserClusters> {
-    let clusters = Vec::new();
+    let mut clusters = Vec::new();
 
-    for (_cid, _urls) in grouped.into_iter() {
+    for (_cid, urls) in grouped.into_iter() {
         // TODO: implement label generation with `async_openai`
-        // let label = label_cluster(&urls).await?;
-        // clusters.push(ClusterOutput { label, urls });
+        let label = label_url_cluster(client, &urls).await?;
+        clusters.push(ClusterOutput {
+            label: label.label,
+            urls,
+        });
     }
 
     Ok(BrowserClusters { clusters })
@@ -328,7 +334,10 @@ fn group_by_cluster(
     map
 }
 
-pub async fn embed_urls(urls: Vec<SafariHistoryItem>) -> AppResult<BrowserClusters> {
+pub async fn embed_urls<C: Config>(
+    client: &Client<C>,
+    urls: Vec<SafariHistoryItem>,
+) -> AppResult<BrowserClusters> {
     let embedder = BertEmbedder::new_from_pretrained("intfloat/e5-small-v2").await?;
     let embeddings = embedder.embed_batch(&urls).await?;
 
@@ -347,7 +356,7 @@ pub async fn embed_urls(urls: Vec<SafariHistoryItem>) -> AppResult<BrowserCluste
     );
     let clustered = group_by_cluster(&embeddings, labels);
 
-    let ret = build_cluster_output(clustered).await?;
+    let ret = build_cluster_output(client, clustered).await?;
 
     Ok(ret)
 }

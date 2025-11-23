@@ -44,7 +44,7 @@ async fn main() {
         }
     };
 
-    let urls = match classify::embed_urls(safari_history).await {
+    let urls = match classify::embed_urls(&client, safari_history).await {
         Ok(urls) => urls,
         Err(e) => {
             error!("Error classifying Safari history: {}", e);
