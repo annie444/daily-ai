@@ -50,7 +50,7 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
 
     // Write git commit histories
     let mut unknown_repo_count = 1;
-    for commit_summary in &context.commit_history {
+    for repo_history in &context.commit_history {
         let DiffSummary {
             repo_path,
             unmodified,
@@ -63,7 +63,7 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
             typechange,
             unreadable,
             conflicted,
-        } = commit_summary.to_owned();
+        } = repo_history.diff.clone();
         let repo_name = match repo_path.iter().next_back() {
             Some(name) => match name.to_str() {
                 Some(name) => name.to_owned(),
@@ -81,6 +81,7 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
         };
         let repo_summary_path = output.as_ref().join(repo_name);
         let git_history_path = repo_summary_path.join("git_history_paths.json");
+        let commit_log_path = repo_summary_path.join("commit_log.json");
         fs::create_dir_all(&repo_summary_path).await?;
         let commit_summary = RepoPathsSummary {
             repo_path,
@@ -93,6 +94,7 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
             conflicted,
         };
         write_json_output(git_history_path, &commit_summary).await?;
+        write_json_output(commit_log_path, &repo_history.commits).await?;
         for patches in [added, modified, untracked] {
             write_patches(&repo_summary_path, patches).await?;
         }

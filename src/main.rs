@@ -1,6 +1,8 @@
 pub(crate) mod ai;
+pub(crate) mod classify;
 pub(crate) mod cli;
 mod context;
+pub(crate) mod dirs;
 pub(crate) mod entity;
 mod error;
 pub(crate) mod git;
@@ -11,7 +13,7 @@ pub(crate) mod serde_helpers;
 pub(crate) mod shell;
 pub(crate) mod time_utils;
 
-pub(crate) use error::{AppError, AppResult};
+pub(crate) use error::AppResult;
 
 use clap::Parser;
 use std::process::exit;
@@ -42,6 +44,14 @@ async fn main() {
         }
     };
 
+    let urls = match classify::embed_urls(safari_history).await {
+        Ok(urls) => urls,
+        Err(e) => {
+            error!("Error classifying Safari history: {}", e);
+            exit(1);
+        }
+    };
+
     let commit_history = match git::get_git_history(&client, &shell_history).await {
         Ok(history) => history,
         Err(e) => {
@@ -52,7 +62,7 @@ async fn main() {
 
     let combined_hist = context::Context {
         shell_history,
-        safari_history,
+        safari_history: urls.clusters,
         commit_history,
     };
 

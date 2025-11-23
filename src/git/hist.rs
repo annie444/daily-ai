@@ -1,12 +1,14 @@
 use std::collections::HashSet;
 
 use crate::AppResult;
-use crate::ai::generate_commit_message;
+use crate::ai::commit_message::generate_commit_message;
 use crate::git::diff::{DiffSummary, get_diff_summary};
 use crate::shell::ShellHistoryEntry;
-use crate::time_utils::{unix_time_nsec_to_datetime, yesterday};
+use crate::time_utils::{timestamp_secs_to_nsecs, unix_time_nsec_to_datetime, yesterday};
 use async_openai::{Client, config::Config};
 use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions, Tree};
+use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 use tracing::{debug, info, trace};
 
 #[tracing::instrument(level = "trace")]
@@ -79,6 +81,20 @@ fn head_tree_and_parents<'b, 'a: 'b>(
     let empty_tree_id = builder.write()?;
     let empty_tree = repo.find_tree(empty_tree_id)?;
     Ok((empty_tree, Vec::new()))
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CommitMeta {
+    pub message: String,
+    #[serde(with = "crate::serde_helpers::offset_datetime")]
+    pub timestamp: OffsetDateTime,
+    pub branches: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GitRepoHistory {
+    pub diff: DiffSummary,
+    pub commits: Vec<CommitMeta>,
 }
 
 #[tracing::instrument(level = "trace", skip(client, repo))]
@@ -174,7 +190,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
 pub async fn get_git_history<C: Config>(
     client: &Client<C>,
     shell_history: &Vec<ShellHistoryEntry>,
-) -> AppResult<Vec<DiffSummary>> {
+) -> AppResult<Vec<GitRepoHistory>> {
     let mut visited = HashSet::new();
     let yesterday_dt = yesterday();
     let mut git_history = Vec::new();
@@ -190,10 +206,22 @@ pub async fn get_git_history<C: Config>(
                 debug!("Failed to refresh index for {:?}: {}", entry.directory, e);
             }
             let mut oldest_commit: (Option<Oid>, Option<Commit>) = (None, None);
+            let mut daily_commits: Vec<CommitMeta> = Vec::new();
             debug!(
                 "Checking git history for repository in {:?}",
                 entry.directory
             );
+            // Collect local branch tips and push all to revwalk to cover all branches.
+            let mut branch_tips: Vec<(String, Oid)> = Vec::new();
+            if let Ok(branches) = repo.branches(Some(git2::BranchType::Local)) {
+                for branch in branches.flatten() {
+                    if let Ok(name_opt) = branch.0.name()
+                        && let (Some(name), Some(target)) = (name_opt, branch.0.get().target())
+                    {
+                        branch_tips.push((name.to_string(), target));
+                    }
+                }
+            }
             let mut revwalk = match repo.revwalk() {
                 Ok(rw) => rw,
                 Err(e) => {
@@ -201,25 +229,50 @@ pub async fn get_git_history<C: Config>(
                     continue;
                 }
             };
-            if let Err(e) = revwalk.push_head() {
-                debug!(
-                    "No HEAD to walk (likely unborn branch) for {:?}: {}",
-                    entry.directory, e
-                );
-                continue;
+            if branch_tips.is_empty() {
+                if let Err(e) = revwalk.push_head() {
+                    debug!(
+                        "No HEAD to walk (likely unborn branch) for {:?}: {}",
+                        entry.directory, e
+                    );
+                    continue;
+                }
+            } else {
+                for (_, tip) in &branch_tips {
+                    if let Err(e) = revwalk.push(*tip) {
+                        debug!(
+                            "Failed to push branch tip {:?} in {:?}: {}",
+                            tip, entry.directory, e
+                        );
+                    }
+                }
             }
             for oid in revwalk.flatten() {
                 debug!("Found git commit {} in {:?}", oid, entry.directory);
                 let commit = repo.find_commit(oid)?;
                 trace!("Found commit object: {:?}", commit);
                 let time = commit.time();
-                if unix_time_nsec_to_datetime(time.seconds(), 0) >= yesterday_dt {
+                let timestamp = unix_time_nsec_to_datetime(timestamp_secs_to_nsecs(time.seconds()));
+                if timestamp >= yesterday_dt {
+                    let message = commit.message().unwrap_or_default().to_string();
+                    let mut branches = Vec::new();
+                    for (name, tip) in &branch_tips {
+                        if repo.graph_descendant_of(*tip, commit.id()).unwrap_or(false) {
+                            branches.push(name.clone());
+                        }
+                    }
+                    daily_commits.push(CommitMeta {
+                        message,
+                        timestamp,
+                        branches,
+                    });
+
                     if let Some(prev_commit) = &oldest_commit.1
                         && commit.time().seconds() < prev_commit.time().seconds()
                     {
-                        oldest_commit = (Some(oid), Some(commit));
+                        oldest_commit = (Some(oid), Some(commit.clone()));
                     } else if oldest_commit.1.is_none() {
-                        oldest_commit = (Some(oid), Some(commit));
+                        oldest_commit = (Some(oid), Some(commit.clone()));
                     }
                 } else {
                     break;
@@ -235,9 +288,12 @@ pub async fn get_git_history<C: Config>(
                     Some(&mut get_diff_opts()),
                 )?;
                 let repo_path = repo.path().parent().unwrap();
-                get_diff_summary(repo_path, &diff).map(|diff_summary| {
-                    git_history.push(diff_summary);
-                })?;
+                if let Ok(diff_summary) = get_diff_summary(repo_path, &diff) {
+                    git_history.push(GitRepoHistory {
+                        diff: diff_summary,
+                        commits: daily_commits.clone(),
+                    });
+                }
             }
         }
     }

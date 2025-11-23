@@ -1,22 +1,22 @@
 use crate::AppResult;
 use crate::entity::{history_items, history_visits};
-use crate::time_utils::{datetime_to_macos_time, macos_to_datetime, macos_yesterday, midnight};
-use chrono::NaiveDateTime;
+use crate::time_utils::{datetime_to_macos_time, macos_to_datetime, macos_yesterday, midnight_utc};
 use sea_orm::{
     ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder,
 };
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::{Path, PathBuf};
+use time::OffsetDateTime;
 use tracing::{debug, trace};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SafariHistoryItem {
     pub url: String,
     pub title: Option<String>,
     pub visit_count: i64,
-    #[serde(with = "crate::serde_helpers::naive_datetime")]
-    pub last_visited: NaiveDateTime,
+    #[serde(with = "crate::serde_helpers::offset_datetime")]
+    pub last_visited: OffsetDateTime,
 }
 
 #[tracing::instrument(level = "trace")]
@@ -90,7 +90,7 @@ pub async fn get_safari_history() -> AppResult<Vec<SafariHistoryItem>> {
 
     trace!("Processing Safari history items");
 
-    let mid = midnight();
+    let mid = midnight_utc();
     let mid_macos = datetime_to_macos_time(&mid);
 
     for (item, visits) in history_items {

@@ -9,7 +9,6 @@ sea-orm = { version = "2.0.0-rc", features = [
   "runtime-tokio-rustls",
   "macros",
 ] }
-chrono = { version = "0.4.42", features = ["now", "std", "alloc", "clock"] }
 clap = { version = "4.5.53", features = ["derive"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
@@ -33,7 +32,41 @@ tracing-subscriber = { version = "0.3.20", features = [
 tracing-indicatif = "0.3.13"
 tracing-unwrap = { version = "1.0.1", features = ["log-location"] }
 serde_path_to_error = "0.1.20"
-# reqwest = "0.12.24"
+atuin-client = "18.10.0"
+atuin-history = "18.10.0"
+candle-core = "0.9.1"
+candle-nn = "0.9.1"
+tokenizers = { version = "0.22.1", features = ["rustls-tls"] }
+time = { version = "0.3.44", features = [
+  "serde-human-readable",
+  "macros",
+  "local-offset",
+  "formatting",
+  "parsing",
+] }
+candle-transformers = "0.9.1"
+futures = "0.3.31"
+ndarray = "0.16.1"
+linfa = { version = "0.8.0" }
+linfa-clustering = { version = "0.8.0" }
+linfa-reduction = { version = "0.8.0" }
+safetensors = "0.7.0"
+reqwest = { version = "0.12.24", default-features = false, features = [
+  "charset",
+  "http2",
+  "system-proxy",
+  "rustls-tls",
+  "stream",
+] }
+atuin-common = "18.10.0"
+atuin-kv = "18.10.0"
+atuin-scripts = "18.10.0"
+atuin-dotfiles = "18.10.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+candle-core = { version = "0.9.1", features = ["metal"] }
+candle-nn = { version = "0.9.1", features = ["metal"] }
+candle-transformers = { version = "0.9.1", features = ["metal"] }
 
 # [patch.crates-io]
 # async-openai = { git = "https://github.com/annie444/async-openai.git", branch = "main" }

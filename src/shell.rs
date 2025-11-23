@@ -1,116 +1,192 @@
-use crate::{AppError, AppResult};
-use chrono::{NaiveDateTime, TimeDelta};
+use crate::AppResult;
+use crate::error::AppError;
+use atuin_client::{
+    database::{Database, Sqlite},
+    encryption,
+    history::{History, store::HistoryStore},
+    record::{sqlite_store::SqliteStore, store::Store, sync},
+    settings::{FilterMode, Settings},
+};
+use atuin_common::record::RecordId;
+use atuin_dotfiles::store::{AliasStore, var::VarStore};
+use atuin_kv::store::KvStore;
+use atuin_scripts::store::ScriptStore;
 use serde::{Deserialize, Serialize};
-use std::env;
 use std::path::PathBuf;
-use std::process::Stdio;
-use tokio::io::{AsyncBufReadExt, BufReader};
-use tokio::process::{Child, Command};
-use tracing::{debug, trace};
+use std::time::Duration;
+use time::OffsetDateTime;
+use tracing::{debug, info};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ShellHistoryEntry {
-    #[serde(with = "crate::serde_helpers::naive_datetime")]
-    pub date_time: NaiveDateTime,
+    #[serde(with = "crate::serde_helpers::offset_datetime")]
+    pub date_time: OffsetDateTime,
     #[serde(with = "crate::serde_helpers::duration")]
-    pub duration: TimeDelta,
+    pub duration: Duration,
     pub host: String,
     pub directory: PathBuf,
     pub command: String,
+    pub exit_code: i64,
+    pub session_id: String,
 }
 
-#[tracing::instrument(level = "trace")]
-fn parse_duration<S: AsRef<str> + std::fmt::Debug>(s: S) -> TimeDelta {
-    crate::serde_helpers::duration::parse_duration(s).unwrap_or_else(|_| TimeDelta::seconds(0))
-}
-
-#[tracing::instrument(level = "trace")]
-fn get_shell() -> String {
-    match env::var("SHELL") {
-        Ok(val) => val,
-        Err(_) => env::var_os("SHELL")
-            .and_then(|os_str| os_str.into_string().ok())
-            .unwrap_or_else(|| "/bin/bash".to_string()),
+impl From<&History> for ShellHistoryEntry {
+    fn from(history: &History) -> Self {
+        ShellHistoryEntry {
+            date_time: history.timestamp,
+            duration: Duration::from_nanos(std::cmp::max(history.duration, 0) as u64),
+            host: history.hostname.clone(),
+            directory: PathBuf::from(&history.cwd),
+            command: history.command.clone(),
+            exit_code: history.exit,
+            session_id: history.session.clone(),
+        }
     }
 }
 
-#[tracing::instrument(level = "trace")]
-async fn atuin_sync<S: AsRef<str> + std::fmt::Debug>(shell: S) -> AppResult<()> {
-    Command::new(shell.as_ref())
-        .arg("-l")
-        .arg("-c")
-        .arg("atuin sync")
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .status()
-        .await?;
-    debug!("Atuin sync completed");
+#[tracing::instrument(level = "debug", skip_all)]
+async fn rebuild(
+    encryption_key: [u8; 32],
+    settings: &Settings,
+    store: &SqliteStore,
+    db: &dyn Database,
+    downloaded: Option<&[RecordId]>,
+) -> AppResult<()> {
+    let host_id = Settings::host_id().expect("failed to get host_id");
+
+    let downloaded = downloaded.unwrap_or(&[]);
+
+    let kv_db = atuin_kv::database::Database::new(settings.kv.db_path.clone(), 1.0).await?;
+
+    let history_store = HistoryStore::new(store.clone(), host_id, encryption_key);
+    let alias_store = AliasStore::new(store.clone(), host_id, encryption_key);
+    let var_store = VarStore::new(store.clone(), host_id, encryption_key);
+    let kv_store = KvStore::new(store.clone(), kv_db, host_id, encryption_key);
+    let script_store = ScriptStore::new(store.clone(), host_id, encryption_key);
+
+    history_store
+        .incremental_build(db, downloaded)
+        .await
+        .map_err(|e| {
+            AppError::AtuinClient(format!(
+                "Unable to rebuild the atuin history database: {}",
+                e
+            ))
+        })?;
+
+    alias_store.build().await.map_err(|e| {
+        AppError::AtuinClient(format!("Unable to rebuild the atuin alias database: {}", e))
+    })?;
+    var_store.build().await.map_err(|e| {
+        AppError::AtuinClient(format!(
+            "Unable to rebuild the atuin variables database: {}",
+            e
+        ))
+    })?;
+    kv_store.build().await.map_err(|e| {
+        AppError::AtuinClient(format!(
+            "Unable to rebuild the atuin key-value database: {}",
+            e
+        ))
+    })?;
+
+    let script_db =
+        atuin_scripts::database::Database::new(settings.scripts.db_path.clone(), 1.0).await?;
+    script_store.build(script_db).await.map_err(|e| {
+        AppError::AtuinClient(format!(
+            "Unable to rebuild the atuin scripts database: {}",
+            e
+        ))
+    })?;
     Ok(())
-}
-
-#[tracing::instrument(level = "trace")]
-async fn atuin_history<S: AsRef<str> + std::fmt::Debug>(shell: S) -> AppResult<Child> {
-    Command::new(shell.as_ref())
-        .arg("-l")
-        .arg("-c")
-        .arg("atuin history list")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::inherit())
-        .spawn()
-        .map_err(|e| e.into())
-}
-
-#[tracing::instrument(level = "trace", skip(line))]
-fn parse_line<S: AsRef<str> + std::fmt::Debug>(line: S) -> AppResult<Option<ShellHistoryEntry>> {
-    let sections = line.as_ref().split('\t').collect::<Vec<&str>>();
-    if sections.len() < 3 {
-        return Ok(None);
-    }
-    let (host, dir) = sections[2]
-        .split_once(':')
-        .ok_or(AppError::HostDirSplit(sections[2].to_string()))?;
-
-    let datetime = NaiveDateTime::parse_from_str(sections[0], "%Y-%m-%d %H:%M:%S")?;
-    if datetime
-        < chrono::Local::now()
-            .naive_local()
-            .checked_sub_days(chrono::Days::new(1))
-            .unwrap()
-    {
-        return Ok(None);
-    }
-    let cmd = sections[3..].join("\t");
-    Ok(Some(ShellHistoryEntry {
-        date_time: datetime,
-        duration: parse_duration(sections[1]),
-        host: host.to_string(),
-        directory: dir.into(),
-        command: cmd,
-    }))
 }
 
 #[tracing::instrument(level = "debug")]
 pub async fn get_history() -> AppResult<Vec<ShellHistoryEntry>> {
-    let shell = get_shell();
-    atuin_sync(&shell).await?;
-    let mut child = atuin_history(&shell).await?;
-    debug!("Capturing shell history from Atuin");
+    let settings = Settings::new().map_err(|e| AppError::Other(e.to_string()))?;
 
-    let stdout = child.stdout.take().ok_or(AppError::StdoutCapture)?;
-    let reader = BufReader::new(stdout);
+    let db_path = PathBuf::from(settings.db_path.as_str());
+    let record_store_path = PathBuf::from(settings.record_store_path.as_str());
 
-    let mut history = Vec::new();
-    let mut lines = reader.lines();
-    trace!("Reading shell history lines");
-    while let Some(line) = lines.next_line().await? {
-        let entry = match parse_line(&line)? {
-            Some(e) => e,
-            None => continue,
-        };
-        history.push(entry);
+    let db = Sqlite::new(db_path, settings.local_timeout).await?;
+    let store = SqliteStore::new(record_store_path, settings.local_timeout)
+        .await
+        .map_err(|e| AppError::AtuinClient(format!("Unable to open the sqlite store: {0}", e)))?;
+
+    if settings.sync.records {
+        debug!("History recording is enabled; Syncing before fetching history");
+        let encryption_key: [u8; 32] = encryption::load_key(&settings)
+            .map_err(|e| {
+                AppError::AtuinClient(format!("Unable to fetch encryption key. Got error: {}", e))
+            })?
+            .into();
+        let host_id = Settings::host_id().expect("failed to get host_id");
+        let history_store = HistoryStore::new(store.clone(), host_id, encryption_key);
+
+        let (uploaded, downloaded) = sync::sync(&settings, &store).await.map_err(|e| {
+            AppError::AtuinClient(format!("Unable to sync shell history records: {}", e))
+        })?;
+
+        rebuild(encryption_key, &settings, &store, &db, Some(&downloaded)).await?;
+
+        info!("{uploaded}/{} up/down to record store", downloaded.len());
+
+        let history_length = db.history_count(true).await?;
+        let store_history_length = store.len_tag("history").await.map_err(|e| {
+            AppError::AtuinClient(format!(
+                "Unable to get the length of the atuin history db: {}",
+                e
+            ))
+        })?;
+        #[allow(clippy::cast_sign_loss)]
+        if history_length as u64 > store_history_length {
+            info!("{history_length} in history index, but {store_history_length} in history store");
+            info!("Running automatic history store init...");
+
+            // Internally we use the global filter mode, so this context is ignored.
+            // don't recurse or loop here.
+            history_store.init_store(&db).await.map_err(|e| {
+                AppError::AtuinClient(format!("Unable to initialize the history store: {}", e))
+            })?;
+
+            info!("Re-running sync due to new records locally");
+
+            // we'll want to run sync once more, as there will now be stuff to upload
+            let (uploaded, downloaded) = sync::sync(&settings, &store).await.map_err(|e| {
+                AppError::AtuinClient(format!("Unable to sync atuin history database: {}", e))
+            })?;
+
+            rebuild(encryption_key, &settings, &store, &db, Some(&downloaded)).await?;
+
+            info!("{uploaded}/{} up/down to record store", downloaded.len());
+        }
+    } else {
+        atuin_client::sync::sync(&settings, false, &db)
+            .await
+            .map_err(|e| AppError::AtuinClient(format!("Unable to sync atuin database: {}", e)))?;
     }
-    trace!("Finished reading shell history lines");
-    child.wait().await?;
-    trace!("Atuin history command completed");
-    Ok(history)
+
+    let history = db
+        .list(
+            &[settings.default_filter_mode(), FilterMode::Global],
+            &atuin_client::database::current_context(),
+            None,
+            false,
+            false,
+        )
+        .await?;
+
+    let entries = history
+        .iter()
+        .filter_map(|record| {
+            let filter_date = OffsetDateTime::now_utc().saturating_sub(time::Duration::days(1));
+            if record.deleted_at.is_some() || record.timestamp < filter_date {
+                None
+            } else {
+                Some(record.into())
+            }
+        })
+        .collect();
+
+    Ok(entries)
 }
