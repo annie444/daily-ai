@@ -16,6 +16,7 @@ use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, trace, warn};
 
+use super::ResponseCleaner;
 use crate::AppResult;
 use crate::git::diff::{get_diff_summary, get_file, get_patch};
 
@@ -177,6 +178,9 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
                     }
                 }
             }
+            trace!("Raw response content: {}", response_content);
+            let response_content = ResponseCleaner::new(&response_content).clean();
+            trace!("Cleaned response content: {}", response_content);
             let jd = &mut serde_json::Deserializer::from_str(&response_content);
             match serde_path_to_error::deserialize(jd) {
                 Ok(cm) => return Ok(cm),
