@@ -134,6 +134,46 @@ pub async fn label_url_cluster<C: Config>(
                     }
                 }
             }
+            // Attempt to deserialize the response content into proper JSON by filtering out any extraneous text.
+            // This is a bit of a hack, but it helps with models that may include extra text around the JSON.
+            // We track whether we're inside quotes or brackets to ensure we capture the full JSON object.
+            // This assumes the JSON object is the outermost structure in the response.
+            // This may need to be adjusted for more complex scenarios.
+            // For now, we assume the response is a single JSON object.
+            //
+            // Example response:
+            //
+            // !{
+            //   !"label": "Tech News and Articles"
+            // }
+            // We want to extract:
+            // {
+            //   "label": "Tech News and Articles"
+            // }
+            //
+            // We do this by iterating through the characters and tracking our position.
+            // When we encounter a '{', we start capturing until we find the matching '}'.
+            // We also need to handle quotes to avoid prematurely ending the capture.
+            // This is a simple state machine approach.
+            let mut in_quote = false;
+            let mut in_bracket = false;
+            let response_content = response_content
+                .chars()
+                .filter(|c| {
+                    if c == &'"' && in_bracket {
+                        in_quote = !in_quote;
+                        true
+                    } else if c == &'{' && !in_quote {
+                        in_bracket = true;
+                        true
+                    } else if c == &'}' && !in_quote {
+                        in_bracket = false;
+                        true
+                    } else {
+                        (c == &':' && in_bracket) || in_quote
+                    }
+                })
+                .collect::<String>();
             let jd = &mut serde_json::Deserializer::from_str(&response_content);
             match serde_path_to_error::deserialize(jd) {
                 Ok(cm) => return Ok(cm),

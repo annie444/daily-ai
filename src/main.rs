@@ -76,4 +76,5 @@ async fn main() {
         info!("Combined History:");
         info!("{}", hist_str);
     }
+    exit(0);
 }

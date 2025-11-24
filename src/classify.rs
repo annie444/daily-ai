@@ -244,7 +244,7 @@ impl BertEmbedder {
         let this = self.clone();
         let texts: Vec<String> = history
             .iter()
-            .map(|item| format!("{} {}", item.clone().title.unwrap_or_default(), item.url))
+            .map(|item| format!("query: {}", item.clone().title.unwrap_or_default()))
             .collect();
         let items = history.to_vec();
 
@@ -282,7 +282,6 @@ async fn build_cluster_output<C: Config>(
     let mut clusters = Vec::new();
 
     for (_cid, urls) in grouped.into_iter() {
-        // TODO: implement label generation with `async_openai`
         let label = label_url_cluster(client, &urls).await?;
         clusters.push(ClusterOutput {
             label: label.label,
