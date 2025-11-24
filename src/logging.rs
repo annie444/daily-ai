@@ -16,15 +16,20 @@ pub fn setup_logger() {
         .with_env_var("DAILY_AI_LOG")
         .from_env_lossy();
 
-    let fmt = fmt::layer()
-        .with_ansi(true)
-        .with_target(true)
-        .with_file(true)
-        .with_line_number(true)
-        .with_thread_names(false)
-        .with_thread_ids(false)
-        .with_writer(indicatif_layer.get_stderr_writer())
-        .pretty();
+    let fmt = if cfg!(debug_assertions) {
+        fmt::layer()
+            .with_ansi(true)
+            .with_target(true)
+            .with_file(true)
+            .with_line_number(true)
+            .with_writer(indicatif_layer.get_stderr_writer())
+            .compact()
+    } else {
+        fmt::layer()
+            .with_ansi(true)
+            .with_writer(indicatif_layer.get_stderr_writer())
+            .compact()
+    };
 
     tracing_subscriber::registry()
         .with(fmt) // Direct fmt logs to stderr writer

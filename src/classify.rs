@@ -14,11 +14,13 @@ use linfa_clustering::Dbscan;
 use linfa_reduction::Pca;
 use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Arc;
 use tokenizers::tokenizer::Tokenizer;
 use tokio::io::AsyncWriteExt;
+use tracing::info;
 use tracing::{Span, debug, info_span, warn};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
@@ -246,7 +248,8 @@ impl BertEmbedder {
             .collect();
         let items = history.to_vec();
 
-        tokio::task::spawn_blocking(move || {
+        let embeddings = tokio::task::spawn_blocking(move || {
+            let mut embeddings = Vec::new();
             let header_span = info_span!("Running embeddings for URLs");
             header_span.pb_set_message("Embedding...");
             header_span.pb_set_finish_message("Embedding complete");
@@ -258,7 +261,6 @@ impl BertEmbedder {
             );
             let header_span_enter = header_span.enter();
 
-            let mut embeddings = Vec::with_capacity(texts.len());
             for (i, t) in texts.iter().enumerate() {
                 let emb = this.embed_text_blocking(t)?;
                 embeddings.push((items[i].clone(), emb));
@@ -266,9 +268,10 @@ impl BertEmbedder {
             }
             std::mem::drop(header_span_enter);
             std::mem::drop(header_span);
-            Result::<_, _>::Ok(embeddings)
+            Result::<_, AppError>::Ok(embeddings)
         })
-        .await?
+        .await??;
+        Ok(embeddings)
     }
 }
 
@@ -303,20 +306,60 @@ fn embeddings_to_ndarray(embs: &[Vec<f32>]) -> Array2<f64> {
     array
 }
 
-fn reduce_dimensionality(data: Array2<f64>, k: usize) -> Array2<f64> {
-    let dataset = DatasetBase::from(data);
-    let pca = Pca::params(k).fit(&dataset).unwrap();
+/// Compute pairwise Euclidean distances for the dataset and return all distances flattened.
+fn compute_pairwise_distances(data: &Array2<f64>) -> Vec<f64> {
+    let rows = data.nrows();
+    let mut dists = Vec::new();
+    for i in 0..rows {
+        let vi = data.slice(s![i, ..]);
+        for j in (i + 1)..rows {
+            let vj = data.slice(s![j, ..]);
+            let mut sum_sq = 0.0;
+            for k in 0..vi.len() {
+                let diff = vi[k] - vj[k];
+                sum_sq += diff * diff;
+            }
+            dists.push(sum_sq.sqrt());
+        }
+    }
+    dists
+}
+
+/// Find the value at the `percentile` (0.0-1.0) of the sorted distances.
+fn find_distance_percentile(distances: &mut [f64], percentile: f64) -> f64 {
+    assert!(percentile > 0.0 && percentile < 1.0);
+    distances.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+    let idx = ((distances.len() as f64) * percentile).floor() as usize;
+    distances[idx]
+}
+
+fn reduce_dimensionality(data: &Array2<f64>, k: usize) -> Array2<f64> {
+    let dataset = DatasetBase::from(data.to_owned());
+    let pca = Pca::params(k)
+        .whiten(false)
+        .fit(&dataset)
+        .map_err(|e| {
+            AppError::Other(format!(
+                "Failed to fit PCA model for dimensionality reduction: {}",
+                e
+            ))
+        })
+        .unwrap();
     let transformed = pca.transform(dataset);
     transformed.records
 }
 
-fn cluster_embeddings(data: &Array2<f64>) -> Vec<Option<usize>> {
-    Dbscan::params(3)
-        .tolerance(1e-2)
-        .check()
-        .unwrap()
+/// Cluster embeddings with DBSCAN and return a vector of Option<usize> labels
+fn cluster_embeddings(
+    data: &Array2<f64>,
+    eps: f64,
+    min_points: usize,
+) -> AppResult<Vec<Option<usize>>> {
+    let params = Dbscan::params(min_points).tolerance(eps);
+    let model = params
         .transform(data)
-        .to_vec()
+        .map_err(|e| AppError::Other(format!("Failed to cluster embeddings with DBSCAN: {}", e)))?;
+    Ok(model.to_vec())
 }
 
 fn group_by_cluster(
@@ -343,9 +386,12 @@ pub async fn embed_urls<C: Config>(
 
     let embs_only: Vec<Vec<f32>> = embeddings.iter().map(|(_, emb)| emb.clone()).collect();
     let data = embeddings_to_ndarray(&embs_only);
-    let reduced = reduce_dimensionality(data, 10);
+    let reduced = reduce_dimensionality(&data, 25);
     debug!("Reduced embeddings to shape: {:?}", reduced.dim());
-    let labels = cluster_embeddings(&reduced);
+
+    let mut dists = compute_pairwise_distances(&reduced);
+    let eps = find_distance_percentile(&mut dists, 0.10);
+    let labels = cluster_embeddings(&reduced, eps, 3)?;
     debug!(
         "Clustered embeddings into {} clusters",
         labels
@@ -355,6 +401,11 @@ pub async fn embed_urls<C: Config>(
             .len()
     );
     let clustered = group_by_cluster(&embeddings, labels);
+
+    info!(
+        "Generating preliminary labels for {} url groups",
+        clustered.len()
+    );
 
     let ret = build_cluster_output(client, clustered).await?;
 

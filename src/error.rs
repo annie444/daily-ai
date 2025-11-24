@@ -36,6 +36,8 @@ pub enum AppError {
     HeaderToStr(#[from] reqwest::header::ToStrError),
     #[error("Error with Atuin client: {0}")]
     AtuinClient(String),
+    #[error("Error accessing the internet: {0}")]
+    MCPClient(#[from] reqwest::Error),
 }
 
 pub type AppResult<T> = Result<T, AppError>;

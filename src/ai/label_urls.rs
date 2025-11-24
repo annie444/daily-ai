@@ -4,20 +4,19 @@ use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
-    CreateResponse, InputContent, InputItem, InputMessage, InputParam, InputRole, Item,
+    CreateResponse, FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool,
+    FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole, Item,
     MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort, RefusalContent,
-    ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
+    ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration, Tool,
     ToolChoiceOptions, ToolChoiceParam, Truncation,
 };
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
-use tracing::{debug, error};
+use tracing::{debug, error, trace, warn};
 
 static LABEL_URLS_PROMPT: &str = std::include_str!("label_urls_prompt.txt");
 
-/// # url_label
-/// Generated label for a group of URLs.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct UrlLabel {
     /// Short label for the group of URLs.
@@ -30,7 +29,17 @@ impl Display for UrlLabel {
     }
 }
 
-#[tracing::instrument(level = "debug", skip(client, urls))]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+struct FetchUrlParams {
+    /// URL to fetch.
+    pub url: String,
+    /// Optional starting line number to fetch from.
+    pub starting_line: Option<usize>,
+    /// Optional maximum number of lines to fetch.
+    pub max_lines: Option<usize>,
+}
+
+#[tracing::instrument(name = "Label URL groups", level = "debug", skip(client, urls))]
 pub async fn label_url_cluster<C: Config>(
     client: &Client<C>,
     urls: &[SafariHistoryItem],
@@ -54,60 +63,176 @@ pub async fn label_url_cluster<C: Config>(
             status: None,
         },
     ))));
+    let tools = vec![Tool::Function(FunctionTool {
+        name: "fetch_url".to_string(),
+        description: Some("Fetches the content of a URL.".to_string()),
+        parameters: Some(schema_for!(FetchUrlParams).as_value().to_owned()),
+        strict: None,
+    })];
+    let mut previous_response_id: Option<String> = None;
 
-    let request = CreateResponse {
-        model: Some("openai/gpt-oss-20b".to_string()),
-        input: InputParam::Items(input_items.clone()),
-        background: Some(false),
-        instructions: Some(LABEL_URLS_PROMPT.to_string()),
-        parallel_tool_calls: Some(false),
-        reasoning: Some(Reasoning {
-            effort: Some(ReasoningEffort::Medium),
-            summary: None,
-        }),
-        store: Some(true),
-        stream: Some(false),
-        temperature: Some(0.05),
-        text: Some(ResponseTextParam {
-            format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
-                description: Some("Label for the given list of URLs".to_string()),
-                schema: Some(schema_for!(UrlLabel).as_value().to_owned()),
-                name: "url_label".to_string(),
-                strict: None,
+    loop {
+        let request = CreateResponse {
+            model: Some("openai/gpt-oss-20b".to_string()),
+            input: InputParam::Items(input_items.clone()),
+            background: Some(false),
+            instructions: Some(LABEL_URLS_PROMPT.to_string()),
+            parallel_tool_calls: Some(false),
+            reasoning: Some(Reasoning {
+                effort: Some(ReasoningEffort::Medium),
+                summary: None,
             }),
-            verbosity: None,
-        }),
-        tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
-        top_logprobs: Some(0),
-        top_p: Some(0.1),
-        truncation: Some(Truncation::Disabled),
-        ..Default::default()
-    };
+            store: Some(true),
+            stream: Some(false),
+            temperature: Some(0.05),
+            text: Some(ResponseTextParam {
+                format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
+                    description: Some("Label for the given list of URLs".to_string()),
+                    schema: Some(schema_for!(UrlLabel).as_value().to_owned()),
+                    name: "url_label".to_string(),
+                    strict: None,
+                }),
+                verbosity: None,
+            }),
+            tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
+            tools: Some(tools.clone()),
+            top_logprobs: Some(0),
+            top_p: Some(0.1),
+            truncation: Some(Truncation::Disabled),
+            previous_response_id,
+            ..Default::default()
+        };
 
-    let response = client.responses().create(request).await?;
-    debug!("AI Response: {:?}", response);
+        let response = client.responses().create(request).await?;
+        debug!("AI Response: {:?}", response);
+        previous_response_id = Some(response.id.clone());
 
-    let mut response_content = String::new();
-    for out in &response.output {
-        if let OutputItem::Message(msg) = out {
-            for content in &msg.content {
-                match content {
-                    OutputMessageContent::OutputText(text) => response_content.push_str(&text.text),
-                    OutputMessageContent::Refusal(RefusalContent { refusal }) => {
-                        error!("AI refused prompt: {}", refusal);
+        let function_calls: Vec<FunctionToolCall> = response
+            .output
+            .iter()
+            .filter_map(|item| {
+                if let OutputItem::FunctionCall(fc) = item {
+                    Some(fc.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        if function_calls.is_empty() {
+            let mut response_content = String::new();
+            for out in &response.output {
+                if let OutputItem::Message(msg) = out {
+                    for content in &msg.content {
+                        match content {
+                            OutputMessageContent::OutputText(text) => {
+                                response_content.push_str(&text.text)
+                            }
+                            OutputMessageContent::Refusal(RefusalContent { refusal }) => {
+                                error!("AI refused prompt: {}", refusal);
+                            }
+                        }
                     }
                 }
             }
+            let jd = &mut serde_json::Deserializer::from_str(&response_content);
+            match serde_path_to_error::deserialize(jd) {
+                Ok(cm) => return Ok(cm),
+                Err(e) => {
+                    error!("Failed to deserialize url label message: {}", e);
+                    error!("Response content was: {}", response_content);
+                    error!("Failed to parse JSON at path: {}", e.path());
+                    return Err(e.into_inner().into());
+                }
+            };
+        }
+        for call in function_calls {
+            let function_name = call.name.as_str();
+            let arguments = &call.arguments;
+            match function_name {
+                "fetch_url" => {
+                    debug!("Processing tool call: fetch_url with args {}", arguments);
+                    let jd = &mut serde_json::Deserializer::from_str(arguments);
+                    let args: FetchUrlParams = match serde_path_to_error::deserialize(jd) {
+                        Ok(args) => {
+                            trace!("Parsed `fetch_url` arguments: {:?}", args);
+                            args
+                        }
+                        Err(e) => {
+                            error!("Failed to parse `get_file` arguments: {}", e);
+                            error!("Failed to parse JSON at path: {}", e.path());
+                            return Err(e.into_inner().into());
+                        }
+                    };
+                    let content = get_url(&args.url, args.starting_line, args.max_lines).await?;
+                    trace!(
+                        "Retrieved url content: {}",
+                        content[..std::cmp::min(100, content.len())].to_string()
+                    );
+                    input_items.push(InputItem::Item(Item::FunctionCall(call.clone())));
+                    input_items.push(InputItem::Item(Item::FunctionCallOutput(
+                        FunctionCallOutputItemParam {
+                            call_id: call.call_id,
+                            output: FunctionCallOutput::Text(content),
+                            id: None,
+                            status: None,
+                        },
+                    )));
+                }
+                _ => warn!("Unknown tool call: {}", function_name),
+            }
         }
     }
-    let jd = &mut serde_json::Deserializer::from_str(&response_content);
-    match serde_path_to_error::deserialize(jd) {
-        Ok(cm) => return Ok(cm),
-        Err(e) => {
-            error!("Failed to deserialize url label: {}", e);
-            error!("Response content was: {}", response_content);
-            error!("Failed to parse JSON at path: {}", e.path());
-            return Err(e.into_inner().into());
-        }
+}
+
+#[tracing::instrument(name = "Process MCP Tool Calls", level = "trace")]
+async fn get_url(
+    url: &str,
+    starting_line: Option<usize>,
+    max_lines: Option<usize>,
+) -> AppResult<String> {
+    let resp = reqwest::get(url).await?;
+    let ct = if let Some(content) = resp.headers().get("content-type") {
+        content.to_str().unwrap_or_default().to_string()
+    } else {
+        "text/plain".to_string()
     };
+    let mut body = match (starting_line, max_lines) {
+        (Some(start), Some(max)) => resp
+            .text()
+            .await?
+            .lines()
+            .collect::<Vec<&str>>()
+            .iter()
+            .skip(start)
+            .take(max)
+            .cloned()
+            .collect::<Vec<&str>>()
+            .join("\n"),
+        (Some(start), None) => resp
+            .text()
+            .await?
+            .lines()
+            .collect::<Vec<&str>>()
+            .iter()
+            .skip(start)
+            .cloned()
+            .collect::<Vec<&str>>()
+            .join("\n"),
+        (None, Some(max)) => resp
+            .text()
+            .await?
+            .lines()
+            .collect::<Vec<&str>>()
+            .iter()
+            .take(max)
+            .cloned()
+            .collect::<Vec<&str>>()
+            .join("\n"),
+        (None, None) => resp.text().await?,
+    };
+    if ct.to_lowercase().contains("text/html") {
+        // Simple HTML stripping.
+        body = html2md::parse_html(&body);
+    }
+    Ok(body)
 }
