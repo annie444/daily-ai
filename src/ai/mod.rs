@@ -1,9 +1,11 @@
 pub mod commit_message;
 pub mod label_urls;
+
 use async_openai::Client;
 use async_openai::config::{Config, OpenAIConfig};
 
-#[tracing::instrument(level = "debug")]
+/// Build an async-openai client pointed at an LM Studio-compatible server.
+#[tracing::instrument(name = "Connecting to local LLM server", level = "debug")]
 pub fn get_lm_studio_client<S: AsRef<str> + std::fmt::Debug>(
     server: S,
     port: u16,
@@ -13,6 +15,6 @@ pub fn get_lm_studio_client<S: AsRef<str> + std::fmt::Debug>(
         server.as_ref(),
         port
     ))) as Box<dyn Config>;
-    let client: Client<Box<dyn Config>> = Client::with_config(config);
-    client
+
+    Client::with_config(config)
 }

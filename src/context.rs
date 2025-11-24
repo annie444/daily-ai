@@ -1,8 +1,10 @@
+use serde::{Deserialize, Serialize};
+
 use crate::classify::UrlCluster;
 use crate::git::hist::GitRepoHistory;
 use crate::shell::ShellHistoryEntry;
-use serde::{Deserialize, Serialize};
 
+/// Aggregate of all histories collected by the tool for a run.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Context {
     pub shell_history: Vec<ShellHistoryEntry>,

@@ -1,18 +1,27 @@
-use crate::AppResult;
+use std::collections::{HashMap, HashSet};
+use std::fmt::Write;
+use std::path::{Path, PathBuf};
+use std::str;
+
 use git2::{Delta, Diff, DiffDelta, DiffFormat, DiffHunk, DiffLine, Patch, Repository};
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
-use std::path::Path;
-use std::{fmt::Write, path::PathBuf, str};
 use tracing::error;
 
+use crate::AppResult;
+
+/// Captures the source and destination paths for rename/copy deltas.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
 pub struct DiffFromTo {
     pub from: PathBuf,
     pub to: PathBuf,
 }
 
-#[tracing::instrument(level = "debug", skip(repo, diff))]
+/// Read file contents from the repo for a path referenced in a diff, optionally slicing lines.
+#[tracing::instrument(
+    name = "Getting a file from the git tree",
+    level = "debug",
+    skip(repo, diff)
+)]
 pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
     repo: &Repository,
     diff: &Diff,
@@ -20,8 +29,7 @@ pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
     start_line: Option<usize>,
     end_line: Option<usize>,
 ) -> Option<String> {
-    // To read file contents we need repository ownership.
-
+    // Identify the first delta that matches either old or new path.
     let mut chosen: Option<DiffDelta> = None;
     for delta in diff.deltas() {
         let matches_new = delta
@@ -74,12 +82,14 @@ pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
     Some(out)
 }
 
+/// Path plus rendered patch content for a single file.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct DiffWithPatch {
     pub path: PathBuf,
     pub patch: String,
 }
 
+/// Aggregated diff summary used for output.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct DiffSummary {
     pub repo_path: PathBuf,
@@ -96,7 +106,6 @@ pub struct DiffSummary {
 }
 
 impl DiffFromTo {
-    #[tracing::instrument(level = "trace", skip(delta))]
     pub fn from_delta(delta: &DiffDelta) -> Self {
         DiffFromTo {
             from: match delta.old_file().path() {
@@ -114,7 +123,11 @@ impl DiffFromTo {
 impl DiffWithPatch {
     /// Append a diff line to the accumulated patch buffer for a file, adding headers as needed.
     /// Call this repeatedly for all lines of a delta to build a full patch string.
-    #[tracing::instrument(level = "trace", skip(hunk, line, buf, last_hunk))]
+    #[tracing::instrument(
+        name = "Adding line to patches",
+        level = "trace",
+        skip(hunk, line, buf, last_hunk)
+    )]
     pub fn append_line(
         hunk: Option<DiffHunk>,
         line: &DiffLine,
@@ -154,7 +167,11 @@ impl DiffWithPatch {
     }
 }
 
-#[tracing::instrument(level = "trace", skip(delta))]
+#[tracing::instrument(
+    name = "Resolving path name from git tree",
+    level = "trace",
+    skip(delta)
+)]
 fn get_filename(delta: &DiffDelta) -> PathBuf {
     match delta.new_file().path() {
         Some(p) => p.to_path_buf(),
@@ -167,7 +184,12 @@ fn get_filename(delta: &DiffDelta) -> PathBuf {
 
 type PatchCollector = HashMap<PathBuf, (String, Option<(u32, u32, u32, u32)>)>;
 
-#[tracing::instrument(level = "debug", skip(diff))]
+/// Generate a `DiffSummary` from a git2 `Diff`, capturing patches and path sets.
+#[tracing::instrument(
+    name = "Generating a summary of all changes",
+    level = "debug",
+    skip(diff)
+)]
 pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
     repo_path: P,
     diff: &Diff,
@@ -253,7 +275,6 @@ pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
     Ok(summary)
 }
 
-#[tracing::instrument(level = "trace")]
 fn line_in_range(
     start: Option<u32>,
     end: Option<u32>,
@@ -277,7 +298,12 @@ fn line_in_range(
     false
 }
 
-#[tracing::instrument(level = "debug", skip(diff))]
+/// Render a patch for a specific path within a diff, optionally filtered to line ranges.
+#[tracing::instrument(
+    name = "Fetching a patch from the git tree",
+    level = "debug",
+    skip(diff)
+)]
 pub fn get_patch<P: AsRef<Path> + std::fmt::Debug>(
     diff: &Diff,
     path: &P,

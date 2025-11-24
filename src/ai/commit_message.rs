@@ -1,5 +1,6 @@
-use crate::AppResult;
-use crate::git::diff::{get_diff_summary, get_file, get_patch};
+use std::fmt::{Display, Formatter};
+use std::path::PathBuf;
+
 use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
@@ -13,14 +14,14 @@ use async_openai::types::responses::{
 use git2::{Diff, Repository};
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Formatter};
-use std::path::PathBuf;
 use tracing::{debug, error, trace, warn};
+
+use crate::AppResult;
+use crate::git::diff::{get_diff_summary, get_file, get_patch};
 
 static COMMIT_MESSAGE_PROMPT: &str = std::include_str!("commit_message_prompt.txt");
 
-/// # commit_message
-/// Generate a commit message based on the provided diff summary
+/// Commit message output from the model: summary plus optional body.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct CommitMessage {
     /// Short summary of the commit
@@ -63,13 +64,18 @@ struct GetPatch {
     pub end_line: Option<usize>,
 }
 
-#[tracing::instrument(level = "debug", skip(client, diff, repo))]
+/// Generate a commit message using the model, optionally calling back into file/patch tools.
+#[tracing::instrument(
+    name = "Generating a commit message with LLM",
+    level = "debug",
+    skip(client, diff, repo)
+)]
 pub async fn generate_commit_message<'c, 'd, C: Config>(
     client: &'c Client<C>,
     diff: &Diff<'d>,
     repo: &Repository,
 ) -> AppResult<CommitMessage> {
-    // Kick off first turn.
+    // Kick off first turn with diff summary and commit prompt.
     let mut input_items: Vec<InputItem> = vec![InputItem::Item(Item::Message(MessageItem::Input(
         InputMessage {
             content: vec![InputContent::InputText(InputTextContent {
@@ -183,6 +189,7 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
             };
         }
 
+        // Handle each tool call in order and feed results back into the conversation.
         for call in function_calls {
             let function_name = call.name.as_str();
             let arguments = &call.arguments;

@@ -1,5 +1,5 @@
-use crate::AppResult;
-use crate::safari::SafariHistoryItem;
+use std::fmt::{Display, Formatter};
+
 use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
@@ -12,11 +12,14 @@ use async_openai::types::responses::{
 };
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Formatter};
 use tracing::{debug, error, trace, warn};
+
+use crate::AppResult;
+use crate::safari::SafariHistoryItem;
 
 static LABEL_URLS_PROMPT: &str = std::include_str!("label_urls_prompt.txt");
 
+/// Label returned by the model for a cluster of URLs.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct UrlLabel {
     /// Short label for the group of URLs.
@@ -39,12 +42,17 @@ struct FetchUrlParams {
     pub max_lines: Option<usize>,
 }
 
-#[tracing::instrument(name = "Label URL groups", level = "debug", skip(client, urls))]
+/// Label a cluster of URLs using the model; may call back into the `fetch_url` tool.
+#[tracing::instrument(
+    name = "Generating a label for a group of URLs",
+    level = "debug",
+    skip(client, urls)
+)]
 pub async fn label_url_cluster<C: Config>(
     client: &Client<C>,
     urls: &[SafariHistoryItem],
 ) -> AppResult<UrlLabel> {
-    // Kick off first turn.
+    // Kick off first turn with the URL list and system prompt.
     let mut input_items: Vec<InputItem> = vec![InputItem::Item(Item::Message(MessageItem::Input(
         InputMessage {
             content: vec![InputContent::InputText(InputTextContent {
@@ -186,6 +194,7 @@ pub async fn label_url_cluster<C: Config>(
                 }
             };
         }
+        // Handle each tool call in sequence and feed results back to the model.
         for call in function_calls {
             let function_name = call.name.as_str();
             let arguments = &call.arguments;
@@ -225,7 +234,8 @@ pub async fn label_url_cluster<C: Config>(
     }
 }
 
-#[tracing::instrument(name = "Process MCP Tool Calls", level = "trace")]
+/// Fetch URL content with optional line slicing; strips basic HTML to text.
+#[tracing::instrument(name = "Fetching the contents of a URL", level = "trace")]
 async fn get_url(
     url: &str,
     starting_line: Option<usize>,

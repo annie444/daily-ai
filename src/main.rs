@@ -15,11 +15,14 @@ pub(crate) mod time_utils;
 
 pub(crate) use error::AppResult;
 
-use clap::Parser;
-use cli::{GetDefaultArgs, GetVerbosity};
 use std::process::exit;
+
+use clap::Parser;
 use tracing::info;
 
+use cli::{GetDefaultArgs, GetVerbosity};
+
+/// Entrypoint: parse CLI args, set up logging, run command, and emit history output.
 #[tokio::main]
 async fn main() -> AppResult<()> {
     let args = cli::Cli::parse();

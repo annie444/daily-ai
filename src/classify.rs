@@ -1,8 +1,8 @@
-use crate::AppResult;
-use crate::ai::label_urls::label_url_cluster;
-use crate::dirs::DirType;
-use crate::error::AppError;
-use crate::safari::SafariHistoryItem;
+use std::cmp::Ordering;
+use std::collections::HashMap;
+use std::path::Path;
+use std::sync::Arc;
+
 use async_openai::{Client, config::Config};
 use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
@@ -14,24 +14,26 @@ use linfa_clustering::Dbscan;
 use linfa_reduction::Pca;
 use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
-use std::collections::HashMap;
-use std::path::Path;
-use std::sync::Arc;
 use tokenizers::tokenizer::Tokenizer;
 use tokio::io::AsyncWriteExt;
-use tracing::info;
-use tracing::trace;
-use tracing::{Span, debug, info_span, warn};
+use tracing::{Span, debug, info, info_span, trace, warn};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
 
+use crate::AppResult;
+use crate::ai::label_urls::label_url_cluster;
+use crate::dirs::DirType;
+use crate::error::AppError;
+use crate::safari::SafariHistoryItem;
+
+/// Cluster of Safari URLs with a human-friendly label.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UrlCluster {
     pub label: String,
     pub urls: Vec<SafariHistoryItem>,
 }
 
+/// Wrapper around a BERT encoder for URL/title embeddings.
 #[derive(Clone)]
 pub struct BertEmbedder {
     device: Device,
@@ -55,7 +57,13 @@ impl BertEmbedder {
         }
     }
 
-    pub async fn new_from_pretrained<S: AsRef<str>>(model_name: S) -> AppResult<Self> {
+    #[tracing::instrument(
+        name = "Downloading embedding model from Hugging Face",
+        level = "trace"
+    )]
+    pub async fn new_from_pretrained<S: AsRef<str> + std::fmt::Debug>(
+        model_name: S,
+    ) -> AppResult<Self> {
         let hf_cache_dir = DirType::Cache
             .ensure_dir_async()
             .await?
@@ -73,6 +81,7 @@ impl BertEmbedder {
             model_name.as_ref()
         );
 
+        // Minimal fetcher for the few files we need; retries and progress for better UX.
         let client = reqwest::ClientBuilder::new()
             .user_agent(format!("daily-ai/{}", env!("CARGO_PKG_VERSION")))
             .redirect(reqwest::redirect::Policy::limited(10))
@@ -87,6 +96,7 @@ impl BertEmbedder {
         for file in ["config.json", "model.safetensors", "tokenizer.json"] {
             let file_path = model_dir.join(file);
             if !file_path.exists() {
+                // Stream download into cache file.
                 let mut open_file = tokio::fs::OpenOptions::new()
                     .create(true)
                     .append(true)
@@ -149,6 +159,11 @@ impl BertEmbedder {
     ///   - config.json
     ///   - model.safetensors (or multiple shard .safetensors files)
     ///   - tokenizer.json
+    #[tracing::instrument(
+        name = "Loading embedding model from directory",
+        level = "trace",
+        skip(model_dir)
+    )]
     pub fn new_from_dir<P: AsRef<Path>>(model_dir: P) -> AppResult<Self> {
         let model_dir = model_dir.as_ref();
 
@@ -228,10 +243,12 @@ impl BertEmbedder {
         Ok(embedding)
     }
 
-    /// Asynchronously embed many texts.
-    ///
-    /// This spawns a single blocking worker thread and does the whole loop there,
-    /// so Candle + Metal stay on one thread and Tokio stays happy.
+    /// Asynchronously embed many texts. Runs in a blocking worker so Candle stays off Tokio.
+    #[tracing::instrument(
+        name = "Embedding browser history",
+        level = "trace",
+        skip(self, history)
+    )]
     pub async fn embed_batch(
         &self,
         history: &[SafariHistoryItem],
@@ -271,6 +288,11 @@ impl BertEmbedder {
     }
 }
 
+#[tracing::instrument(
+    name = "Labeling browser history groups",
+    level = "trace",
+    skip(client, grouped)
+)]
 async fn build_cluster_output<C: Config>(
     client: &Client<C>,
     grouped: HashMap<usize, Vec<SafariHistoryItem>>,
@@ -288,6 +310,7 @@ async fn build_cluster_output<C: Config>(
     Ok(clusters)
 }
 
+#[tracing::instrument(name = "Converting links", level = "trace", skip(embs))]
 fn embeddings_to_ndarray(embs: &[Vec<f32>]) -> Array2<f64> {
     let rows = embs.len();
     let cols = embs[0].len();
@@ -302,6 +325,7 @@ fn embeddings_to_ndarray(embs: &[Vec<f32>]) -> Array2<f64> {
 }
 
 /// Compute pairwise Euclidean distances for the dataset and return all distances flattened.
+#[tracing::instrument(name = "Reducing links", level = "trace", skip(data))]
 fn compute_pairwise_distances(data: &Array2<f64>) -> Vec<f64> {
     let rows = data.nrows();
     let mut dists = Vec::new();
@@ -321,6 +345,7 @@ fn compute_pairwise_distances(data: &Array2<f64>) -> Vec<f64> {
 }
 
 /// Find the value at the `percentile` (0.0-1.0) of the sorted distances.
+#[tracing::instrument(name = "Embedding links", level = "trace", skip(distances))]
 fn find_distance_percentile(distances: &mut [f64], percentile: f64) -> f64 {
     assert!(percentile > 0.0 && percentile < 1.0);
     distances.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
@@ -328,6 +353,7 @@ fn find_distance_percentile(distances: &mut [f64], percentile: f64) -> f64 {
     distances[idx]
 }
 
+#[tracing::instrument(name = "Reducing links", level = "trace", skip(data))]
 fn reduce_dimensionality(data: &Array2<f64>, k: usize) -> Array2<f64> {
     let dataset = DatasetBase::from(data.to_owned());
     let pca = Pca::params(k)
@@ -344,7 +370,8 @@ fn reduce_dimensionality(data: &Array2<f64>, k: usize) -> Array2<f64> {
     transformed.records
 }
 
-/// Cluster embeddings with DBSCAN and return a vector of Option<usize> labels
+/// Cluster embeddings with DBSCAN and return a vector of Option<usize> labels.
+#[tracing::instrument(name = "Transforming links", level = "trace", skip(data))]
 fn cluster_embeddings(
     data: &Array2<f64>,
     eps: f64,
@@ -357,6 +384,7 @@ fn cluster_embeddings(
     Ok(model.to_vec())
 }
 
+#[tracing::instrument(name = "Grouping links", level = "trace", skip(urls, labels))]
 fn group_by_cluster(
     urls: &[(SafariHistoryItem, Vec<f32>)],
     labels: Vec<Option<usize>>,
@@ -372,6 +400,8 @@ fn group_by_cluster(
     map
 }
 
+/// Entry point: embed Safari URLs, cluster them, and produce labeled clusters via the model.
+#[tracing::instrument(name = "Grouping browser history", level = "debug", skip(client, urls))]
 pub async fn embed_urls<C: Config>(
     client: &Client<C>,
     urls: Vec<SafariHistoryItem>,

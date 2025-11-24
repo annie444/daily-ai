@@ -4,6 +4,7 @@ use tracing_subscriber::fmt;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
+/// Initialize tracing subscriber with verbosity-aware filters and indicatif integration.
 pub fn setup_logger(verbosity: &clap_verbosity_flag::Verbosity) {
     let indicatif_layer = IndicatifLayer::new();
 

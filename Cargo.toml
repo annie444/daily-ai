@@ -66,6 +66,7 @@ html2md = "0.2.15"
 clap_complete = "4.5.61"
 clap_complete_nushell = "4.5.10"
 clap-verbosity-flag = { version = "3.0.4", default-features = false, features = ["tracing"] }
+humantime = "2.3.0"
 
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
 candle-core = { version = "0.9.1", features = ["metal"] }

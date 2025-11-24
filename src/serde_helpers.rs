@@ -1,15 +1,14 @@
 use serde::{Deserialize, Deserializer, Serializer};
-use std::time::Duration;
 use time::{
-    OffsetDateTime, PrimitiveDateTime,
+    Duration, OffsetDateTime, PrimitiveDateTime,
     format_description::{BorrowedFormatItem, well_known::Rfc3339},
     macros::format_description,
 };
 
-/// Serde helpers for chrono::NaiveDateTime.
+/// Serde helpers for `OffsetDateTime` values.
 ///
 /// Input format: `YYYY-mm-dd HH:MM:SS`
-/// Output format: ISO 8601 without timezone (e.g. `2025-01-02T03:04:05`).
+/// Output format: RFC 3339 / ISO 8601 (e.g. `2025-01-02T03:04:05Z`).
 pub mod offset_datetime {
 
     use super::*;
@@ -19,6 +18,7 @@ pub mod offset_datetime {
     );
     pub(super) const OUTPUT_FORMAT: Rfc3339 = Rfc3339;
 
+    /// Serialize an `OffsetDateTime` as RFC 3339.
     pub fn serialize<S>(dt: &OffsetDateTime, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -30,6 +30,7 @@ pub mod offset_datetime {
         )
     }
 
+    /// Deserialize either the friendly input format or RFC 3339 into an `OffsetDateTime` (UTC).
     pub fn deserialize<'de, D>(deserializer: D) -> Result<OffsetDateTime, D::Error>
     where
         D: Deserializer<'de>,
@@ -43,40 +44,24 @@ pub mod offset_datetime {
     }
 }
 
-/// Serde helpers for chrono::TimeDelta.
+/// Serde helpers for `std::time::Duration`.
 ///
 /// The duration is represented as an integer followed by a unit suffix.
 /// We choose the largest whole unit when serializing to avoid fractional values.
 pub mod duration {
     use super::*;
 
-    const MINUTE_NS: i128 = 60 * 1_000_000_000;
-    const SECOND_NS: i128 = 1_000_000_000;
-    const MILLI_NS: i128 = 1_000_000;
-    const MICRO_NS: i128 = 1_000;
-
+    /// Serialize `Duration` to the largest integral unit (m, s, ms, us, ns).
     pub fn serialize<S>(duration: &Duration, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        let secs = duration.as_secs_f64();
-        let ns = (secs * 1_000_000_000.0).round() as i128;
-
-        let (value, unit) = if ns % MINUTE_NS == 0 {
-            (ns / MINUTE_NS, "m")
-        } else if ns % SECOND_NS == 0 {
-            (ns / SECOND_NS, "s")
-        } else if ns % MILLI_NS == 0 {
-            (ns / MILLI_NS, "ms")
-        } else if ns % MICRO_NS == 0 {
-            (ns / MICRO_NS, "us")
-        } else {
-            (ns, "ns")
-        };
-
-        serializer.serialize_str(&format!("{}{}", value, unit))
+        let duration = TryInto::<std::time::Duration>::try_into(*duration)
+            .map_err(serde::ser::Error::custom)?;
+        serializer.serialize_str(&format!("{}", humantime::Duration::from(duration)))
     }
 
+    /// Deserialize a duration string like `3m`, `120ms`, `42ns`.
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Duration, D::Error>
     where
         D: Deserializer<'de>,
@@ -85,28 +70,14 @@ pub mod duration {
         parse_duration(&raw).map_err(serde::de::Error::custom)
     }
 
+    /// Parse a duration string into `Duration`, preferring exact integer units.
     pub fn parse_duration<S: AsRef<str>>(s: S) -> Result<Duration, String> {
-        let raw = s.as_ref().trim();
         // Match longest suffixes first to avoid the `m` vs `ms` ambiguity.
-        for suffix in ["ns", "us", "ms", "s", "m"] {
-            if let Some(value_part) = raw.strip_suffix(suffix) {
-                let magnitude = value_part
-                    .trim()
-                    .parse::<u64>()
-                    .map_err(|e| format!("invalid duration '{}': {}", raw, e))?;
-
-                return match suffix {
-                    "ns" => Ok(Duration::from_nanos(magnitude)),
-                    "us" => Ok(Duration::from_micros(magnitude)),
-                    "ms" => Ok(Duration::from_millis(magnitude)),
-                    "s" => Ok(Duration::from_secs(magnitude)),
-                    "m" => Ok(Duration::from_mins(magnitude)),
-                    _ => unreachable!(),
-                };
-            }
-        }
-
-        Err(format!("unsupported duration format: '{}'", raw))
+        Duration::try_from(
+            humantime::parse_duration(s.as_ref())
+                .map_err(|e| format!("Failed to parse duration '{}': {}", s.as_ref(), e))?,
+        )
+        .map_err(|e| format!("Duration value overflowed for '{}': {}", s.as_ref(), e))
     }
 }
 
@@ -153,7 +124,7 @@ mod tests {
             duration: Duration,
         }
 
-        let duration = Duration::from_micros(120);
+        let duration = Duration::microseconds(120);
         let value = Wrapper { duration };
         let serialized = serde_json::to_string(&value).unwrap();
         assert_eq!(
@@ -164,7 +135,7 @@ mod tests {
 
         // Should pick minutes when possible
         let minutes = Wrapper {
-            duration: Duration::from_mins(3),
+            duration: Duration::minutes(3),
         };
         let serialized_minutes = serde_json::to_string(&minutes).unwrap();
         assert_eq!(

@@ -1,5 +1,5 @@
-use crate::AppResult;
-use crate::error::AppError;
+use std::path::PathBuf;
+
 use atuin_client::{
     database::{Database, Sqlite},
     encryption,
@@ -12,11 +12,13 @@ use atuin_dotfiles::store::{AliasStore, var::VarStore};
 use atuin_kv::store::KvStore;
 use atuin_scripts::store::ScriptStore;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
-use std::time::Duration;
-use time::OffsetDateTime;
+use time::{Duration, OffsetDateTime};
 use tracing::{debug, info};
 
+use crate::AppResult;
+use crate::error::AppError;
+
+/// Represents a single shell command execution retrieved from Atuin.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ShellHistoryEntry {
     #[serde(with = "crate::serde_helpers::offset_datetime")]
@@ -31,10 +33,11 @@ pub struct ShellHistoryEntry {
 }
 
 impl From<&History> for ShellHistoryEntry {
+    /// Convert an Atuin history record into our internal serializable shape.
     fn from(history: &History) -> Self {
         ShellHistoryEntry {
             date_time: history.timestamp,
-            duration: Duration::from_nanos(std::cmp::max(history.duration, 0) as u64),
+            duration: Duration::nanoseconds(std::cmp::max(history.duration, 0) as i64),
             host: history.hostname.clone(),
             directory: PathBuf::from(&history.cwd),
             command: history.command.clone(),
@@ -44,7 +47,12 @@ impl From<&History> for ShellHistoryEntry {
     }
 }
 
-#[tracing::instrument(level = "debug", skip_all)]
+/// Rebuild all Atuin stores after sync to ensure indexes are consistent.
+#[tracing::instrument(
+    name = "Rebuilding Atuin databases after history sync",
+    level = "debug",
+    skip_all
+)]
 async fn rebuild(
     encryption_key: [u8; 32],
     settings: &Settings,
@@ -101,7 +109,13 @@ async fn rebuild(
     Ok(())
 }
 
-#[tracing::instrument(level = "trace", skip_all)]
+/// Sync the local history with the remote Atuin service, optionally rebuilding
+/// local indexes when the record store is out of date.
+#[tracing::instrument(
+    name = "Syncing shell history with the Atuin server",
+    level = "trace",
+    skip_all
+)]
 async fn sync_history<D: Database>(
     settings: &Settings,
     store: &SqliteStore,
@@ -121,6 +135,7 @@ async fn sync_history<D: Database>(
             AppError::AtuinClient(format!("Unable to sync shell history records: {}", e))
         })?;
 
+        // Newly downloaded records might not be reflected in the local stores yet.
         rebuild(encryption_key, settings, store, db, Some(&downloaded)).await?;
 
         info!("{uploaded}/{} up/down to record store", downloaded.len());
@@ -138,7 +153,7 @@ async fn sync_history<D: Database>(
             info!("Running automatic history store init...");
 
             // Internally we use the global filter mode, so this context is ignored.
-            // don't recurse or loop here.
+            // Don't recurse or loop here—init_store already pulls records into the store.
             history_store.init_store(db).await.map_err(|e| {
                 AppError::AtuinClient(format!("Unable to initialize the history store: {}", e))
             })?;
@@ -162,13 +177,31 @@ async fn sync_history<D: Database>(
     Ok(())
 }
 
-#[tracing::instrument(level = "debug")]
-pub async fn get_history(sync: bool) -> AppResult<Vec<ShellHistoryEntry>> {
+/// Filter out deleted entries and those older than 24 hours.
+#[tracing::instrument(name = "Filtering recent history", level = "debug")]
+fn filter_recent_history(records: &[History], duration: &Duration) -> Vec<ShellHistoryEntry> {
+    let cutoff = OffsetDateTime::now_utc().saturating_sub(*duration);
+    records
+        .iter()
+        .filter_map(|record| {
+            if record.deleted_at.is_some() || record.timestamp < cutoff {
+                None
+            } else {
+                Some(record.into())
+            }
+        })
+        .collect()
+}
+
+/// Convert the Atuin sqlite + record store into a history iterator.
+#[tracing::instrument(name = "Collecting shell history", level = "debug")]
+pub async fn get_history(sync: bool, duration: &Duration) -> AppResult<Vec<ShellHistoryEntry>> {
     let settings = Settings::new().map_err(|e| AppError::Other(e.to_string()))?;
 
     let db_path = PathBuf::from(settings.db_path.as_str());
     let record_store_path = PathBuf::from(settings.record_store_path.as_str());
 
+    // The sqlite DB holds history rows; the record store holds encrypted blobs.
     let db = Sqlite::new(db_path, settings.local_timeout).await?;
     let store = SqliteStore::new(record_store_path, settings.local_timeout)
         .await
@@ -178,6 +211,7 @@ pub async fn get_history(sync: bool) -> AppResult<Vec<ShellHistoryEntry>> {
         sync_history(&settings, &store, &db).await?;
     }
 
+    // Use both default and global contexts to capture commands executed in any shell session.
     let history = db
         .list(
             &[settings.default_filter_mode(), FilterMode::Global],
@@ -188,17 +222,5 @@ pub async fn get_history(sync: bool) -> AppResult<Vec<ShellHistoryEntry>> {
         )
         .await?;
 
-    let entries = history
-        .iter()
-        .filter_map(|record| {
-            let filter_date = OffsetDateTime::now_utc().saturating_sub(time::Duration::days(1));
-            if record.deleted_at.is_some() || record.timestamp < filter_date {
-                None
-            } else {
-                Some(record.into())
-            }
-        })
-        .collect();
-
-    Ok(entries)
+    Ok(filter_recent_history(&history, duration))
 }

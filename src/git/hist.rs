@@ -1,17 +1,17 @@
 use std::collections::HashSet;
 
+use async_openai::{Client, config::Config};
+use git2::{Commit, DiffOptions, Oid, Repository, Revwalk, Status, StatusOptions, Tree};
+use serde::{Deserialize, Serialize};
+use time::{Duration, OffsetDateTime};
+use tracing::{debug, info, trace};
+
 use crate::AppResult;
 use crate::ai::commit_message::generate_commit_message;
 use crate::git::diff::{DiffSummary, get_diff_summary};
 use crate::shell::ShellHistoryEntry;
-use crate::time_utils::{timestamp_secs_to_nsecs, unix_time_nsec_to_datetime, yesterday};
-use async_openai::{Client, config::Config};
-use git2::{Commit, DiffOptions, Oid, Repository, Status, StatusOptions, Tree};
-use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
-use tracing::{debug, info, trace};
+use crate::time_utils::{past_ts, timestamp_secs_to_nsecs, unix_time_nsec_to_datetime};
 
-#[tracing::instrument(level = "trace")]
 fn get_status_opts() -> StatusOptions {
     let mut opts = StatusOptions::new();
     opts.include_untracked(true)
@@ -32,7 +32,7 @@ fn get_status_opts() -> StatusOptions {
     opts
 }
 
-#[tracing::instrument(level = "trace")]
+/// Diff options for generating unified patches with metadata for our summaries.
 fn get_diff_opts() -> DiffOptions {
     let mut opts = DiffOptions::new();
     opts.reverse(false)
@@ -66,6 +66,8 @@ fn get_diff_opts() -> DiffOptions {
     opts
 }
 
+/// Get HEAD tree and parents, or an empty tree when HEAD is unborn.
+#[tracing::instrument(name = "Fetching git tree", level = "trace", skip(repo))]
 fn head_tree_and_parents<'b, 'a: 'b>(
     repo: &'a Repository,
 ) -> AppResult<(Tree<'b>, Vec<Commit<'b>>)> {
@@ -91,17 +93,112 @@ pub struct CommitMeta {
     pub branches: Vec<String>,
 }
 
+/// Per-repository history bundle: diff summary plus commit metadata.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GitRepoHistory {
     pub diff: DiffSummary,
     pub commits: Vec<CommitMeta>,
 }
 
-#[tracing::instrument(level = "trace", skip(client, repo))]
+/// Collect branch tips for the repository to ensure revwalk covers all local branches.
+#[tracing::instrument(name = "Fetching git branches", level = "trace", skip(repo))]
+fn collect_branch_tips(repo: &Repository) -> Vec<(String, Oid)> {
+    let mut branch_tips = Vec::new();
+    if let Ok(branches) = repo.branches(Some(git2::BranchType::Local)) {
+        for branch in branches.flatten() {
+            if let Ok(name_opt) = branch.0.name()
+                && let (Some(name), Some(target)) = (name_opt, branch.0.get().target())
+            {
+                branch_tips.push((name.to_string(), target));
+            }
+        }
+    }
+    branch_tips
+}
+
+/// Prepare a revwalk with all branch tips (or HEAD) pushed.
+#[tracing::instrument(
+    name = "Walking git revision history",
+    level = "trace",
+    skip(repo, branch_tips)
+)]
+fn init_revwalk<'repo>(
+    repo: &'repo Repository,
+    branch_tips: &[(String, Oid)],
+) -> Option<Revwalk<'repo>> {
+    let mut revwalk = repo.revwalk().ok()?;
+    if branch_tips.is_empty() {
+        revwalk.push_head().ok()?;
+    } else {
+        for (_, tip) in branch_tips {
+            let _ = revwalk.push(*tip);
+        }
+    }
+    Some(revwalk)
+}
+
+/// Collect commits in the last `past_date` window, tracking the oldest commit found.
+#[tracing::instrument(
+    name = "Collecting recent git commits",
+    level = "debug",
+    skip(repo, branch_tips)
+)]
+fn collect_recent_commits<'repo>(
+    repo: &'repo Repository,
+    branch_tips: &[(String, Oid)],
+    past_date: OffsetDateTime,
+) -> AppResult<(Vec<CommitMeta>, Option<Commit<'repo>>)> {
+    let revwalk = match init_revwalk(repo, branch_tips) {
+        Some(rw) => rw,
+        None => return Ok((Vec::new(), None)),
+    };
+
+    let mut daily_commits: Vec<CommitMeta> = Vec::new();
+    let mut oldest_commit: Option<Commit> = None;
+
+    for oid in revwalk.flatten() {
+        debug!("Found git commit {} in {:?}", oid, repo.path());
+        let commit = repo.find_commit(oid)?;
+        trace!("Found commit object: {:?}", commit);
+
+        let time = commit.time();
+        let timestamp = unix_time_nsec_to_datetime(timestamp_secs_to_nsecs(time.seconds()));
+        if timestamp < past_date {
+            // We walked past the window; stop to avoid unnecessary work.
+            break;
+        }
+
+        let message = commit.message().unwrap_or_default().to_string();
+        let mut branches = Vec::new();
+        for (name, tip) in branch_tips {
+            if repo.graph_descendant_of(*tip, commit.id()).unwrap_or(false) {
+                branches.push(name.clone());
+            }
+        }
+
+        if oldest_commit
+            .as_ref()
+            .map(|c| commit.time().seconds() < c.time().seconds())
+            .unwrap_or(true)
+        {
+            oldest_commit = Some(commit.clone());
+        }
+
+        daily_commits.push(CommitMeta {
+            message,
+            timestamp,
+            branches,
+        });
+    }
+
+    Ok((daily_commits, oldest_commit))
+}
+
+/// Commit staged and/or working directory changes into the repository so history is current.
+#[tracing::instrument(name = "Checking repo status", level = "debug", skip(client, repo))]
 async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> AppResult<()> {
     let mut opts = get_status_opts();
 
-    // You might set opts.include_untracked(true) etc if you care about untracked files
     let statuses = repo.statuses(Some(&mut opts))?;
     let mut staged_changes = false;
     let mut working_dir_changes = false;
@@ -186,13 +283,19 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
     Ok(())
 }
 
-#[tracing::instrument(level = "debug", skip(client, shell_history))]
+/// Collect git history for repositories seen in shell history over the specified duration.
+#[tracing::instrument(
+    name = "Collecting git history",
+    level = "debug",
+    skip(client, shell_history)
+)]
 pub async fn get_git_history<C: Config>(
     client: &Client<C>,
     shell_history: &Vec<ShellHistoryEntry>,
+    duration: &Duration,
 ) -> AppResult<Vec<GitRepoHistory>> {
     let mut visited = HashSet::new();
-    let yesterday_dt = yesterday();
+    let past_date = past_ts(duration);
     let mut git_history = Vec::new();
     for entry in shell_history {
         if visited.contains(&entry.directory) {
@@ -205,80 +308,15 @@ pub async fn get_git_history<C: Config>(
             if let Err(e) = repo.index().and_then(|mut idx| idx.read(true)) {
                 debug!("Failed to refresh index for {:?}: {}", entry.directory, e);
             }
-            let mut oldest_commit: (Option<Oid>, Option<Commit>) = (None, None);
-            let mut daily_commits: Vec<CommitMeta> = Vec::new();
             debug!(
                 "Checking git history for repository in {:?}",
                 entry.directory
             );
-            // Collect local branch tips and push all to revwalk to cover all branches.
-            let mut branch_tips: Vec<(String, Oid)> = Vec::new();
-            if let Ok(branches) = repo.branches(Some(git2::BranchType::Local)) {
-                for branch in branches.flatten() {
-                    if let Ok(name_opt) = branch.0.name()
-                        && let (Some(name), Some(target)) = (name_opt, branch.0.get().target())
-                    {
-                        branch_tips.push((name.to_string(), target));
-                    }
-                }
-            }
-            let mut revwalk = match repo.revwalk() {
-                Ok(rw) => rw,
-                Err(e) => {
-                    debug!("Revwalk unavailable for {:?}: {}", entry.directory, e);
-                    continue;
-                }
-            };
-            if branch_tips.is_empty() {
-                if let Err(e) = revwalk.push_head() {
-                    debug!(
-                        "No HEAD to walk (likely unborn branch) for {:?}: {}",
-                        entry.directory, e
-                    );
-                    continue;
-                }
-            } else {
-                for (_, tip) in &branch_tips {
-                    if let Err(e) = revwalk.push(*tip) {
-                        debug!(
-                            "Failed to push branch tip {:?} in {:?}: {}",
-                            tip, entry.directory, e
-                        );
-                    }
-                }
-            }
-            for oid in revwalk.flatten() {
-                debug!("Found git commit {} in {:?}", oid, entry.directory);
-                let commit = repo.find_commit(oid)?;
-                trace!("Found commit object: {:?}", commit);
-                let time = commit.time();
-                let timestamp = unix_time_nsec_to_datetime(timestamp_secs_to_nsecs(time.seconds()));
-                if timestamp >= yesterday_dt {
-                    let message = commit.message().unwrap_or_default().to_string();
-                    let mut branches = Vec::new();
-                    for (name, tip) in &branch_tips {
-                        if repo.graph_descendant_of(*tip, commit.id()).unwrap_or(false) {
-                            branches.push(name.clone());
-                        }
-                    }
-                    daily_commits.push(CommitMeta {
-                        message,
-                        timestamp,
-                        branches,
-                    });
+            let branch_tips = collect_branch_tips(&repo);
+            let (daily_commits, oldest_commit) =
+                collect_recent_commits(&repo, &branch_tips, past_date)?;
 
-                    if let Some(prev_commit) = &oldest_commit.1
-                        && commit.time().seconds() < prev_commit.time().seconds()
-                    {
-                        oldest_commit = (Some(oid), Some(commit.clone()));
-                    } else if oldest_commit.1.is_none() {
-                        oldest_commit = (Some(oid), Some(commit.clone()));
-                    }
-                } else {
-                    break;
-                }
-            }
-            if let (Some(_), Some(commit)) = oldest_commit {
+            if let Some(commit) = oldest_commit {
                 let head = repo.head()?;
                 let head_tree = head.peel_to_tree()?;
                 let commit_tree = commit.tree()?;

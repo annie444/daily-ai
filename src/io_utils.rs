@@ -1,14 +1,17 @@
-use crate::AppResult;
-use crate::cli::OutputFormat;
-use crate::context::Context;
-use crate::git::diff::{DiffFromTo, DiffSummary, DiffWithPatch};
-use serde::{Deserialize, Serialize, ser};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize, ser};
 use tokio::fs;
 use tokio::io::AsyncWriteExt;
 use tracing::debug;
 
+use crate::AppResult;
+use crate::cli::OutputFormat;
+use crate::context::Context;
+use crate::git::diff::{DiffFromTo, DiffSummary, DiffWithPatch};
+
+/// Aggregated view of paths per repository used when writing summaries to disk.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct RepoPathsSummary {
     pub repo_path: PathBuf,
@@ -21,7 +24,8 @@ pub struct RepoPathsSummary {
     pub conflicted: HashSet<PathBuf>,
 }
 
-#[tracing::instrument(level = "debug", skip(context))]
+/// Write output in the requested format (json or directory layout).
+#[tracing::instrument(name = "Saving output to disk", level = "debug", skip(context))]
 pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
     output: P,
     format: &OutputFormat,
@@ -33,11 +37,17 @@ pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
     }
 }
 
+/// Write output to a directory structure.
+#[tracing::instrument(
+    name = "Creating directories and writing output",
+    level = "debug",
+    skip(context)
+)]
 async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
     output: P,
     context: &Context,
 ) -> AppResult<()> {
-    // Create output directory if it doesn't exist
+    // Ensure base output directory exists.
     fs::create_dir_all(&output).await?;
 
     // Write shell history
@@ -103,6 +113,8 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
     Ok(())
 }
 
+/// Write git patches to patch files.
+#[tracing::instrument(name = "Writing patch files", level = "trace", skip(patches))]
 async fn write_patches<P: AsRef<Path> + std::fmt::Debug>(
     dir: P,
     patches: Vec<DiffWithPatch>,
@@ -116,7 +128,8 @@ async fn write_patches<P: AsRef<Path> + std::fmt::Debug>(
     Ok(())
 }
 
-#[tracing::instrument(level = "trace", skip(obj))]
+/// Serialize an object to pretty JSON and write it to disk.
+#[tracing::instrument(name = "Writing JSON file", level = "trace", skip(obj))]
 async fn write_json_output<P: AsRef<Path> + std::fmt::Debug, S: ser::Serialize>(
     output: P,
     obj: &S,
@@ -125,7 +138,7 @@ async fn write_json_output<P: AsRef<Path> + std::fmt::Debug, S: ser::Serialize>(
     write_file(output, data).await
 }
 
-#[tracing::instrument(level = "trace", skip(data))]
+/// Write raw string data to a file, overwriting any existing content.
 async fn write_file<P: AsRef<Path> + std::fmt::Debug>(output: P, data: String) -> AppResult<()> {
     let mut file = fs::OpenOptions::new()
         .create(true)

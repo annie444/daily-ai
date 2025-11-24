@@ -1145,6 +1145,7 @@ dependencies = [
  "futures",
  "git2",
  "html2md",
+ "humantime",
  "linfa",
  "linfa-clustering",
  "linfa-reduction",

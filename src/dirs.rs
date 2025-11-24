@@ -1,8 +1,10 @@
-use crate::error::{AppError, AppResult};
 use std::env;
 use std::fmt::Display;
 use std::path::PathBuf;
 
+use crate::error::{AppError, AppResult};
+
+/// Application name used to namespace directories.
 pub static APP_NAME: &str = "dailyai";
 
 #[allow(dead_code)]
@@ -14,6 +16,7 @@ pub enum DirType {
 }
 
 impl Display for DirType {
+    /// Pretty-print the default directory path hint for this dir type.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             DirType::Data => write!(f, "~/.local/share/")?,
@@ -25,6 +28,7 @@ impl Display for DirType {
 }
 
 impl DirType {
+    /// XDG environment variable key for this directory type.
     fn xdg_key(&self) -> &'static str {
         match self {
             DirType::Data => "XDG_DATA_HOME",
@@ -33,6 +37,7 @@ impl DirType {
         }
     }
 
+    /// Relative default path under HOME when XDG is not set.
     fn rel_path(&self) -> &'static str {
         match self {
             DirType::Data => ".local/share",
@@ -41,6 +46,7 @@ impl DirType {
         }
     }
 
+    /// Resolve the directory path from XDG or fallback environment hints.
     pub fn get_dir(&self) -> AppResult<PathBuf> {
         if let Some(dir) = env::var_os(self.xdg_key()) {
             Ok(PathBuf::from(dir).join(APP_NAME))
@@ -57,6 +63,7 @@ impl DirType {
         }
     }
 
+    /// Ensure the directory exists, creating it asynchronously if needed.
     pub async fn ensure_dir_async(&self) -> AppResult<PathBuf> {
         let dir = self.get_dir()?;
         tokio::fs::create_dir_all(&dir).await?;

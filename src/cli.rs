@@ -7,6 +7,7 @@ use clap::{
 };
 use clap_complete::aot::{Generator, Shell, generate};
 use clap_complete_nushell::Nushell;
+use time::Duration;
 use tracing::info;
 
 use crate::{AppResult, classify, context::Context, git, safari, shell};
@@ -30,6 +31,7 @@ const STYLES: Styles = Styles::styled()
             .fg_color(Some(Color::Ansi(AnsiColor::Cyan))),
     );
 
+/// Long-form CLI description shown in `--help`.
 const LONG_ABOUT: &str = "Daily AI - Summarize your daily activities using AI
 
 This tool collects:
@@ -39,7 +41,7 @@ This tool collects:
 
 Then, it sends this data to a language model server (like \x1b]8;;https://lmstudio.ai/\x1b\\\x1b[4;36mLM Studio\x1b[24;39m\x1b]8;;\x1b\\) to generate a summary.";
 
-/// Daily AI - Summarize your daily activities using AI
+/// Daily AI - Summarize your daily activities using AI.
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, propagate_version = true, about, long_about = Some(LONG_ABOUT), styles = STYLES)]
 pub struct Cli {
@@ -52,7 +54,7 @@ pub struct Cli {
     pub cmd: Cmd,
 }
 
-/// Output format for the collected history
+/// Output format for the collected history.
 #[derive(ValueEnum, Clone, Debug)]
 pub enum OutputFormat {
     /// Output a JSON file containing all collected changes
@@ -65,6 +67,7 @@ pub enum OutputFormat {
     Dir,
 }
 
+/// Top-level commands supported by the CLI.
 #[derive(Subcommand, Debug, Clone)]
 pub enum Cmd {
     /// Generate a summary of your daily activities
@@ -104,6 +107,7 @@ pub enum Cmd {
     },
 }
 
+/// Supported completion targets for shell auto-completion.
 #[derive(ValueEnum, Clone, Debug)]
 pub enum CompletionShell {
     Bash,
@@ -115,6 +119,7 @@ pub enum CompletionShell {
 }
 
 impl Display for CompletionShell {
+    /// Render the canonical shell name string.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             CompletionShell::Bash => "bash",
@@ -158,6 +163,7 @@ impl Generator for &CompletionShell {
 /// Each subcommand corresponds to a specific data source
 ///
 /// See the documentation for each subcommand for more information
+/// Subcommands for collecting data without summarizing.
 #[derive(Subcommand, Debug, Clone)]
 pub enum CollectCmd {
     /// Collect shell history from atuin
@@ -210,6 +216,7 @@ pub enum CollectCmd {
     },
 }
 
+/// Options controlling shell history collection.
 #[derive(Args, Debug, Clone)]
 pub struct ShellCollectArgs {
     /// Disable syncing atuin history before collecting
@@ -217,6 +224,7 @@ pub struct ShellCollectArgs {
     pub sync: bool,
 }
 
+/// Options controlling git history collection.
 #[derive(Args, Debug, Clone)]
 pub struct GitCollectArgs {
     /// Include shell history in output when collecting git commits
@@ -224,6 +232,7 @@ pub struct GitCollectArgs {
     pub with_shell_history: bool,
 }
 
+/// Common options shared across commands.
 #[derive(Args, Debug, Clone)]
 pub struct DefaultArgs {
     /// Host for the language model server
@@ -234,15 +243,24 @@ pub struct DefaultArgs {
     #[arg(long, default_value_t = 1234)]
     pub port: u16,
 
-    /// API version for the language model server
-    /// Defaults to "v1"
+    /// OpenAI API version for the language model server
+    ///
+    /// Defaults to "v1" (the standard OpenAI API version)
     #[arg(long, default_value = "v1")]
     pub api_version: String,
 
-    /// Number of days of history to consider
-    /// Defaults to 1 (i.e., today)
-    #[arg(short, long, default_value_t = 1)]
-    pub days: u32,
+    /// Duration (since now) of history to summarize
+    ///
+    /// Some valid suffixes are:
+    /// - Months: `M`, `month`, or `months`
+    /// - Weeks: `w`, `wk`, `wks`, `week`, or `weeks`
+    /// - Days: `d`, `day`, or `days`
+    /// - Hours: `h`, `hour`, or `hours`
+    /// - Minutes: `m`, `min`, or `minutes`
+    ///
+    /// Defaults to 1d (i.e., yeserday)
+    #[arg(short, long, default_value = "1d")]
+    pub duration: Option<String>,
 
     /// Output format for the summary
     #[arg(short, long, value_enum, default_value_t = OutputFormat::Json)]
@@ -258,12 +276,12 @@ pub trait GetDefaultArgs {
     fn get_default_args(&self) -> &DefaultArgs;
 }
 
+/// Helper trait for accessing verbosity flags on commands.
 pub trait GetVerbosity {
     fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity;
 }
 
 impl GetDefaultArgs for Cmd {
-    #[tracing::instrument(level = "debug", skip(self))]
     fn get_default_args(&self) -> &DefaultArgs {
         match self {
             Cmd::Summarize { default, .. } => default,
@@ -276,7 +294,6 @@ impl GetDefaultArgs for Cmd {
 }
 
 impl GetDefaultArgs for CollectCmd {
-    #[tracing::instrument(level = "debug", skip(self))]
     fn get_default_args(&self) -> &DefaultArgs {
         match self {
             CollectCmd::Shell { default, .. } => default,
@@ -288,7 +305,6 @@ impl GetDefaultArgs for CollectCmd {
 }
 
 impl GetVerbosity for Cmd {
-    #[tracing::instrument(level = "debug", skip(self))]
     fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity {
         match self {
             Cmd::Summarize { verbosity, .. } => verbosity,
@@ -299,7 +315,6 @@ impl GetVerbosity for Cmd {
 }
 
 impl GetVerbosity for CollectCmd {
-    #[tracing::instrument(level = "debug", skip(self))]
     fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity {
         match self {
             CollectCmd::Shell { verbosity, .. } => verbosity,
@@ -310,14 +325,32 @@ impl GetVerbosity for CollectCmd {
     }
 }
 
+fn get_duration(duration_str: &Option<String>) -> Duration {
+    duration_str
+        .as_ref()
+        .map(|dur_str| {
+            Duration::try_from(
+                humantime::parse_duration(dur_str)
+                    .unwrap_or_else(|_| std::time::Duration::from_secs(86400)),
+            )
+            .unwrap_or_else(|_| Duration::days(1))
+        })
+        .unwrap_or_else(|| Duration::days(1))
+}
+
 impl Cmd {
-    #[tracing::instrument(level = "debug", skip(self, client))]
+    /// Execute the chosen top-level command.
+    #[tracing::instrument(name = "Running command", level = "debug", skip(self, client))]
     pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<Context> {
         match self {
             Cmd::Summarize {
                 shell: ShellCollectArgs { sync },
+                default: DefaultArgs { duration, .. },
                 ..
-            } => self.run_summarize(client, *sync).await,
+            } => {
+                self.run_summarize(client, *sync, get_duration(duration))
+                    .await
+            }
             Cmd::Collect { cmd } => cmd.run(client).await,
             Cmd::Completion { shell, output, .. } => {
                 let mut cmd = Cli::command();
@@ -327,6 +360,7 @@ impl Cmd {
                         .truncate(true)
                         .create(true)
                         .open(output_path)?;
+                    // Write completion script to the requested file.
                     generate(shell, &mut cmd, "daily-ai", &mut file);
                     info!(
                         "Generated completion script for {} at {}",
@@ -334,6 +368,7 @@ impl Cmd {
                         output_path.display()
                     );
                 } else {
+                    // Fallback: print completion script to stdout.
                     generate(shell, &mut cmd, "daily-ai", &mut std::io::stdout());
                 }
                 std::process::exit(0);
@@ -341,14 +376,24 @@ impl Cmd {
         }
     }
 
-    #[tracing::instrument(level = "debug", skip(self, client))]
-    async fn run_summarize<C: Config>(&self, client: &Client<C>, sync: bool) -> AppResult<Context> {
-        let shell_history = shell::get_history(sync).await?;
+    #[tracing::instrument(
+        name = "Collecting and summarizing history",
+        level = "debug",
+        skip(self, client)
+    )]
+    async fn run_summarize<C: Config>(
+        &self,
+        client: &Client<C>,
+        sync: bool,
+        duration: Duration,
+    ) -> AppResult<Context> {
+        // Collect shell, Safari, and git history, then return the aggregated context.
+        let shell_history = shell::get_history(sync, &duration).await?;
 
         let safari_history =
-            classify::embed_urls(client, safari::get_safari_history().await?).await?;
+            classify::embed_urls(client, safari::get_safari_history(&duration).await?).await?;
 
-        let commit_history = git::get_git_history(client, &shell_history).await?;
+        let commit_history = git::get_git_history(client, &shell_history, &duration).await?;
 
         Ok(Context {
             shell_history,
@@ -359,23 +404,31 @@ impl Cmd {
 }
 
 impl CollectCmd {
-    #[tracing::instrument(level = "debug", skip(self, client))]
+    /// Execute the specific collect subcommand without summarization.
+    #[tracing::instrument(name = "Collecting history", level = "debug", skip(self, client))]
     pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<Context> {
         match self {
             CollectCmd::Shell {
                 shell: ShellCollectArgs { sync },
+                default: DefaultArgs { duration, .. },
                 ..
             } => {
-                let shell_history = shell::get_history(*sync).await?;
+                let duration = get_duration(duration);
+                let shell_history = shell::get_history(*sync, &duration).await?;
                 Ok(Context {
                     shell_history,
                     safari_history: vec![],
                     commit_history: vec![],
                 })
             }
-            CollectCmd::Safari { .. } => {
+            CollectCmd::Safari {
+                default: DefaultArgs { duration, .. },
+                ..
+            } => {
+                let duration = get_duration(duration);
                 let safari_history =
-                    classify::embed_urls(client, safari::get_safari_history().await?).await?;
+                    classify::embed_urls(client, safari::get_safari_history(&duration).await?)
+                        .await?;
                 Ok(Context {
                     shell_history: vec![],
                     safari_history,
@@ -385,10 +438,13 @@ impl CollectCmd {
             CollectCmd::Git {
                 shell: ShellCollectArgs { sync },
                 git: GitCollectArgs { with_shell_history },
+                default: DefaultArgs { duration, .. },
                 ..
             } => {
-                let shell_history = shell::get_history(*sync).await?;
-                let commit_history = git::get_git_history(client, &shell_history).await?;
+                let duration = get_duration(duration);
+                let shell_history = shell::get_history(*sync, &duration).await?;
+                let commit_history =
+                    git::get_git_history(client, &shell_history, &duration).await?;
                 let shell_history = if *with_shell_history {
                     shell_history
                 } else {
@@ -402,14 +458,18 @@ impl CollectCmd {
             }
             CollectCmd::All {
                 shell: ShellCollectArgs { sync },
+                default: DefaultArgs { duration, .. },
                 ..
             } => {
-                let shell_history = shell::get_history(*sync).await?;
+                let duration = get_duration(duration);
+                let shell_history = shell::get_history(*sync, &duration).await?;
 
                 let safari_history =
-                    classify::embed_urls(client, safari::get_safari_history().await?).await?;
+                    classify::embed_urls(client, safari::get_safari_history(&duration).await?)
+                        .await?;
 
-                let commit_history = git::get_git_history(client, &shell_history).await?;
+                let commit_history =
+                    git::get_git_history(client, &shell_history, &duration).await?;
 
                 Ok(Context {
                     shell_history,
