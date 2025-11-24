@@ -1,4 +1,4 @@
 /target
 *.db
-example.json
+*example*.json
 test*out*/

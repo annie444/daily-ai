@@ -9,7 +9,7 @@ sea-orm = { version = "2.0.0-rc", features = [
   "runtime-tokio-rustls",
   "macros",
 ] }
-clap = { version = "4.5.53", features = ["derive"] }
+clap = { version = "4.5.53", features = ["derive", "color"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 thiserror = "2.0.17"
@@ -63,8 +63,11 @@ atuin-kv = "18.10.0"
 atuin-scripts = "18.10.0"
 atuin-dotfiles = "18.10.0"
 html2md = "0.2.15"
+clap_complete = "4.5.61"
+clap_complete_nushell = "4.5.10"
+clap-verbosity-flag = { version = "3.0.4", default-features = false, features = ["tracing"] }
 
-[target.'cfg(target_os = "macos")'.dependencies]
+[target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
 candle-core = { version = "0.9.1", features = ["metal"] }
 candle-nn = { version = "0.9.1", features = ["metal"] }
 candle-transformers = { version = "0.9.1", features = ["metal"] }

@@ -101,21 +101,15 @@ async fn rebuild(
     Ok(())
 }
 
-#[tracing::instrument(level = "debug")]
-pub async fn get_history() -> AppResult<Vec<ShellHistoryEntry>> {
-    let settings = Settings::new().map_err(|e| AppError::Other(e.to_string()))?;
-
-    let db_path = PathBuf::from(settings.db_path.as_str());
-    let record_store_path = PathBuf::from(settings.record_store_path.as_str());
-
-    let db = Sqlite::new(db_path, settings.local_timeout).await?;
-    let store = SqliteStore::new(record_store_path, settings.local_timeout)
-        .await
-        .map_err(|e| AppError::AtuinClient(format!("Unable to open the sqlite store: {0}", e)))?;
-
+#[tracing::instrument(level = "trace", skip_all)]
+async fn sync_history<D: Database>(
+    settings: &Settings,
+    store: &SqliteStore,
+    db: &D,
+) -> AppResult<()> {
     if settings.sync.records {
         debug!("History recording is enabled; Syncing before fetching history");
-        let encryption_key: [u8; 32] = encryption::load_key(&settings)
+        let encryption_key: [u8; 32] = encryption::load_key(settings)
             .map_err(|e| {
                 AppError::AtuinClient(format!("Unable to fetch encryption key. Got error: {}", e))
             })?
@@ -123,11 +117,11 @@ pub async fn get_history() -> AppResult<Vec<ShellHistoryEntry>> {
         let host_id = Settings::host_id().expect("failed to get host_id");
         let history_store = HistoryStore::new(store.clone(), host_id, encryption_key);
 
-        let (uploaded, downloaded) = sync::sync(&settings, &store).await.map_err(|e| {
+        let (uploaded, downloaded) = sync::sync(settings, store).await.map_err(|e| {
             AppError::AtuinClient(format!("Unable to sync shell history records: {}", e))
         })?;
 
-        rebuild(encryption_key, &settings, &store, &db, Some(&downloaded)).await?;
+        rebuild(encryption_key, settings, store, db, Some(&downloaded)).await?;
 
         info!("{uploaded}/{} up/down to record store", downloaded.len());
 
@@ -145,25 +139,43 @@ pub async fn get_history() -> AppResult<Vec<ShellHistoryEntry>> {
 
             // Internally we use the global filter mode, so this context is ignored.
             // don't recurse or loop here.
-            history_store.init_store(&db).await.map_err(|e| {
+            history_store.init_store(db).await.map_err(|e| {
                 AppError::AtuinClient(format!("Unable to initialize the history store: {}", e))
             })?;
 
             info!("Re-running sync due to new records locally");
 
             // we'll want to run sync once more, as there will now be stuff to upload
-            let (uploaded, downloaded) = sync::sync(&settings, &store).await.map_err(|e| {
+            let (uploaded, downloaded) = sync::sync(settings, store).await.map_err(|e| {
                 AppError::AtuinClient(format!("Unable to sync atuin history database: {}", e))
             })?;
 
-            rebuild(encryption_key, &settings, &store, &db, Some(&downloaded)).await?;
+            rebuild(encryption_key, settings, store, db, Some(&downloaded)).await?;
 
             info!("{uploaded}/{} up/down to record store", downloaded.len());
         }
     } else {
-        atuin_client::sync::sync(&settings, false, &db)
+        atuin_client::sync::sync(settings, false, db)
             .await
             .map_err(|e| AppError::AtuinClient(format!("Unable to sync atuin database: {}", e)))?;
+    }
+    Ok(())
+}
+
+#[tracing::instrument(level = "debug")]
+pub async fn get_history(sync: bool) -> AppResult<Vec<ShellHistoryEntry>> {
+    let settings = Settings::new().map_err(|e| AppError::Other(e.to_string()))?;
+
+    let db_path = PathBuf::from(settings.db_path.as_str());
+    let record_store_path = PathBuf::from(settings.record_store_path.as_str());
+
+    let db = Sqlite::new(db_path, settings.local_timeout).await?;
+    let store = SqliteStore::new(record_store_path, settings.local_timeout)
+        .await
+        .map_err(|e| AppError::AtuinClient(format!("Unable to open the sqlite store: {0}", e)))?;
+
+    if sync {
+        sync_history(&settings, &store, &db).await?;
     }
 
     let history = db

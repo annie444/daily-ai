@@ -155,6 +155,7 @@ pub async fn label_url_cluster<C: Config>(
             // When we encounter a '{', we start capturing until we find the matching '}'.
             // We also need to handle quotes to avoid prematurely ending the capture.
             // This is a simple state machine approach.
+            trace!("Raw response content: {}", response_content);
             let mut in_quote = false;
             let mut in_bracket = false;
             let response_content = response_content

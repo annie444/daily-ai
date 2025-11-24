@@ -21,19 +21,15 @@ use std::sync::Arc;
 use tokenizers::tokenizer::Tokenizer;
 use tokio::io::AsyncWriteExt;
 use tracing::info;
+use tracing::trace;
 use tracing::{Span, debug, info_span, warn};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ClusterOutput {
+pub struct UrlCluster {
     pub label: String,
     pub urls: Vec<SafariHistoryItem>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct BrowserClusters {
-    pub clusters: Vec<ClusterOutput>,
 }
 
 #[derive(Clone)]
@@ -47,13 +43,13 @@ impl BertEmbedder {
     /// Create a device; prefer Metal on macOS, fall back to CPU.
     fn create_device() -> AppResult<Device> {
         // If you only ever want Metal on this machine you can just do Device::new_metal(0)?
-        #[cfg(target_os = "macos")]
+        #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
         {
             // ordinal 0 is usually the integrated GPU
             Ok(Device::new_metal(0)?)
         }
 
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
         {
             Ok(Device::Cpu)
         }
@@ -278,18 +274,18 @@ impl BertEmbedder {
 async fn build_cluster_output<C: Config>(
     client: &Client<C>,
     grouped: HashMap<usize, Vec<SafariHistoryItem>>,
-) -> AppResult<BrowserClusters> {
+) -> AppResult<Vec<UrlCluster>> {
     let mut clusters = Vec::new();
 
     for (_cid, urls) in grouped.into_iter() {
         let label = label_url_cluster(client, &urls).await?;
-        clusters.push(ClusterOutput {
+        clusters.push(UrlCluster {
             label: label.label,
             urls,
         });
     }
 
-    Ok(BrowserClusters { clusters })
+    Ok(clusters)
 }
 
 fn embeddings_to_ndarray(embs: &[Vec<f32>]) -> Array2<f64> {
@@ -379,17 +375,32 @@ fn group_by_cluster(
 pub async fn embed_urls<C: Config>(
     client: &Client<C>,
     urls: Vec<SafariHistoryItem>,
-) -> AppResult<BrowserClusters> {
+) -> AppResult<Vec<UrlCluster>> {
     let embedder = BertEmbedder::new_from_pretrained("intfloat/e5-small-v2").await?;
     let embeddings = embedder.embed_batch(&urls).await?;
 
     let embs_only: Vec<Vec<f32>> = embeddings.iter().map(|(_, emb)| emb.clone()).collect();
+    debug!("Generated {} embeddings", embs_only.len());
+    trace!(
+        "First 5 embeddings: {:?}",
+        &embs_only[..5.min(embs_only.len())]
+    );
     let data = embeddings_to_ndarray(&embs_only);
+    debug!("Embeddings ndarray shape: {:?}", data.dim());
+    trace!("Embeddings ndarray sample: {:?}", data.slice(s![..5, ..]));
     let reduced = reduce_dimensionality(&data, 25);
     debug!("Reduced embeddings to shape: {:?}", reduced.dim());
+    trace!(
+        "Reduced embeddings sample: {:?}",
+        reduced.slice(s![..5, ..])
+    );
 
     let mut dists = compute_pairwise_distances(&reduced);
+    debug!("Computed {} pairwise distances", dists.len());
+    trace!("First 10 distances: {:?}", &dists[..10.min(dists.len())]);
     let eps = find_distance_percentile(&mut dists, 0.10);
+    debug!("Chosen eps for DBSCAN: {}", eps);
+    trace!("All distances sorted: {:?}", dists);
     let labels = cluster_embeddings(&reduced, eps, 3)?;
     debug!(
         "Clustered embeddings into {} clusters",
@@ -399,7 +410,10 @@ pub async fn embed_urls<C: Config>(
             .collect::<std::collections::HashSet<_>>()
             .len()
     );
+    trace!("Cluster labels: {:?}", labels);
     let clustered = group_by_cluster(&embeddings, labels);
+    debug!("Grouped URLs into {} clusters", clustered.len());
+    trace!("Clustered URLs: {:?}", clustered);
 
     info!(
         "Generating preliminary labels for {} url groups",
