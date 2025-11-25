@@ -11,6 +11,7 @@ use futures::StreamExt;
 use linfa::DatasetBase;
 use linfa::prelude::*;
 use linfa_clustering::Dbscan;
+use linfa_preprocessing::norm_scaling::NormScaler;
 use linfa_reduction::Pca;
 use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -257,7 +258,13 @@ impl BertEmbedder {
         let this = self.clone();
         let texts: Vec<String> = history
             .iter()
-            .map(|item| format!("query: {}", item.clone().title.unwrap_or_default()))
+            .map(|item| {
+                format!(
+                    "query: {} {}",
+                    item.clone().title.unwrap_or_default(),
+                    item.url
+                )
+            })
             .collect();
         let items = history.to_vec();
 
@@ -310,47 +317,97 @@ async fn build_cluster_output<C: Config>(
     Ok(clusters)
 }
 
-#[tracing::instrument(name = "Converting links", level = "trace", skip(embs))]
-fn embeddings_to_ndarray(embs: &[Vec<f32>]) -> Array2<f64> {
-    let rows = embs.len();
-    let cols = embs[0].len();
-    let mut array = Array2::<f64>::zeros((rows, cols));
-
-    for (i, vec) in embs.iter().enumerate() {
-        for (j, val) in vec.iter().enumerate() {
-            array[(i, j)] = *val as f64;
-        }
-    }
-    array
+#[tracing::instrument(name = "Normalizing links", level = "trace", skip(v))]
+fn normalize_embedding(mut v: Vec<f32>) -> Vec<f64> {
+    let sum_sq: f64 = v.iter().map(|&x| (x as f64) * (x as f64)).sum();
+    let norm = sum_sq.sqrt().max(f64::MAX);
+    v.iter_mut()
+        .map(|x| (*x as f64) / norm)
+        .collect::<Vec<f64>>()
 }
 
-/// Compute pairwise Euclidean distances for the dataset and return all distances flattened.
-#[tracing::instrument(name = "Reducing links", level = "trace", skip(data))]
-fn compute_pairwise_distances(data: &Array2<f64>) -> Vec<f64> {
-    let rows = data.nrows();
-    let mut dists = Vec::new();
-    for i in 0..rows {
-        let vi = data.slice(s![i, ..]);
-        for j in (i + 1)..rows {
-            let vj = data.slice(s![j, ..]);
-            let mut sum_sq = 0.0;
-            for k in 0..vi.len() {
-                let diff = vi[k] - vj[k];
-                sum_sq += diff * diff;
-            }
-            dists.push(sum_sq.sqrt());
+#[tracing::instrument(name = "Converting links", level = "trace", skip(embs))]
+fn embeddings_to_dataset(embs: &[Vec<f64>]) -> Dataset<f64> {
+    let rows = embs.len();
+    let cols = embs[0].len();
+    let mut arr = Array2::<f64>::zeros((rows, cols));
+    for (i, vec) in embs.iter().enumerate() {
+        for (j, &val) in vec.iter().enumerate() {
+            arr[(i, j)] = val;
         }
     }
-    dists
+    Dataset::from(arr)
+}
+
+#[tracing::instrument(name = "Converting links", level = "trace", skip(embs))]
+fn embeddings_to_ndarray(embs: &[Vec<f64>]) -> Array2<f64> {
+    let rows = embs.len();
+    let cols = embs[0].len();
+    let mut arr = Array2::<f64>::zeros((rows, cols));
+    for (i, vec) in embs.iter().enumerate() {
+        for (j, &val) in vec.iter().enumerate() {
+            arr[(i, j)] = val;
+        }
+    }
+    arr
+}
+
+/// Compute pairwise distances between all rows in the data.
+#[tracing::instrument(name = "Reducing links", level = "trace", skip(data))]
+fn find_k_distances(data: &Array2<f64>, k: usize) -> Vec<f64> {
+    let n = data.nrows();
+    let mut k_dists = Vec::with_capacity(n);
+    for i in 0..n {
+        let vi = data.row(i);
+        let mut dists = Vec::with_capacity(n - 1);
+        for j in 0..n {
+            if j == i {
+                continue;
+            }
+            let vj = data.row(j);
+            let d = vi
+                .iter()
+                .zip(vj.iter())
+                .map(|(&a, &b)| (a - b).powi(2))
+                .sum::<f64>()
+                .sqrt();
+            dists.push(d);
+        }
+        dists.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+        if dists.len() >= k {
+            k_dists.push(dists[k - 1]);
+        }
+    }
+    k_dists
 }
 
 /// Find the value at the `percentile` (0.0-1.0) of the sorted distances.
-#[tracing::instrument(name = "Embedding links", level = "trace", skip(distances))]
-fn find_distance_percentile(distances: &mut [f64], percentile: f64) -> f64 {
-    assert!(percentile > 0.0 && percentile < 1.0);
-    distances.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
-    let idx = ((distances.len() as f64) * percentile).floor() as usize;
-    distances[idx]
+#[tracing::instrument(name = "Filtering browsing history", level = "trace", skip(kd))]
+fn select_eps_from_k_distances(mut kd: Vec<f64>, percentile: f64) -> f64 {
+    kd.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+    let idx = ((kd.len() as f64) * percentile).floor() as usize;
+    kd[idx].max(1e-6)
+}
+
+#[tracing::instrument(name = "Filtering browsing history", level = "trace", skip(kd))]
+fn select_eps_from_k_dists_sc(mut kd: Vec<f64>) -> f64 {
+    kd.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+    debug!("Sorted k-distances for SC method: {:?}", kd);
+    let mut best: Vec<(usize, f64, usize)> = vec![(0, f64::MIN, 0)];
+    kd.windows(2).enumerate().for_each(|(i, w)| {
+        let reld = (w[0] - w[1]) / w[0];
+        trace!("k-distance jump at index {} for point {:?}: {}", i, w, reld);
+        if reld > best[0].1 {
+            best.insert(0, (i, reld, (i as f64 / kd.len() as f64).floor() as usize));
+        }
+    });
+    debug!("Best k-distance jumps: {:?}", &best);
+    best.sort_by(|(_, _, a), (_, _, b)| a.cmp(b));
+    if let Some((idx, _, _)) = best.first() {
+        kd[*idx]
+    } else {
+        kd[kd.len() / 10].max(1e-6)
+    }
 }
 
 #[tracing::instrument(name = "Reducing links", level = "trace", skip(data))]
@@ -366,8 +423,8 @@ fn reduce_dimensionality(data: &Array2<f64>, k: usize) -> Array2<f64> {
             ))
         })
         .unwrap();
-    let transformed = pca.transform(dataset);
-    transformed.records
+    let reduced = pca.predict(dataset);
+    reduced.records.clone()
 }
 
 /// Cluster embeddings with DBSCAN and return a vector of Option<usize> labels.
@@ -406,44 +463,97 @@ pub async fn embed_urls<C: Config>(
     client: &Client<C>,
     urls: Vec<SafariHistoryItem>,
 ) -> AppResult<Vec<UrlCluster>> {
+    let starting_count = urls.len();
+
     let embedder = BertEmbedder::new_from_pretrained("intfloat/e5-small-v2").await?;
     let embeddings = embedder.embed_batch(&urls).await?;
 
-    let embs_only: Vec<Vec<f32>> = embeddings.iter().map(|(_, emb)| emb.clone()).collect();
-    debug!("Generated {} embeddings", embs_only.len());
+    // Normalize
+    let embs_only = embeddings
+        .iter()
+        .map(|(_, v)| v.clone())
+        .collect::<Vec<_>>();
+    let emb_abs = embs_only
+        .iter()
+        .flatten()
+        .map(|x| x.abs())
+        .collect::<Vec<_>>();
+    debug!(
+        "Embedding value range: min={} max={}",
+        emb_abs
+            .iter()
+            .copied()
+            .reduce(|a, b| a.min(b))
+            .unwrap_or(0.0),
+        emb_abs
+            .iter()
+            .copied()
+            .reduce(|a, b| a.max(b))
+            .unwrap_or(0.0)
+    );
+    let raw_arr = embeddings_to_ndarray(&embs_only);
+    let norm_embs: Array2<f64> = debug!(
+        "Normalized embeddings range: min={} max={}",
+        norm_embs
+            .iter()
+            .flatten()
+            .copied()
+            .reduce(|a, b| a.min(b))
+            .unwrap_or(0.0),
+        norm_embs
+            .iter()
+            .flatten()
+            .copied()
+            .reduce(|a, b| a.max(b))
+            .unwrap_or(0.0)
+    );
+    let arr = embeddings_to_ndarray(&norm_embs);
+    debug!("Generated embeddings of shape: {:?}", arr.dim());
     trace!(
         "First 5 embeddings: {:?}",
-        &embs_only[..5.min(embs_only.len())]
+        &arr.slice(s![..2.min(arr.dim().0), ..2.min(arr.dim().1)])
     );
-    let data = embeddings_to_ndarray(&embs_only);
-    debug!("Embeddings ndarray shape: {:?}", data.dim());
-    trace!("Embeddings ndarray sample: {:?}", data.slice(s![..5, ..]));
-    let reduced = reduce_dimensionality(&data, 25);
+
+    // PCA reduce
+    let reduced = reduce_dimensionality(&arr, 30);
     debug!("Reduced embeddings to shape: {:?}", reduced.dim());
     trace!(
         "Reduced embeddings sample: {:?}",
-        reduced.slice(s![..5, ..])
+        reduced.slice(s![..2.min(reduced.dim().0), ..2.min(reduced.dim().1)])
     );
 
-    let mut dists = compute_pairwise_distances(&reduced);
-    debug!("Computed {} pairwise distances", dists.len());
-    trace!("First 10 distances: {:?}", &dists[..10.min(dists.len())]);
-    let eps = find_distance_percentile(&mut dists, 0.10);
-    debug!("Chosen eps for DBSCAN: {}", eps);
-    trace!("All distances sorted: {:?}", dists);
-    let labels = cluster_embeddings(&reduced, eps, 3)?;
+    // compute k‐distance
+    let dists = find_k_distances(&reduced, 15);
+    debug!("Computed {} k-distances", dists.len());
+    trace!("First 2 distances: {:?}", &dists[..2.min(dists.len())]);
+    let eps = select_eps_from_k_distances(dists.clone(), 0.04);
+    let new_eps = select_eps_from_k_dists_sc(dists);
+    debug!("Chosen eps for DBSCAN: {} {}", eps, new_eps);
+
+    // cluster with DBSCAN
+    let labels = cluster_embeddings(&reduced, eps, 5)?;
     debug!(
         "Clustered embeddings into {} clusters",
         labels
             .iter()
-            .filter_map(|l| *l)
+            .copied()
             .collect::<std::collections::HashSet<_>>()
             .len()
     );
-    trace!("Cluster labels: {:?}", labels);
+    trace!(
+        "Cluster labels: {:?}",
+        labels
+            .iter()
+            .copied()
+            .collect::<std::collections::HashSet<_>>()
+    );
     let clustered = group_by_cluster(&embeddings, labels);
+    let clustered_count: usize = clustered.values().map(|v| v.len()).sum();
     debug!("Grouped URLs into {} clusters", clustered.len());
-    trace!("Clustered URLs: {:?}", clustered);
+    debug!(
+        "Clustered URL count: {}, original URL count: {}",
+        clustered_count, starting_count
+    );
 
     info!(
         "Generating preliminary labels for {} url groups",
