@@ -21,8 +21,7 @@ tokio = { version = "1.48.0", features = [
   "io-util",
 ] }
 git2 = "0.20.2"
-async-openai = { path = "../../PRs/async-openai/async-openai" }
-# async-openai = "0.31.0-alpha.11"
+async-openai = "0.31.0-alpha.11"
 schemars = "1.1.0"
 tracing = { version = "0.1.41", features = ["attributes", "std"] }
 tracing-subscriber = { version = "0.3.20", features = [
@@ -46,7 +45,7 @@ time = { version = "0.3.44", features = [
 ] }
 candle-transformers = "0.9.1"
 futures = "0.3.31"
-ndarray = "0.16.1"
+ndarray = "0.17.1"
 linfa = "0.8.0"
 linfa-clustering = "0.8.0"
 linfa-reduction = "0.8.0"
@@ -76,5 +75,5 @@ candle-core = { version = "0.9.1", features = ["metal"] }
 candle-nn = { version = "0.9.1", features = ["metal"] }
 candle-transformers = { version = "0.9.1", features = ["metal"] }
 
-# [patch.crates-io]
-# async-openai = { git = "https://github.com/annie444/async-openai.git", branch = "main" }
+[patch.crates-io]
+async-openai = { git = "https://github.com/annie444/async-openai.git", branch = "main" }
