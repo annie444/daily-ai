@@ -23,26 +23,32 @@ pub enum AppError {
     Sqlx(#[from] sea_orm::sqlx::Error),
     #[error("{0}")]
     Other(String),
-    #[error("Error while running a local ML model. {0}")]
+    #[error("Unable to run local machine learning models. Here's what hugging face said: {0}")]
     Candle(#[from] candle_core::Error),
-    #[error("Runtime error. {0}")]
+    #[error("Uh oh! The runtime had a problem. Here's what happened: {0}")]
     TokioJoin(#[from] tokio::task::JoinError),
-    #[error("Error while tokenizing input. {0}")]
+    #[error("Something happened while tokenizing URLs. Here's the error: {0}")]
     Tokenizer(#[from] tokenizers::Error),
-    #[error("Error handling local ML model. {0}")]
+    #[error("Unable to run local machine learning models. Here's what Hugging Face says: {0}")]
     Safetensors(#[from] safetensors::SafeTensorError),
-    #[error("Directory not found error. {0}")]
+    #[error("A directory seems to be missing. Here's what the OS said: {0}")]
     DirNotFound(String),
-    #[error("Error converting header to a string. {0}")]
+    #[error("Unable to convert HTTP header to a string. Here's what I found: {0}")]
     HeaderToStr(#[from] reqwest::header::ToStrError),
-    #[error("Error with the Atuin client. {0}")]
+    #[error(
+        "Something happened while processing shell history from Atuin. Atuin errored with: {0}"
+    )]
     AtuinClient(String),
-    #[error("Error accessing the internet. {0}")]
+    #[error("Something happened while accessing the internet. Here's the error: {0}")]
     MCPClient(#[from] reqwest::Error),
-    #[error("Error parsing the duration string. {0}")]
+    #[error("Unable to convert the duration string to a number. Got error: {0}")]
     DurationParse(#[from] humantime::DurationError),
-    #[error("Duration value overflowed. {0}")]
+    #[error("Duration seems too large... The value overflowed with the error: {0}")]
     DurationOverflow(#[from] time::error::ConversionRange),
+    #[error("Something happened during linear algebra operations. Here's the error: {0}")]
+    Linalg(#[from] ndarray_linalg::error::LinalgError),
+    #[error("Something happened while grouping the URLs. This is the error: {0}")]
+    Hdbscan(#[from] hdbscan::HdbscanError),
 }
 
 /// Convenience alias for results that bubble `AppError`.

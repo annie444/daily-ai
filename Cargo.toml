@@ -46,10 +46,6 @@ time = { version = "0.3.44", features = [
 candle-transformers = "0.9.1"
 futures = "0.3.31"
 ndarray = "0.17.1"
-linfa = "0.8.0"
-linfa-clustering = "0.8.0"
-linfa-reduction = "0.8.0"
-linfa-preprocessing = "0.8.0"
 safetensors = "0.7.0"
 reqwest = { version = "0.12.24", default-features = false, features = [
   "charset",
@@ -69,6 +65,9 @@ clap-verbosity-flag = { version = "3.0.4", default-features = false, features = 
   "tracing",
 ] }
 humantime = "2.3.0"
+ndarray-linalg = { version = "0.18.0", features = ["openblas-system"] }
+hdbscan = "0.12.0"
+ndarray-rand = "0.16.0"
 
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
 candle-core = { version = "0.9.1", features = ["metal"] }

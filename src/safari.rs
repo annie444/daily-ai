@@ -30,7 +30,7 @@ fn valid_db_path(path: &Path) -> bool {
 /// Resolve the Safari History.db path from several common locations and overrides.
 #[tracing::instrument(
     name = "Searching for the Safari history database file",
-    level = "trace"
+    level = "info"
 )]
 fn get_safari_history_db_path() -> PathBuf {
     let candidate = |p: PathBuf| if valid_db_path(&p) { Some(p) } else { None };
@@ -61,7 +61,7 @@ fn get_safari_history_db_path() -> PathBuf {
 }
 
 /// Open the Safari history sqlite database at the provided path.
-#[tracing::instrument(name = "Connecting to the Safari history database", level = "trace")]
+#[tracing::instrument(name = "Connecting to the Safari history database", level = "info")]
 async fn connect_to_db<P: AsRef<Path> + std::fmt::Debug>(
     db_path: P,
 ) -> AppResult<DatabaseConnection> {
@@ -72,7 +72,7 @@ async fn connect_to_db<P: AsRef<Path> + std::fmt::Debug>(
 }
 
 /// Fetch Safari history entries from the past 24 hours (UTC) ordered by most recent visit.
-#[tracing::instrument(name = "Fetching the Safari history", level = "debug")]
+#[tracing::instrument(name = "Fetching the Safari history", level = "info")]
 pub async fn get_safari_history(duration: &Duration) -> AppResult<Vec<SafariHistoryItem>> {
     let db_path = get_safari_history_db_path();
     let db = connect_to_db(db_path).await?;

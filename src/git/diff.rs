@@ -19,7 +19,7 @@ pub struct DiffFromTo {
 /// Read file contents from the repo for a path referenced in a diff, optionally slicing lines.
 #[tracing::instrument(
     name = "Getting a file from the git tree",
-    level = "debug",
+    level = "info",
     skip(repo, diff)
 )]
 pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
@@ -125,7 +125,7 @@ impl DiffWithPatch {
     /// Call this repeatedly for all lines of a delta to build a full patch string.
     #[tracing::instrument(
         name = "Adding line to patches",
-        level = "trace",
+        level = "info",
         skip(hunk, line, buf, last_hunk)
     )]
     pub fn append_line(
@@ -169,7 +169,7 @@ impl DiffWithPatch {
 
 #[tracing::instrument(
     name = "Resolving path name from git tree",
-    level = "trace",
+    level = "info",
     skip(delta)
 )]
 fn get_filename(delta: &DiffDelta) -> PathBuf {
@@ -187,7 +187,7 @@ type PatchCollector = HashMap<PathBuf, (String, Option<(u32, u32, u32, u32)>)>;
 /// Generate a `DiffSummary` from a git2 `Diff`, capturing patches and path sets.
 #[tracing::instrument(
     name = "Generating a summary of all changes",
-    level = "debug",
+    level = "info",
     skip(diff)
 )]
 pub fn get_diff_summary<P: AsRef<Path> + std::fmt::Debug>(
@@ -301,7 +301,7 @@ fn line_in_range(
 /// Render a patch for a specific path within a diff, optionally filtered to line ranges.
 #[tracing::instrument(
     name = "Fetching a patch from the git tree",
-    level = "debug",
+    level = "info",
     skip(diff)
 )]
 pub fn get_patch<P: AsRef<Path> + std::fmt::Debug>(

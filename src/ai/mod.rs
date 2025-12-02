@@ -130,3 +130,32 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::ResponseCleaner;
+
+    #[test]
+    fn cleans_simple_object_with_noise() {
+        let resp = "random prefix {\"label\": \"Tech\"} trailing";
+        let mut cleaner = ResponseCleaner::new(resp);
+        let cleaned = cleaner.clean();
+        assert_eq!(cleaned, "{\"label\":\"Tech\"}");
+    }
+
+    #[test]
+    fn preserves_brackets_and_quotes_inside() {
+        let resp = "### [{\"label\": \"A [bracket] test\"}] ###";
+        let mut cleaner = ResponseCleaner::new(resp);
+        let cleaned = cleaner.clean();
+        assert_eq!(cleaned, "[{\"label\":\"A [bracket] test\"}]");
+    }
+
+    #[test]
+    fn handles_escaped_quotes_inside_string() {
+        let resp = "!! {\"label\": \"He said \\\"hi\\\"\"} !!";
+        let mut cleaner = ResponseCleaner::new(resp);
+        let cleaned = cleaner.clean();
+        assert_eq!(cleaned, "{\"label\":\"He said \\\"hi\\\"\"}");
+    }
+}

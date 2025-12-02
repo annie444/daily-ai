@@ -2,3 +2,6 @@
 *.db
 *example*.json
 test*out*/
+.ipynb_checkpoints/
+*.ipynb
+*.csv

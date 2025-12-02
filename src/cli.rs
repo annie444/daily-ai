@@ -340,7 +340,7 @@ fn get_duration(duration_str: &Option<String>) -> Duration {
 
 impl Cmd {
     /// Execute the chosen top-level command.
-    #[tracing::instrument(name = "Running command", level = "debug", skip(self, client))]
+    #[tracing::instrument(name = "Running command", level = "info", skip(self, client))]
     pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<Context> {
         match self {
             Cmd::Summarize {
@@ -378,7 +378,7 @@ impl Cmd {
 
     #[tracing::instrument(
         name = "Collecting and summarizing history",
-        level = "debug",
+        level = "info",
         skip(self, client)
     )]
     async fn run_summarize<C: Config>(
@@ -405,7 +405,7 @@ impl Cmd {
 
 impl CollectCmd {
     /// Execute the specific collect subcommand without summarization.
-    #[tracing::instrument(name = "Collecting history", level = "debug", skip(self, client))]
+    #[tracing::instrument(name = "Collecting history", level = "info", skip(self, client))]
     pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<Context> {
         match self {
             CollectCmd::Shell {

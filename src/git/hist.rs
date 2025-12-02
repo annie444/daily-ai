@@ -67,7 +67,7 @@ fn get_diff_opts() -> DiffOptions {
 }
 
 /// Get HEAD tree and parents, or an empty tree when HEAD is unborn.
-#[tracing::instrument(name = "Fetching git tree", level = "trace", skip(repo))]
+#[tracing::instrument(name = "Fetching git tree", level = "info", skip(repo))]
 fn head_tree_and_parents<'b, 'a: 'b>(
     repo: &'a Repository,
 ) -> AppResult<(Tree<'b>, Vec<Commit<'b>>)> {
@@ -101,7 +101,7 @@ pub struct GitRepoHistory {
 }
 
 /// Collect branch tips for the repository to ensure revwalk covers all local branches.
-#[tracing::instrument(name = "Fetching git branches", level = "trace", skip(repo))]
+#[tracing::instrument(name = "Fetching git branches", level = "info", skip(repo))]
 fn collect_branch_tips(repo: &Repository) -> Vec<(String, Oid)> {
     let mut branch_tips = Vec::new();
     if let Ok(branches) = repo.branches(Some(git2::BranchType::Local)) {
@@ -119,7 +119,7 @@ fn collect_branch_tips(repo: &Repository) -> Vec<(String, Oid)> {
 /// Prepare a revwalk with all branch tips (or HEAD) pushed.
 #[tracing::instrument(
     name = "Walking git revision history",
-    level = "trace",
+    level = "info",
     skip(repo, branch_tips)
 )]
 fn init_revwalk<'repo>(
@@ -140,7 +140,7 @@ fn init_revwalk<'repo>(
 /// Collect commits in the last `past_date` window, tracking the oldest commit found.
 #[tracing::instrument(
     name = "Collecting recent git commits",
-    level = "debug",
+    level = "info",
     skip(repo, branch_tips)
 )]
 fn collect_recent_commits<'repo>(
@@ -195,7 +195,7 @@ fn collect_recent_commits<'repo>(
 }
 
 /// Commit staged and/or working directory changes into the repository so history is current.
-#[tracing::instrument(name = "Checking repo status", level = "debug", skip(client, repo))]
+#[tracing::instrument(name = "Checking repo status", level = "info", skip(client, repo))]
 async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> AppResult<()> {
     let mut opts = get_status_opts();
 
@@ -286,7 +286,7 @@ async fn check_repo_status<C: Config>(client: &Client<C>, repo: &Repository) -> 
 /// Collect git history for repositories seen in shell history over the specified duration.
 #[tracing::instrument(
     name = "Collecting git history",
-    level = "debug",
+    level = "info",
     skip(client, shell_history)
 )]
 pub async fn get_git_history<C: Config>(

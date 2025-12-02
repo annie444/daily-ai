@@ -50,7 +50,7 @@ impl From<&History> for ShellHistoryEntry {
 /// Rebuild all Atuin stores after sync to ensure indexes are consistent.
 #[tracing::instrument(
     name = "Rebuilding Atuin databases after history sync",
-    level = "debug",
+    level = "info",
     skip_all
 )]
 async fn rebuild(
@@ -113,7 +113,7 @@ async fn rebuild(
 /// local indexes when the record store is out of date.
 #[tracing::instrument(
     name = "Syncing shell history with the Atuin server",
-    level = "trace",
+    level = "info",
     skip_all
 )]
 async fn sync_history<D: Database>(
@@ -178,7 +178,7 @@ async fn sync_history<D: Database>(
 }
 
 /// Filter out deleted entries and those older than 24 hours.
-#[tracing::instrument(name = "Filtering recent history", level = "debug")]
+#[tracing::instrument(name = "Filtering recent history", level = "info")]
 fn filter_recent_history(records: &[History], duration: &Duration) -> Vec<ShellHistoryEntry> {
     let cutoff = OffsetDateTime::now_utc().saturating_sub(*duration);
     records
@@ -194,7 +194,7 @@ fn filter_recent_history(records: &[History], duration: &Duration) -> Vec<ShellH
 }
 
 /// Convert the Atuin sqlite + record store into a history iterator.
-#[tracing::instrument(name = "Collecting shell history", level = "debug")]
+#[tracing::instrument(name = "Collecting shell history", level = "info")]
 pub async fn get_history(sync: bool, duration: &Duration) -> AppResult<Vec<ShellHistoryEntry>> {
     let settings = Settings::new().map_err(|e| AppError::Other(e.to_string()))?;
 

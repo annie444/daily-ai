@@ -25,7 +25,7 @@ pub struct RepoPathsSummary {
 }
 
 /// Write output in the requested format (json or directory layout).
-#[tracing::instrument(name = "Saving output to disk", level = "debug", skip(context))]
+#[tracing::instrument(name = "Saving output to disk", level = "info", skip(context))]
 pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
     output: P,
     format: &OutputFormat,
@@ -40,7 +40,7 @@ pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
 /// Write output to a directory structure.
 #[tracing::instrument(
     name = "Creating directories and writing output",
-    level = "debug",
+    level = "info",
     skip(context)
 )]
 async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
@@ -114,7 +114,7 @@ async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
 }
 
 /// Write git patches to patch files.
-#[tracing::instrument(name = "Writing patch files", level = "trace", skip(patches))]
+#[tracing::instrument(name = "Writing patch files", level = "info", skip(patches))]
 async fn write_patches<P: AsRef<Path> + std::fmt::Debug>(
     dir: P,
     patches: Vec<DiffWithPatch>,
@@ -129,7 +129,7 @@ async fn write_patches<P: AsRef<Path> + std::fmt::Debug>(
 }
 
 /// Serialize an object to pretty JSON and write it to disk.
-#[tracing::instrument(name = "Writing JSON file", level = "trace", skip(obj))]
+#[tracing::instrument(name = "Writing JSON file", level = "info", skip(obj))]
 async fn write_json_output<P: AsRef<Path> + std::fmt::Debug, S: ser::Serialize>(
     output: P,
     obj: &S,
@@ -149,4 +149,165 @@ async fn write_file<P: AsRef<Path> + std::fmt::Debug>(output: P, data: String) -
     file.write_all(data.as_bytes()).await?;
     file.flush().await?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashSet, path::PathBuf};
+
+    use time::{Duration, OffsetDateTime};
+    use tokio::fs;
+
+    use crate::{
+        classify::UrlCluster,
+        context::Context,
+        git::diff::{DiffFromTo, DiffSummary, DiffWithPatch},
+        git::hist::{CommitMeta, GitRepoHistory},
+        safari::SafariHistoryItem,
+        shell::ShellHistoryEntry,
+    };
+
+    use super::*;
+
+    fn temp_dir(name: &str) -> PathBuf {
+        let mut dir = std::env::temp_dir();
+        let nonce = OffsetDateTime::now_utc().unix_timestamp_nanos();
+        dir.push(format!("{name}_{nonce}"));
+        dir
+    }
+
+    fn sample_context() -> Context {
+        let shell_history = vec![ShellHistoryEntry {
+            date_time: OffsetDateTime::UNIX_EPOCH,
+            duration: Duration::seconds(1),
+            host: "localhost".into(),
+            directory: PathBuf::from("/tmp"),
+            command: "echo test".into(),
+            exit_code: 0,
+            session_id: "abc".into(),
+        }];
+        let safari_history = vec![UrlCluster {
+            label: "Example".into(),
+            urls: vec![SafariHistoryItem {
+                url: "https://example.com".into(),
+                title: Some("Example".into()),
+                visit_count: 1,
+                last_visited: OffsetDateTime::UNIX_EPOCH,
+            }],
+        }];
+        let diff = DiffSummary {
+            repo_path: PathBuf::from("/repo"),
+            unmodified: HashSet::new(),
+            added: vec![DiffWithPatch {
+                path: PathBuf::from("foo.txt"),
+                patch: "+++".into(),
+            }],
+            deleted: HashSet::new(),
+            modified: Vec::new(),
+            renamed: HashSet::from([DiffFromTo {
+                from: PathBuf::from("old"),
+                to: PathBuf::from("new"),
+            }]),
+            copied: HashSet::new(),
+            untracked: Vec::new(),
+            typechange: HashSet::new(),
+            unreadable: HashSet::new(),
+            conflicted: HashSet::new(),
+        };
+        let commits = vec![CommitMeta {
+            message: "init".into(),
+            timestamp: OffsetDateTime::UNIX_EPOCH,
+            branches: vec!["main".into()],
+        }];
+        let commit_history = vec![GitRepoHistory { diff, commits }];
+
+        Context {
+            shell_history,
+            safari_history,
+            commit_history,
+        }
+    }
+
+    #[tokio::test]
+    async fn write_json_output_creates_file() {
+        let dir = temp_dir("json_output");
+        fs::create_dir_all(&dir).await.unwrap();
+        let file = dir.join("out.json");
+        let data = vec![1.0_f64, 2.0_f64];
+
+        write_json_output(&file, &data).await.unwrap();
+
+        let contents = fs::read_to_string(&file).await.unwrap();
+        assert!(contents.contains("[\n  1.0,\n  2.0\n]"));
+        let _ = fs::remove_dir_all(dir).await;
+    }
+
+    #[tokio::test]
+    async fn write_patches_writes_patch_files() {
+        let dir = temp_dir("patch_output");
+        fs::create_dir_all(&dir).await.unwrap();
+        let patches = vec![
+            DiffWithPatch {
+                path: PathBuf::from("nested/file.txt"),
+                patch: "patch-content".into(),
+            },
+            DiffWithPatch {
+                path: PathBuf::from("root.txt"),
+                patch: "root".into(),
+            },
+        ];
+
+        write_patches(&dir, patches).await.unwrap();
+
+        let nested = dir.join("nested").join("file.patch");
+        let root = dir.join("root.patch");
+        assert!(nested.exists());
+        assert!(root.exists());
+        assert_eq!(fs::read_to_string(nested).await.unwrap(), "patch-content");
+        assert_eq!(fs::read_to_string(root).await.unwrap(), "root");
+        let _ = fs::remove_dir_all(dir).await;
+    }
+
+    #[tokio::test]
+    async fn write_dir_output_writes_expected_structure() {
+        let dir = temp_dir("dir_output");
+        let context = sample_context();
+
+        write_dir_output(&dir, &context).await.unwrap();
+
+        let shell_history = dir.join("shell_history.json");
+        let safari_history = dir.join("safari_history.json");
+        let repo_dir = dir.join("repo");
+        let git_paths = repo_dir.join("git_history_paths.json");
+        let commit_log = repo_dir.join("commit_log.json");
+        let patch_file = repo_dir.join("foo.patch");
+
+        assert!(shell_history.exists());
+        assert!(safari_history.exists());
+        assert!(git_paths.exists());
+        assert!(commit_log.exists());
+        assert!(patch_file.exists());
+
+        // Verify git history paths contains repo_path
+        let paths_contents = fs::read_to_string(&git_paths).await.unwrap();
+        assert!(paths_contents.contains("\"/repo\""));
+
+        let _ = fs::remove_dir_all(dir).await;
+    }
+
+    #[tokio::test]
+    async fn write_output_json_writes_single_file() {
+        let dir = temp_dir("write_output_json");
+        fs::create_dir_all(&dir).await.unwrap();
+        let file = dir.join("output.json");
+        let context = sample_context();
+
+        write_output(&file, &OutputFormat::Json, &context)
+            .await
+            .unwrap();
+
+        let contents = fs::read_to_string(&file).await.unwrap();
+        assert!(contents.contains("shell_history"));
+        let _ = fs::remove_dir_all(dir).await;
+    }
 }
