@@ -54,9 +54,9 @@ fn update_chunk_dense(
         .to_owned();
     pairwise += &centers_sq.broadcast((n_samples, n_clusters)).unwrap();
 
-    let mut labels_chunk = Array1::<usize>::zeros(n_samples);
-    let mut centers_new_chunk = Array2::<f64>::zeros((n_clusters, n_features));
-    let mut weight_in_clusters_chunk = Array1::<f64>::zeros(n_clusters);
+    let mut labels_chunk = Array1::<usize>::zeros(n_samples); // labels_chunk = (chunk_size,)
+    let mut centers_new_chunk = Array2::<f64>::zeros((n_clusters, n_features)); // centers_new_chunk = (n_clusters, n_features)
+    let mut weight_in_clusters_chunk = Array1::<f64>::zeros(n_clusters); // weight_in_clusters_chunk = (n_clusters,)
 
     for i in 0..n_samples {
         // distances_row = (n_clusters,)
@@ -108,10 +108,10 @@ fn lloyd_iter_chunked_dense(
         n_chunks += 1;
     }
 
-    let centers_squared_norms = row_norms(centers_old, true);
-    let mut centers_new = Array2::<f64>::zeros((n_clusters, n_features));
-    let mut weight_in_clusters = Array1::<f64>::zeros(n_clusters);
-    let mut labels = Array1::<usize>::zeros(n_samples);
+    let centers_squared_norms = row_norms(centers_old, true); // (n_clusters,)
+    let mut centers_new = Array2::<f64>::zeros((n_clusters, n_features)); // centers_new = (n_clusters, n_features)
+    let mut weight_in_clusters = Array1::<f64>::zeros(n_clusters); // weight_in_clusters = (n_clusters,)
+    let mut labels = Array1::<usize>::zeros(n_samples); // labels = (n_samples,)
 
     for chunk_idx in 0..n_chunks {
         let start = chunk_idx * n_samples_chunk;
@@ -190,7 +190,7 @@ pub fn kmeans_single_lloyd(
 
     for i in 0..max_iter {
         let (centers_new, _weight_in_clusters, new_labels, center_shift) =
-            lloyd_iter_chunked_dense(x, sample_weight, &centers, true);
+            lloyd_iter_chunked_dense(x, sample_weight, &centers, true); // centers_new = (n_clusters, n_features), new_labels = (n_samples,), center_shift = (n_clusters,)
 
         iterations = i + 1;
 
@@ -219,7 +219,7 @@ pub fn kmeans_single_lloyd(
         labels = refreshed_labels;
     }
 
-    let inertia = inertia_dense(x, sample_weight, &centers, &labels);
+    let inertia = inertia_dense(x, sample_weight, &centers, &labels); // inertia = scalar
 
     (labels, inertia, centers, iterations)
 }

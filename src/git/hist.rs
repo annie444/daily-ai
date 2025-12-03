@@ -4,7 +4,7 @@ use async_openai::{Client, config::Config};
 use git2::{Commit, DiffOptions, Oid, Repository, Revwalk, Status, StatusOptions, Tree};
 use serde::{Deserialize, Serialize};
 use time::{Duration, OffsetDateTime};
-use tracing::{debug, info, trace};
+use tracing::{debug, error, info, trace};
 
 use crate::AppResult;
 use crate::ai::commit_message::generate_commit_message;
@@ -303,10 +303,17 @@ pub async fn get_git_history<C: Config>(
         }
         visited.insert(entry.directory.clone());
         if let Ok(repo) = Repository::open(&entry.directory) {
-            check_repo_status(client, &repo).await?;
+            match check_repo_status(client, &repo).await {
+                Ok(_) => debug!("Repository status checked for {:?}", entry.directory),
+                Err(e) => error!(
+                    "Failed to check repository status for {}: {}. Continuing without committing changes.",
+                    entry.directory.display(),
+                    e
+                ),
+            };
             // Refresh state in case check_repo_status created new commits
             if let Err(e) = repo.index().and_then(|mut idx| idx.read(true)) {
-                debug!("Failed to refresh index for {:?}: {}", entry.directory, e);
+                error!("Failed to refresh index for {:?}: {}", entry.directory, e);
             }
             debug!(
                 "Checking git history for repository in {:?}",

@@ -1,9 +1,8 @@
-use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use hdbscan::{DistanceMetric, Hdbscan, HdbscanHyperParams, NnAlgorithm};
 use ndarray::{OwnedRepr, RemoveAxis, prelude::*};
-use tracing::{debug, warn};
+use tracing::warn;
 
 use crate::AppResult;
 use crate::safari::SafariHistoryItem;
@@ -48,63 +47,9 @@ where
     if !squared { sum.sqrt() } else { sum }
 }
 
-/// Compute pairwise distances between all rows in the data.
-/// For each row, find the distances to its k nearest neighbors.
-/// Return an array of shape (n_samples, k) with the k distances for each sample.
-/// Assumes k < n_samples.
-///
-/// # Arguments
-/// * `x_reduced` - Input data of shape (n_samples, n_features)
-/// * `k` - Number of nearest neighbors to consider
-/// # Returns
-/// * `Array2<f64>` - Array of shape (n_samples, k) with k nearest neighbor distances for each sample
-/// # Panics
-/// * If k >= n_samples
-#[tracing::instrument(name = "Finding clusters of URLs", level = "info", skip(x_reduced))]
-pub fn knn_k_distances(x_reduced: &Array2<f64>, k: usize) -> Array2<f64> {
-    let n = x_reduced.nrows();
-    assert!(k < n, "k must be < number of samples");
-
-    let dists = pairwise_distances(x_reduced);
-    let mut kdists = Array2::<f64>::zeros((n, k));
-
-    for i in 0..n {
-        // extract row i as Vec
-        let mut row: Vec<f64> = dists.row(i).to_vec();
-
-        // ignore self-distance
-        row[i] = f64::INFINITY;
-
-        // sort ascending
-        row.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
-
-        // take first k neighbors
-        for m in 0..k {
-            kdists[(i, m)] = row[m];
-        }
-    }
-
-    kdists
-}
-
-/// Extract the k-th nearest neighbor distances from the k-distances array,
-/// sort them in ascending order, and return as a Vec.
-///
-/// # Arguments
-/// * `kdists` - Array of shape (n_samples, k) with k nearest neighbor distances
-///
-/// # Returns
-/// * `Vec<f64>` - Sorted vector of k-th nearest neighbor distances
-fn kth_distances_for_elbow(kdists: &Array2<f64>) -> Vec<f64> {
-    let last_col = kdists.ncols().saturating_sub(1);
-    let mut d: Vec<f64> = kdists.column(last_col).to_vec();
-    d.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    d
-}
-
 /// Find the value at the elbow of the k-distances array.
 #[tracing::instrument(name = "Filtering browsing history", level = "info", skip(kd))]
-fn elbow_kneedle(kd: &[f64]) -> f64 {
+pub fn elbow_kneedle(kd: ArrayView1<f64>) -> f64 {
     let n = kd.len();
     let x1 = 0.0;
     let y1 = kd[0];
@@ -134,15 +79,6 @@ fn elbow_kneedle(kd: &[f64]) -> f64 {
     }
 
     kd[max_i]
-}
-
-#[tracing::instrument(name = "Selecting eps", level = "info", skip(x_reduced))]
-pub fn select_eps_from_k_dists(x_reduced: &Array2<f64>, k: usize) -> f64 {
-    let kdists = knn_k_distances(x_reduced, k);
-    let kth_dists = kth_distances_for_elbow(&kdists);
-    let eps = elbow_kneedle(&kth_dists);
-    debug!("Selected eps from k-distances: {}", eps);
-    eps
 }
 
 /// Cluster embeddings with DBSCAN and return a vector of Option<usize> labels.
@@ -197,30 +133,6 @@ mod tests {
         assert_eq!(squared, arr1(&[25.0, 5.0]));
         assert!((unsquared[0] - 5.0).abs() < 1e-10);
         assert!((unsquared[1] - 5.0_f64.sqrt()).abs() < 1e-10);
-    }
-
-    #[test]
-    fn knn_k_distances_matches_expected() {
-        let x = array![[0.0], [1.0], [3.0]]; // 1D points
-        let kdists = knn_k_distances(&x, 2);
-        // distances from each point to its 2 nearest neighbors
-        let expected = array![
-            [1.0, 3.0], // from 0 -> 1, 3
-            [1.0, 2.0], // from 1 -> 0, 3
-            [2.0, 3.0]  // from 3 -> 1, 0
-        ];
-        for (a, e) in kdists.iter().zip(expected.iter()) {
-            assert!((a - e).abs() < 1e-10, "expected {e}, got {a}");
-        }
-    }
-
-    #[test]
-    fn select_eps_from_k_dists_returns_elbow() {
-        // Points along a line with widening gaps to make an elbow
-        let x = array![[0.0], [10.0], [20.0], [40.0]];
-        let eps = select_eps_from_k_dists(&x, 2);
-        // Expected elbow corresponds to the 2nd-neighbor distances: [20,10,20,30] -> elbow near 20.
-        assert_eq!(eps, 20.0);
     }
 
     #[test]

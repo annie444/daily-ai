@@ -1,3 +1,4 @@
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 use tracing_indicatif::IndicatifLayer;
 use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::fmt;
@@ -5,7 +6,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
 /// Initialize tracing subscriber with verbosity-aware filters and indicatif integration.
-pub fn setup_logger(verbosity: &clap_verbosity_flag::Verbosity) {
+pub fn setup_logger(verbosity: &Verbosity<InfoLevel>) {
     let indicatif_layer = IndicatifLayer::new();
 
     let env_filter = EnvFilter::builder()

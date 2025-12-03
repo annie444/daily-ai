@@ -321,8 +321,107 @@ where
         if self.cluster_centers.is_none() {
             self.fit(x)?;
         }
-        let centers: &Array2<f64> = unsafe { self.cluster_centers.as_ref().unwrap_unchecked() };
-        let distances = utils::euclidean_distances(centers, x, None, None, false);
+        let centers: &Array2<f64> = unsafe { self.cluster_centers.as_ref().unwrap_unchecked() }; // centers = (k, n_features)
+        let distances = utils::euclidean_distances(centers, x, None, None, false); // distances = (k, n_samples)
         Ok(distances)
+    }
+
+    /// Distances to k-nearest neighbors for each sample (excluding self).
+    /// Returns (n_samples, k), where row i contains the sorted k smallest distances to other points.
+    pub fn distances(&self, x: &Array2<f64>) -> AppResult<Array2<f64>> {
+        let n_samples = x.nrows();
+        assert!(self.k < n_samples, "k must be < number of samples");
+
+        let mut full = utils::euclidean_distances(x, x, None, None, false); // full = (n_samples, n_samples)
+        for i in 0..n_samples {
+            full[(i, i)] = f64::INFINITY; // ignore self
+        }
+
+        let mut knn = Array2::<f64>::zeros((n_samples, self.k)); // knn = (n_samples, k)
+        for (i, mut row) in knn.axis_iter_mut(Axis(0)).enumerate() {
+            let mut dists = full.row(i).to_vec();
+            dists.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+            for j in 0..self.k {
+                row[j] = dists[j];
+            }
+        }
+
+        Ok(knn)
+    }
+
+    /// Compute the within-cluster sum of squares for each cluster.
+    /// Returns a vector of length k where entry i is sum_{j in cluster i} ||x_j - c_i||^2.
+    /// x = (n_samples, n_features)
+    pub fn wcss(&self, x: &Array2<f64>) -> Option<Array1<f64>> {
+        let centers = self.cluster_centers.as_ref()?;
+        let labels = self.labels.as_ref()?;
+
+        if labels.len() != x.nrows() {
+            return None;
+        }
+        let n_clusters = centers.nrows();
+        let n_features = centers.ncols();
+
+        let mut per_cluster = Array1::<f64>::zeros(n_clusters);
+        for (idx, &label) in labels.iter().enumerate() {
+            if label >= n_clusters {
+                return None;
+            }
+            // diff = (n_features,)
+            let mut sq = 0.0;
+            for k in 0..n_features {
+                let d = x[(idx, k)] - centers[(label, k)];
+                sq += d * d;
+            }
+            per_cluster[label] += sq;
+        }
+        Some(per_cluster)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wcss_computes_expected_per_cluster() {
+        let mut knn = Knn::default();
+        let centers = array![[1.5, 1.5], [8.5, 8.5]]; // centers = (2, 2)
+        let labels = arr1(&[0_usize, 0, 1, 1]); // labels = (4,)
+        knn.cluster_centers = Some(centers);
+        knn.labels = Some(labels);
+
+        let x = array![[1.0, 1.0], [2.0, 2.0], [8.0, 8.0], [9.0, 9.0]]; // x = (4, 2)
+        let wcss = knn.wcss(&x).unwrap();
+        // Cluster 0: two points at distance sqrt(0.5^2+0.5^2)=~0.707 each => 0.5 per feature -> total 1.0
+        // Cluster 1: same -> total 1.0
+        assert_eq!(wcss, array![1.0, 1.0]);
+    }
+
+    #[test]
+    #[allow(clippy::field_reassign_with_default)]
+    fn wcss_returns_none_on_mismatched_shapes() {
+        let mut knn = Knn::default();
+        knn.cluster_centers = Some(array![[0.0, 0.0]]);
+        knn.labels = Some(arr1(&[0, 0]));
+
+        let x = array![[1.0, 1.0]]; // only one sample, labels expect two
+        assert!(knn.wcss(&x).is_none());
+    }
+
+    #[test]
+    fn distances_returns_k_neighbors_per_sample() {
+        let mut knn = Knn::default();
+        knn.set_k(2);
+        let x = array![[0.0], [1.0], [3.0]]; // x = (3, 1)
+
+        let dists = knn.distances(&x).unwrap(); // (3, 2)
+
+        let expected = array![
+            [1.0, 3.0], // from 0 -> neighbors at 1 and 3
+            [1.0, 2.0], // from 1 -> neighbors at 0 and 3
+            [2.0, 3.0], // from 3 -> neighbors at 1 and 0
+        ];
+        assert_eq!(dists, expected);
     }
 }

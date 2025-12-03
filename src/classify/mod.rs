@@ -7,7 +7,7 @@ pub(super) mod pca;
 use std::collections::HashMap;
 
 use async_openai::{Client, config::Config};
-use ndarray::prelude::*;
+use ndarray::{Slice, prelude::*};
 use serde::{Deserialize, Serialize};
 use tracing::{Span, debug, info, info_span, trace};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
@@ -130,8 +130,16 @@ pub async fn embed_urls<C: Config>(
 
     // compute k‐distance
     let mut knn = knn::Knn::default();
-    let kdists = knn.set_k(15).fit(&reduced)?.transform(&reduced)?;
-    let eps = linalg::select_eps_from_k_dists(&reduced, 15);
+    knn.set_k(25).fit(&reduced)?;
+    debug!("Computed k‐distance graph for k={}", knn.k);
+    let kdists = knn.distances(&reduced)?;
+    let dist_cols = kdists.ncols();
+    let kdists_slice: ArrayView1<f64> = kdists.slice(s![.., dist_cols - 1]);
+    trace!(
+        "K‐distance sample: {:?}",
+        kdists_slice.slice(s![..10.min(kdists_slice.len())])
+    );
+    let eps = linalg::elbow_kneedle(kdists_slice);
     debug!("Chosen eps for DBSCAN: {}", eps);
 
     // cluster with DBSCAN

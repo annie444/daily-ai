@@ -7,6 +7,7 @@ use clap::{
 };
 use clap_complete::aot::{Generator, Shell, generate};
 use clap_complete_nushell::Nushell;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 use time::Duration;
 use tracing::info;
 
@@ -78,7 +79,7 @@ pub enum Cmd {
         #[command(flatten)]
         default: DefaultArgs,
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 
     /// Collect data without summarizing
@@ -103,7 +104,7 @@ pub enum Cmd {
         shell: CompletionShell,
 
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 }
 
@@ -175,7 +176,7 @@ pub enum CollectCmd {
         #[command(flatten)]
         default: DefaultArgs,
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 
     /// Collect Safari browsing history
@@ -187,7 +188,7 @@ pub enum CollectCmd {
         #[command(flatten)]
         default: DefaultArgs,
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 
     /// Collect git commit history from local repositories
@@ -201,7 +202,7 @@ pub enum CollectCmd {
         #[command(flatten)]
         default: DefaultArgs,
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 
     /// Collect all data sources (shell history, Safari history, git history)
@@ -212,7 +213,7 @@ pub enum CollectCmd {
         #[command(flatten)]
         default: DefaultArgs,
         #[command(flatten)]
-        verbosity: clap_verbosity_flag::Verbosity,
+        verbosity: Verbosity<InfoLevel>,
     },
 }
 
@@ -278,7 +279,7 @@ pub trait GetDefaultArgs {
 
 /// Helper trait for accessing verbosity flags on commands.
 pub trait GetVerbosity {
-    fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity;
+    fn get_verbosity(&self) -> &Verbosity<InfoLevel>;
 }
 
 impl GetDefaultArgs for Cmd {
@@ -305,7 +306,7 @@ impl GetDefaultArgs for CollectCmd {
 }
 
 impl GetVerbosity for Cmd {
-    fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity {
+    fn get_verbosity(&self) -> &Verbosity<InfoLevel> {
         match self {
             Cmd::Summarize { verbosity, .. } => verbosity,
             Cmd::Collect { cmd } => cmd.get_verbosity(),
@@ -315,7 +316,7 @@ impl GetVerbosity for Cmd {
 }
 
 impl GetVerbosity for CollectCmd {
-    fn get_verbosity(&self) -> &clap_verbosity_flag::Verbosity {
+    fn get_verbosity(&self) -> &Verbosity<InfoLevel> {
         match self {
             CollectCmd::Shell { verbosity, .. } => verbosity,
             CollectCmd::Safari { verbosity, .. } => verbosity,
