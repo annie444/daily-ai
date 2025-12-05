@@ -23,12 +23,12 @@ use crate::git::{CommitMeta, GitRepoHistory};
 use crate::shell::ShellHistoryEntry;
 use crate::time_utils::system_time_to_offset_datetime;
 
-static SUMMARY_PROMPT: &str = std::include_str!("full_summary/summary_prompt.txt");
-static HIGHLIGHTS_PROMPT: &str = std::include_str!("full_summary/highlights_prompt.txt");
-static TIME_BREAKDOWN_PROMPT: &str = std::include_str!("full_summary/time_breakdown_prompt.txt");
-static COMMON_GROUPS_PROMPT: &str = std::include_str!("full_summary/common_groups_prompt.txt");
-static REPO_SUMMARIES_PROMPT: &str = std::include_str!("full_summary/repo_summaries_prompt.txt");
-static SHELL_OVERVIEW_PROMPT: &str = std::include_str!("full_summary/shell_overview_prompt.txt");
+static SUMMARY_PROMPT: &str = std::include_str!("full_summary/summary_prompt.md");
+static HIGHLIGHTS_PROMPT: &str = std::include_str!("full_summary/highlights_prompt.md");
+static TIME_BREAKDOWN_PROMPT: &str = std::include_str!("full_summary/time_breakdown_prompt.md");
+static COMMON_GROUPS_PROMPT: &str = std::include_str!("full_summary/common_groups_prompt.md");
+static REPO_SUMMARIES_PROMPT: &str = std::include_str!("full_summary/repo_summaries_prompt.md");
+static SHELL_OVERVIEW_PROMPT: &str = std::include_str!("full_summary/shell_overview_prompt.md");
 
 trait Query: JsonSchema + Serialize + for<'de> Deserialize<'de> {
     const PROMPT: &'static str;
