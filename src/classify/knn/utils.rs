@@ -4,8 +4,8 @@ use ndarray_rand::rand_distr::num_traits::Zero;
 use crate::classify::linalg::row_norms;
 
 pub fn pairwize_euclidean_distances(
-    x: &Array2<f64>,                     // x = (n_samples_x, n_features)
-    y: Option<&Array2<f64>>,             // y = (n_samples_y, n_features)
+    x: &Array2<f64>,                      // x = (n_samples_x, n_features)
+    y: Option<&Array2<f64>>,              // y = (n_samples_y, n_features)
     x_norm_squared: Option<&Array1<f64>>, // x_norm_squared = (n_samples_x,)
     y_norm_squared: Option<&Array1<f64>>, // y_norm_squared = (n_samples_y,)
     squared: bool,
@@ -40,8 +40,8 @@ where
 }
 
 pub fn euclidean_distances(
-    a: &Array2<f64>,                     // a = (n_a, n_features)
-    b: &Array2<f64>,                     // b = (n_b, n_features)
+    a: &Array2<f64>,                      // a = (n_a, n_features)
+    b: &Array2<f64>,                      // b = (n_b, n_features)
     a_norm_squared: Option<&Array1<f64>>, // a_norm_squared = (n_a,)
     b_norm_squared: Option<&Array1<f64>>, // b_norm_squared = (n_b,)
     squared: bool,

@@ -1176,6 +1176,7 @@ dependencies = [
  "ndarray",
  "ndarray-linalg",
  "ndarray-rand",
+ "nom 8.0.0",
  "reqwest 0.12.24",
  "safetensors 0.7.0",
  "schemars 1.1.0",
