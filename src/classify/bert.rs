@@ -1,10 +1,12 @@
-use std::path::Path;
+use std::io::Cursor;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::models::bert::{BertModel, Config as BertConfig};
 use futures::StreamExt;
+use murmur3::murmur3_x86_128;
 use tokenizers::tokenizer::Tokenizer;
 use tokio::io::AsyncWriteExt;
 use tracing::{Span, debug, info_span, warn};
@@ -22,6 +24,7 @@ pub struct BertEmbedder {
     device: Device,
     model: Arc<BertModel>,
     tokenizer: Arc<Tokenizer>,
+    cache_dir: PathBuf,
 }
 
 impl BertEmbedder {
@@ -145,6 +148,7 @@ impl BertEmbedder {
         skip(model_dir)
     )]
     pub fn new_from_dir<P: AsRef<Path>>(model_dir: P) -> AppResult<Self> {
+        let cache_dir = DirType::Cache.ensure_dir()?;
         let model_dir = model_dir.as_ref();
 
         // --- Load tokenizer ---------------------------------------------------
@@ -179,11 +183,26 @@ impl BertEmbedder {
             device,
             model: Arc::new(model),
             tokenizer: Arc::new(tokenizer),
+            cache_dir,
         })
     }
 
     /// Synchronous embedding of one text. You will call this from `spawn_blocking`.
     fn embed_text_blocking(&self, text: &str) -> AppResult<Vec<f32>> {
+        let text = text.trim();
+        let hash_result = murmur3_x86_128(&mut Cursor::new(text), 0)?;
+        let cache_path = self.cache_dir.join(format!("{hash_result}.bin"));
+        if cache_path.exists() {
+            // Load cached embedding.
+            let f = std::fs::File::open(&cache_path)?;
+            let reader = std::io::BufReader::new(f);
+            let vec: Vec<f32> = bincode::decode_from_reader(reader, bincode::config::standard())
+                .map_err(|e| {
+                    AppError::Other(format!("failed to deserialize cached embedding: {e}"))
+                })?;
+            return Ok(vec);
+        }
+
         // 1) Tokenize
         let encoding = self.tokenizer.encode(text, true)?;
 
@@ -219,6 +238,15 @@ impl BertEmbedder {
         // mean shape: [batch, hidden_dim] → [hidden_dim]
         let embedding = mean.squeeze(0)?.to_vec1::<f32>()?;
         debug_assert_eq!(embedding.len(), hidden_dim);
+
+        // Cache the embedding.
+        let mut f = std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .open(&cache_path)?;
+        bincode::encode_into_std_write(&embedding, &mut f, bincode::config::standard())
+            .map_err(|e| AppError::Other(format!("failed to serialize cached embedding: {e}")))?;
 
         Ok(embedding)
     }

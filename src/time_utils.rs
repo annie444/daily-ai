@@ -85,6 +85,18 @@ pub fn midnight_utc() -> OffsetDateTime {
     OffsetDateTime::new_utc(today.date(), Time::MIDNIGHT)
 }
 
+#[tracing::instrument(name = "Converting SystemTime to OffsetDateTime", level = "debug")]
+pub fn system_time_to_offset_datetime(st: std::time::SystemTime) -> OffsetDateTime {
+    let duration_since_epoch = st
+        .duration_since(std::time::SystemTime::UNIX_EPOCH)
+        .expect("SystemTime before UNIX EPOCH!");
+    OffsetDateTime::from_unix_timestamp_nanos(
+        (duration_since_epoch.as_secs() as i128) * 1_000_000_000
+            + (duration_since_epoch.subsec_nanos() as i128),
+    )
+    .unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -4,17 +4,17 @@ use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
-    CreateResponse, FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool,
-    FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole, Item,
-    MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort, RefusalContent,
-    ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration, Tool,
-    ToolChoiceOptions, ToolChoiceParam, Truncation,
+    CreateResponse, FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole,
+    Item, MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort,
+    RefusalContent, ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
+    Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
 };
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, trace, warn};
+use tracing::{debug, error, trace};
 
 use super::ResponseCleaner;
+use super::tools::{CustomTool, FetchUrl, unknown_tool};
 use crate::AppResult;
 use crate::safari::SafariHistoryItem;
 
@@ -31,16 +31,6 @@ impl Display for UrlLabel {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.label)
     }
-}
-
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
-struct FetchUrlParams {
-    /// URL to fetch.
-    pub url: String,
-    /// Optional starting line number to fetch from.
-    pub starting_line: Option<usize>,
-    /// Optional maximum number of lines to fetch.
-    pub max_lines: Option<usize>,
 }
 
 /// Label a cluster of URLs using the model; may call back into the `fetch_url` tool.
@@ -72,12 +62,7 @@ pub async fn label_url_cluster<C: Config>(
             status: None,
         },
     ))));
-    let tools = vec![Tool::Function(FunctionTool {
-        name: "fetch_url".to_string(),
-        description: Some("Fetches the content of a URL.".to_string()),
-        parameters: Some(schema_for!(FetchUrlParams).as_value().to_owned()),
-        strict: None,
-    })];
+    let tools = vec![Tool::Function(FetchUrl::definition())];
     let mut previous_response_id: Option<String> = None;
 
     loop {
@@ -127,6 +112,7 @@ pub async fn label_url_cluster<C: Config>(
                 }
             })
             .collect();
+
         if function_calls.is_empty() {
             let mut response_content = String::new();
             for out in &response.output {
@@ -157,96 +143,15 @@ pub async fn label_url_cluster<C: Config>(
                 }
             };
         }
+
         // Handle each tool call in sequence and feed results back to the model.
         for call in function_calls {
-            let function_name = call.name.as_str();
-            let arguments = &call.arguments;
-            match function_name {
-                "fetch_url" => {
-                    debug!("Processing tool call: fetch_url with args {}", arguments);
-                    let jd = &mut serde_json::Deserializer::from_str(arguments);
-                    let args: FetchUrlParams = match serde_path_to_error::deserialize(jd) {
-                        Ok(args) => {
-                            trace!("Parsed `fetch_url` arguments: {:?}", args);
-                            args
-                        }
-                        Err(e) => {
-                            error!("Failed to parse `get_file` arguments: {}", e);
-                            error!("Failed to parse JSON at path: {}", e.path());
-                            return Err(e.into_inner().into());
-                        }
-                    };
-                    let content = get_url(&args.url, args.starting_line, args.max_lines).await?;
-                    trace!(
-                        "Retrieved url content: {}",
-                        content[..std::cmp::min(100, content.len())].to_string()
-                    );
-                    input_items.push(InputItem::Item(Item::FunctionCall(call.clone())));
-                    input_items.push(InputItem::Item(Item::FunctionCallOutput(
-                        FunctionCallOutputItemParam {
-                            call_id: call.call_id,
-                            output: FunctionCallOutput::Text(content),
-                            id: None,
-                            status: None,
-                        },
-                    )));
+            match call.name.as_str() {
+                name if name == FetchUrl::name() => {
+                    input_items.extend(FetchUrl::process(call, &()).await);
                 }
-                _ => warn!("Unknown tool call: {}", function_name),
-            }
+                _ => input_items.extend(unknown_tool(call)),
+            };
         }
     }
-}
-
-/// Fetch URL content with optional line slicing; strips basic HTML to text.
-#[tracing::instrument(name = "Fetching the contents of a URL", level = "trace")]
-async fn get_url(
-    url: &str,
-    starting_line: Option<usize>,
-    max_lines: Option<usize>,
-) -> AppResult<String> {
-    let resp = reqwest::get(url).await?;
-    let ct = if let Some(content) = resp.headers().get("content-type") {
-        content.to_str().unwrap_or_default().to_string()
-    } else {
-        "text/plain".to_string()
-    };
-    let mut body = match (starting_line, max_lines) {
-        (Some(start), Some(max)) => resp
-            .text()
-            .await?
-            .lines()
-            .collect::<Vec<&str>>()
-            .iter()
-            .skip(start)
-            .take(max)
-            .cloned()
-            .collect::<Vec<&str>>()
-            .join("\n"),
-        (Some(start), None) => resp
-            .text()
-            .await?
-            .lines()
-            .collect::<Vec<&str>>()
-            .iter()
-            .skip(start)
-            .cloned()
-            .collect::<Vec<&str>>()
-            .join("\n"),
-        (None, Some(max)) => resp
-            .text()
-            .await?
-            .lines()
-            .collect::<Vec<&str>>()
-            .iter()
-            .take(max)
-            .cloned()
-            .collect::<Vec<&str>>()
-            .join("\n"),
-        (None, None) => resp.text().await?,
-    };
-    if ct.to_lowercase().contains("text/html") {
-        // Simple HTML stripping.
-        body = html2md::parse_html(&body);
-    }
-    Ok(body)
 }

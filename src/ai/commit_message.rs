@@ -5,18 +5,18 @@ use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
-    CreateResponse, FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool,
-    FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole, Item,
-    MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort, RefusalContent,
-    ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration, Tool,
-    ToolChoiceOptions, ToolChoiceParam, Truncation,
+    CreateResponse, FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole,
+    Item, MessageItem, OutputItem, OutputMessageContent, OutputStatus, Reasoning, ReasoningEffort,
+    RefusalContent, ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
+    Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
 };
 use git2::{Diff, Repository};
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, trace, warn};
+use tracing::{debug, error, trace};
 
 use super::ResponseCleaner;
+use super::tools::{CustomTool, unknown_tool};
 use crate::AppResult;
 use crate::git::diff::{get_diff_summary, get_file, get_patch};
 
@@ -41,10 +41,15 @@ impl Display for CommitMessage {
     }
 }
 
+pub struct CommitMessageToolContext<'a> {
+    pub repo: &'a Repository,
+    pub diff: &'a Diff<'a>,
+}
+
 /// # get_file
 /// Retrieve a file or a segment of a file from the repository.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
-struct GetFile {
+pub struct GetFile {
     /// Path to the file
     pub path: PathBuf,
     /// Optional starting line of the file (for partial retrieval)
@@ -53,16 +58,73 @@ struct GetFile {
     pub end_line: Option<usize>,
 }
 
+impl CustomTool for GetFile {
+    type Context<'a> = CommitMessageToolContext<'a>;
+
+    fn name() -> &'static str {
+        "get_file"
+    }
+
+    fn description() -> &'static str {
+        "Retrieve the contents of a file"
+    }
+
+    async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
+        match get_file(
+            context.repo,
+            context.diff,
+            &self.path,
+            self.start_line,
+            self.end_line,
+        ) {
+            Ok(content) => (OutputStatus::Completed, content),
+            Err(e) => {
+                let error_msg = format!("Error retrieving file {:?}: {}", self.path, e);
+                error!("{}", error_msg);
+                (OutputStatus::Incomplete, error_msg)
+            }
+        }
+    }
+}
+
 /// # get_patch
 /// Retrieve a patch or a segment of a patch from the repository.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
-struct GetPatch {
+pub struct GetPatch {
     /// Path to the file the patch applies to
     pub path: PathBuf,
     /// Optional starting line of the patch (for partial retrieval)
     pub start_line: Option<usize>,
     /// Optional ending line of the patch (for partial retrieval)
     pub end_line: Option<usize>,
+}
+
+impl CustomTool for GetPatch {
+    type Context<'a> = CommitMessageToolContext<'a>;
+
+    fn name() -> &'static str {
+        "get_patch"
+    }
+
+    fn description() -> &'static str {
+        "Retrieve a patch for a file"
+    }
+
+    async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
+        match get_patch(
+            context.diff,
+            &self.path,
+            self.start_line.map(|n| n as u32),
+            self.end_line.map(|n| n as u32),
+        ) {
+            Ok(content) => (OutputStatus::Completed, content),
+            Err(e) => {
+                let error_msg = format!("Error retrieving patch for {:?}: {}", self.path, e);
+                error!("{}", error_msg);
+                (OutputStatus::Incomplete, error_msg)
+            }
+        }
+    }
 }
 
 /// Generate a commit message using the model, optionally calling back into file/patch tools.
@@ -100,18 +162,8 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
     ))));
     let mut previous_response_id: Option<String> = None;
     let tools = vec![
-        Tool::Function(FunctionTool {
-            name: "get_patch".to_string(),
-            description: Some("Retrieve a patch for a file".to_string()),
-            parameters: Some(schema_for!(GetPatch).as_value().to_owned()),
-            strict: None,
-        }),
-        Tool::Function(FunctionTool {
-            name: "get_file".to_string(),
-            description: Some("Retrieve the contents of a file".to_string()),
-            parameters: Some(schema_for!(GetFile).as_value().to_owned()),
-            strict: None,
-        }),
+        Tool::Function(GetPatch::definition()),
+        Tool::Function(GetFile::definition()),
     ];
 
     loop {
@@ -195,71 +247,19 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
 
         // Handle each tool call in order and feed results back into the conversation.
         for call in function_calls {
-            let function_name = call.name.as_str();
-            let arguments = &call.arguments;
-            match function_name {
-                "get_file" => {
-                    debug!("Processing tool call: get_file with args {}", arguments);
-                    let jd = &mut serde_json::Deserializer::from_str(arguments);
-                    let args: GetFile = match serde_path_to_error::deserialize(jd) {
-                        Ok(args) => {
-                            trace!("Parsed `get_file` arguments: {:?}", args);
-                            args
-                        }
-                        Err(e) => {
-                            error!("Failed to parse `get_file` arguments: {}", e);
-                            error!("Failed to parse JSON at path: {}", e.path());
-                            return Err(e.into_inner().into());
-                        }
-                    };
-                    let content = get_file(repo, diff, &args.path, args.start_line, args.end_line)
-                        .unwrap_or_default();
-                    trace!("Retrieved file content: {}", content);
-                    input_items.push(InputItem::Item(Item::FunctionCall(call.clone())));
-                    input_items.push(InputItem::Item(Item::FunctionCallOutput(
-                        FunctionCallOutputItemParam {
-                            call_id: call.call_id,
-                            output: FunctionCallOutput::Text(content),
-                            id: None,
-                            status: None,
-                        },
-                    )));
+            match call.name.as_str() {
+                name if name == GetFile::name() => {
+                    input_items.extend(
+                        GetFile::process(call, &CommitMessageToolContext { repo, diff }).await,
+                    );
                 }
-                "get_patch" => {
-                    debug!("Processing tool call: get_patch with args {}", arguments);
-                    let jd = &mut serde_json::Deserializer::from_str(arguments);
-                    let args: GetPatch = match serde_path_to_error::deserialize(jd) {
-                        Ok(args) => {
-                            trace!("Parsed `get_patch` arguments: {:?}", args);
-                            args
-                        }
-                        Err(e) => {
-                            error!("Failed to parse `get_patch` arguments: {}", e);
-                            error!("Failed to parse JSON at path: {}", e.path());
-                            return Err(e.into_inner().into());
-                        }
-                    };
-                    let content = get_patch(
-                        diff,
-                        &args.path,
-                        args.start_line.map(|n| n as u32),
-                        args.end_line.map(|n| n as u32),
-                    )
-                    .unwrap_or_default();
-                    trace!("Retrieved patch content: {}", content);
-
-                    input_items.push(InputItem::Item(Item::FunctionCall(call.clone())));
-                    input_items.push(InputItem::Item(Item::FunctionCallOutput(
-                        FunctionCallOutputItemParam {
-                            call_id: call.call_id,
-                            output: FunctionCallOutput::Text(content),
-                            id: None,
-                            status: None,
-                        },
-                    )));
+                name if name == GetPatch::name() => {
+                    input_items.extend(
+                        GetPatch::process(call, &CommitMessageToolContext { repo, diff }).await,
+                    );
                 }
-                _ => warn!("Unknown tool call: {}", function_name),
-            }
+                _ => input_items.extend(unknown_tool(call)),
+            };
         }
     }
 }

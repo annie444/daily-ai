@@ -69,4 +69,11 @@ impl DirType {
         tokio::fs::create_dir_all(&dir).await?;
         Ok(dir)
     }
+
+    /// Ensure the directory exists, creating it if needed.
+    pub fn ensure_dir(&self) -> AppResult<PathBuf> {
+        let dir = self.get_dir()?;
+        std::fs::create_dir_all(&dir)?;
+        Ok(dir)
+    }
 }

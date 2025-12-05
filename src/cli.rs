@@ -11,7 +11,11 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 use time::Duration;
 use tracing::info;
 
-use crate::{AppResult, classify, context::Context, git, safari, shell};
+use crate::{
+    AppResult, ai, classify,
+    context::{Context, FullContext},
+    git, safari, shell,
+};
 
 const STYLES: Styles = Styles::styled()
     .header(Style::new().bold())
@@ -342,7 +346,7 @@ fn get_duration(duration_str: &Option<String>) -> Duration {
 impl Cmd {
     /// Execute the chosen top-level command.
     #[tracing::instrument(name = "Running command", level = "info", skip(self, client))]
-    pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<Context> {
+    pub async fn run<C: Config>(&self, client: &Client<C>) -> AppResult<FullContext> {
         match self {
             Cmd::Summarize {
                 shell: ShellCollectArgs { sync },
@@ -352,7 +356,7 @@ impl Cmd {
                 self.run_summarize(client, *sync, get_duration(duration))
                     .await
             }
-            Cmd::Collect { cmd } => cmd.run(client).await,
+            Cmd::Collect { cmd } => Ok(cmd.run(client).await?.into()),
             Cmd::Completion { shell, output, .. } => {
                 let mut cmd = Cli::command();
                 if let Some(output_path) = output {
@@ -387,7 +391,7 @@ impl Cmd {
         client: &Client<C>,
         sync: bool,
         duration: Duration,
-    ) -> AppResult<Context> {
+    ) -> AppResult<FullContext> {
         // Collect shell, Safari, and git history, then return the aggregated context.
         let shell_history = shell::get_history(sync, &duration).await?;
 
@@ -396,11 +400,15 @@ impl Cmd {
 
         let commit_history = git::get_git_history(client, &shell_history, &duration).await?;
 
-        Ok(Context {
+        let ctx = Context {
             shell_history,
             safari_history,
             commit_history,
-        })
+        };
+
+        let summary = ai::summary::generate_summary(client, &ctx).await?;
+
+        Ok(FullContext::from((ctx, summary)))
     }
 }
 

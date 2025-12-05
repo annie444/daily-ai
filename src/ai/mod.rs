@@ -1,5 +1,7 @@
 pub mod commit_message;
 pub mod label_urls;
+pub mod summary;
+pub mod tools;
 
 use async_openai::Client;
 use async_openai::config::{Config, OpenAIConfig};

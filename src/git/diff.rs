@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use tracing::error;
 
 use crate::AppResult;
+use crate::error::AppError;
 
 /// Captures the source and destination paths for rename/copy deltas.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash)]
@@ -28,7 +29,7 @@ pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
     path: P,
     start_line: Option<usize>,
     end_line: Option<usize>,
-) -> Option<String> {
+) -> AppResult<String> {
     // Identify the first delta that matches either old or new path.
     let mut chosen: Option<DiffDelta> = None;
     for delta in diff.deltas() {
@@ -48,38 +49,58 @@ pub fn get_file<P: AsRef<Path> + std::fmt::Debug>(
         }
     }
 
-    let delta = chosen?;
+    let delta = match chosen {
+        Some(d) => d,
+        None => {
+            let error_msg = format!("Path {} not found in diff", path.as_ref().display());
+            error!(error_msg);
+            return Err(AppError::Other(error_msg));
+        }
+    };
     // Prefer the new file content; fall back to old for deletions.
     let blob_id = delta.new_file().id();
 
-    let blob = repo.find_blob(blob_id).ok()?;
+    let blob = match repo.find_blob(blob_id) {
+        Ok(b) => b,
+        Err(e) => {
+            let error_msg = format!("Failed to find blob for {}: {e}", path.as_ref().display());
+            error!(error_msg);
+            return Err(AppError::Other(error_msg));
+        }
+    };
     let content = blob.content();
     let text = match std::str::from_utf8(content) {
         Ok(s) => s,
         Err(e) => {
-            error!("Non-utf8 content for {}: {}", path.as_ref().display(), e);
-            return None;
+            let error_msg = format!("Non-utf8 content for {}: {e}", path.as_ref().display());
+            error!(error_msg);
+            return Err(AppError::Other(error_msg));
         }
     };
 
     if start_line.is_none() && end_line.is_none() {
-        return Some(text.to_string());
+        return Ok(text.to_string());
     }
 
     let lines: Vec<&str> = text.split('\n').collect();
     let start = start_line.unwrap_or(1);
     let end = end_line.unwrap_or(lines.len());
-    if start == 0 || start > end {
-        return None;
+    if start == 0 || start > end || start > lines.len() {
+        let error_msg = format!(
+            "Invalid line range {start}-{end} for file {}. This file has {} lines.",
+            path.as_ref().display(),
+            lines.len()
+        );
+        error!(error_msg);
+        return Err(AppError::Other(error_msg));
     }
-    let slice_start = start.saturating_sub(1);
     let slice_end = end.min(lines.len());
-    let mut out = lines[slice_start..slice_end].join("\n");
+    let mut out = lines[start..=slice_end].join("\n");
     // Re-add trailing newline if the original had one and we sliced to the end.
     if text.ends_with('\n') && slice_end == lines.len() {
         out.push('\n');
     }
-    Some(out)
+    Ok(out)
 }
 
 /// Path plus rendered patch content for a single file.
@@ -309,7 +330,7 @@ pub fn get_patch<P: AsRef<Path> + std::fmt::Debug>(
     path: &P,
     start_line: Option<u32>,
     end_line: Option<u32>,
-) -> Option<String> {
+) -> AppResult<String> {
     for (idx, delta) in diff.deltas().enumerate() {
         let matches_new = delta
             .new_file()
@@ -377,18 +398,30 @@ pub fn get_patch<P: AsRef<Path> + std::fmt::Debug>(
                     true
                 });
 
-                return Some(rendered);
+                return Ok(rendered);
             }
             Ok(None) => {
                 // Binary or otherwise unavailable.
-                return None;
+                let error_msg = format!(
+                    "No patch available for binary or unavailable file: {}",
+                    path.as_ref().display()
+                );
+                error!(error_msg);
+                return Err(AppError::Other(error_msg));
             }
             Err(e) => {
-                error!("Failed to build patch for {:?}: {}", path, e);
-                return None;
+                let error_msg = format!(
+                    "Failed to build patch for {}. Got error {e}",
+                    path.as_ref().display(),
+                );
+                error!(error_msg);
+                return Err(AppError::Other(error_msg));
             }
         }
     }
 
-    None
+    Err(AppError::Other(format!(
+        "Path {} not found in diff",
+        path.as_ref().display()
+    )))
 }

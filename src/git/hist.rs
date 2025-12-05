@@ -87,7 +87,9 @@ fn head_tree_and_parents<'b, 'a: 'b>(
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CommitMeta {
-    pub message: String,
+    pub summary: String,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub body: Option<String>,
     #[serde(with = "crate::serde_helpers::offset_datetime")]
     pub timestamp: OffsetDateTime,
     pub branches: Vec<String>,
@@ -184,8 +186,18 @@ fn collect_recent_commits<'repo>(
             oldest_commit = Some(commit.clone());
         }
 
+        let (summary, body) = if let Some(idx) = message.find('\n') {
+            (
+                message[..idx].trim().to_string(),
+                Some(message[idx + 1..].trim().to_string()),
+            )
+        } else {
+            (message.clone(), None)
+        };
+
         daily_commits.push(CommitMeta {
-            message,
+            summary,
+            body,
             timestamp,
             branches,
         });

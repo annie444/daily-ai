@@ -19,7 +19,7 @@ use crate::AppResult;
 use crate::error::AppError;
 
 /// Represents a single shell command execution retrieved from Atuin.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ShellHistoryEntry {
     #[serde(with = "crate::serde_helpers::offset_datetime")]
     pub date_time: OffsetDateTime,

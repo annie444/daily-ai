@@ -8,7 +8,7 @@ use tracing::debug;
 
 use crate::AppResult;
 use crate::cli::OutputFormat;
-use crate::context::Context;
+use crate::context::FullContext;
 use crate::git::diff::{DiffFromTo, DiffSummary, DiffWithPatch};
 
 /// Aggregated view of paths per repository used when writing summaries to disk.
@@ -29,7 +29,7 @@ pub struct RepoPathsSummary {
 pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
     output: P,
     format: &OutputFormat,
-    context: &Context,
+    context: &FullContext,
 ) -> AppResult<()> {
     match format {
         OutputFormat::Json => write_json_output(output, context).await,
@@ -45,7 +45,7 @@ pub async fn write_output<P: AsRef<Path> + std::fmt::Debug>(
 )]
 async fn write_dir_output<P: AsRef<Path> + std::fmt::Debug>(
     output: P,
-    context: &Context,
+    context: &FullContext,
 ) -> AppResult<()> {
     // Ensure base output directory exists.
     fs::create_dir_all(&output).await?;
@@ -160,7 +160,6 @@ mod tests {
 
     use crate::{
         classify::UrlCluster,
-        context::Context,
         git::diff::{DiffFromTo, DiffSummary, DiffWithPatch},
         git::hist::{CommitMeta, GitRepoHistory},
         safari::SafariHistoryItem,
@@ -176,7 +175,7 @@ mod tests {
         dir
     }
 
-    fn sample_context() -> Context {
+    fn sample_context() -> FullContext {
         let shell_history = vec![ShellHistoryEntry {
             date_time: OffsetDateTime::UNIX_EPOCH,
             duration: Duration::seconds(1),
@@ -215,16 +214,18 @@ mod tests {
             conflicted: HashSet::new(),
         };
         let commits = vec![CommitMeta {
-            message: "init".into(),
+            summary: "init".into(),
+            body: None,
             timestamp: OffsetDateTime::UNIX_EPOCH,
             branches: vec!["main".into()],
         }];
         let commit_history = vec![GitRepoHistory { diff, commits }];
 
-        Context {
+        FullContext {
             shell_history,
             safari_history,
             commit_history,
+            summary: None,
         }
     }
 

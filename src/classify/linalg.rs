@@ -7,34 +7,6 @@ use tracing::warn;
 use crate::AppResult;
 use crate::safari::SafariHistoryItem;
 
-/// Compute full pairwise Euclidean distance matrix.
-/// X: (n_samples, n_features)
-fn pairwise_distances(x: &Array2<f64>) -> Array2<f64> {
-    let n = x.nrows();
-
-    // Gram matrix: G[i,j] = x_i · x_j
-    let gram: Array2<f64> = x.dot(&x.t());
-
-    // Squared norms ||x_i||^2 for each row
-    let norms2: Array1<f64> = x
-        .axis_iter(Axis(0))
-        .map(|row| row.mapv(|v| v * v).sum())
-        .collect();
-
-    let mut dists2 = Array2::<f64>::zeros((n, n));
-
-    for i in 0..n {
-        for j in 0..n {
-            let val = norms2[i] + norms2[j] - 2.0 * gram[(i, j)];
-            // numerical safety: distances can't be negative
-            dists2[(i, j)] = if val > 0.0 { val } else { 0.0 };
-        }
-    }
-
-    // sqrt to get Euclidean distances
-    dists2.mapv(|v| v.sqrt())
-}
-
 pub fn row_norms<D>(
     x: &ArrayBase<OwnedRepr<f64>, D>,
     squared: bool,

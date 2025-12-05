@@ -7,7 +7,7 @@ pub(super) mod pca;
 use std::collections::HashMap;
 
 use async_openai::{Client, config::Config};
-use ndarray::{Slice, prelude::*};
+use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
 use tracing::{Span, debug, info, info_span, trace};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
@@ -18,7 +18,7 @@ use crate::ai::label_urls::label_url_cluster;
 use crate::safari::SafariHistoryItem;
 
 /// Cluster of Safari URLs with a human-friendly label.
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UrlCluster {
     pub label: String,
     pub urls: Vec<SafariHistoryItem>,
