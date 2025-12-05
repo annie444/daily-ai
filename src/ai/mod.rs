@@ -23,137 +23,198 @@ pub fn get_lm_studio_client<S: AsRef<str> + std::fmt::Debug>(
 }
 
 /// A utility to clean up responses from language models to extract valid JSON.
+#[derive(Debug, PartialEq, Clone, Copy)]
+enum Expectation {
+    Value,
+    Key,
+    Colon,
+    CommaOrEnd,
+    Done,
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+enum Container {
+    Object,
+    Array,
+}
+
 pub(super) struct ResponseCleaner<'cleaner> {
-    /// The raw response string from the language model.
     response: &'cleaner str,
-    /// State tracking for parsing braces (`{` or `}`)
-    in_braces: bool,
-    /// State tracking for parsing brackets (`[` or `]`)
-    in_brackets: bool,
-    /// State tracking for parsing quotes (`"`)
+    stack: Vec<Container>,
+    expect: Expectation,
     in_quotes: bool,
-    /// State tracking for escape characters (`\`)
     is_escaped: bool,
-    /// State tracking for numeric values
     in_number: bool,
+    literal_buffer: String,
 }
 
 impl<'cleaner> ResponseCleaner<'cleaner> {
-    /// Create a new ResponseCleaner instance.
     pub fn new(response: &'cleaner str) -> Self {
         info!("Cleaning AI response: {response}");
         Self {
             response,
-            in_braces: false,
-            in_brackets: false,
+            stack: Vec::new(),
+            expect: Expectation::Value,
             in_quotes: false,
             is_escaped: false,
             in_number: false,
+            literal_buffer: String::new(),
         }
     }
 
-    // Attempt to deserialize the response content into proper JSON by filtering out any extraneous text.
-    // This is a bit of a hack, but it helps with models that may include extra text around the JSON.
-    // We track whether we're inside quotes or brackets to ensure we capture the full JSON object.
-    // This assumes the JSON object is the outermost structure in the response.
-    // This may need to be adjusted for more complex scenarios.
-    // For now, we assume the response is a single JSON object.
-    //
-    // Example response:
-    //
-    // !{
-    //   !"label": "Tech News and Articles"
-    // }
-    // We want to extract:
-    // {
-    //   "label": "Tech News and Articles"
-    // }
-    //
-    // We do this by iterating through the characters and tracking our position.
-    // When we encounter a '{', we start capturing until we find the matching '}'.
-    // We also need to handle quotes to avoid prematurely ending the capture.
-    // This is a simple state machine approach.
     pub fn clean(&mut self) -> String {
-        self.response
-            .chars()
-            .filter(|c| match c {
-                '\\' if !self.is_escaped && (self.in_braces || self.in_brackets) => {
+        let mut output = String::with_capacity(self.response.len());
+        
+        for c in self.response.chars() {
+            if self.is_escaped {
+                self.is_escaped = false;
+                if self.in_quotes {
+                    output.push(c);
+                }
+                continue;
+            }
+
+            if self.in_quotes {
+                if c == '\\' {
                     self.is_escaped = true;
-                    true
+                    output.push(c);
+                } else if c == '"' {
+                    self.in_quotes = false;
+                    output.push(c);
+                    
+                    if self.expect == Expectation::Key {
+                        self.expect = Expectation::Colon;
+                    } else {
+                        // Finished value
+                        self.transition_after_value();
+                    }
+                } else {
+                    output.push(c);
                 }
-                '"' if !self.is_escaped && (self.in_braces || self.in_brackets) => {
-                    self.in_quotes = !self.in_quotes;
-                    true
+                continue;
+            }
+
+            // Outside quotes
+
+            // Handle Number termination
+            if self.in_number {
+                 match c {
+                     '0'..='9' | '.' | '-' | '+' | 'e' | 'E' => {
+                         output.push(c);
+                         continue;
+                     }
+                     _ => {
+                         self.in_number = false;
+                         self.transition_after_value();
+                     }
+                 }
+            }
+
+            // Handle Literal termination
+            if !self.literal_buffer.is_empty() {
+                if c.is_ascii_alphabetic() {
+                    self.literal_buffer.push(c);
+                    continue;
+                } else {
+                     let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
+                     if valid && self.expect == Expectation::Value {
+                         output.push_str(&self.literal_buffer);
+                         self.transition_after_value();
+                     }
+                     self.literal_buffer.clear();
                 }
-                '"' if self.is_escaped => {
-                    self.is_escaped = false;
-                    true
+            }
+            
+            // Check literal start
+            if c.is_ascii_alphabetic() {
+                self.literal_buffer.push(c);
+                continue;
+            }
+            
+            // Check number start
+            if (c == '-' || c.is_ascii_digit()) && self.expect == Expectation::Value {
+                self.in_number = true;
+                output.push(c);
+                continue;
+            }
+
+            // Structural chars
+            match c {
+                '{' => {
+                    if self.expect == Expectation::Value {
+                        self.stack.push(Container::Object);
+                        self.expect = Expectation::Key;
+                        output.push(c);
+                    }
                 }
-                '[' if !self.in_quotes && !self.is_escaped => {
-                    self.in_number = false;
-                    self.in_brackets = true;
-                    true
+                '[' => {
+                    if self.expect == Expectation::Value {
+                        self.stack.push(Container::Array);
+                        self.expect = Expectation::Value;
+                        output.push(c);
+                    }
                 }
-                '[' if self.is_escaped => {
-                    self.is_escaped = false;
-                    true
+                '}' => {
+                    if let Some(Container::Object) = self.stack.last() {
+                         if self.expect == Expectation::Key || self.expect == Expectation::CommaOrEnd {
+                             self.stack.pop();
+                             self.transition_after_value();
+                             output.push(c);
+                         }
+                    }
                 }
-                ']' if !self.in_quotes && !self.is_escaped => {
-                    self.in_number = false;
-                    self.in_brackets = false;
-                    true
+                ']' => {
+                    if let Some(Container::Array) = self.stack.last() {
+                         if self.expect == Expectation::Value || self.expect == Expectation::CommaOrEnd {
+                             self.stack.pop();
+                             self.transition_after_value();
+                             output.push(c);
+                         }
+                    }
                 }
-                ']' if self.is_escaped => {
-                    self.is_escaped = false;
-                    true
+                '"' => {
+                    if self.expect == Expectation::Key || self.expect == Expectation::Value {
+                        self.in_quotes = true;
+                        output.push(c);
+                    }
                 }
-                '{' if !self.in_quotes && !self.is_escaped => {
-                    self.in_number = false;
-                    self.in_braces = true;
-                    true
+                ':' => {
+                    if self.expect == Expectation::Colon {
+                        self.expect = Expectation::Value;
+                        output.push(c);
+                    }
                 }
-                '{' if self.is_escaped => {
-                    self.is_escaped = false;
-                    true
+                ',' => {
+                    if self.expect == Expectation::CommaOrEnd {
+                        if let Some(container) = self.stack.last() {
+                            match container {
+                                Container::Object => self.expect = Expectation::Key,
+                                Container::Array => self.expect = Expectation::Value,
+                            }
+                            output.push(c);
+                        }
+                    }
                 }
-                '}' if !self.in_quotes && !self.is_escaped => {
-                    self.in_number = false;
-                    self.in_braces = false;
-                    true
-                }
-                '}' if self.is_escaped => {
-                    self.is_escaped = false;
-                    true
-                }
-                ':' if self.in_braces || self.in_quotes => {
-                    self.is_escaped = false;
-                    true
-                }
-                ',' if self.in_brackets || self.in_quotes || self.in_braces => {
-                    self.in_number = false;
-                    self.is_escaped = false;
-                    true
-                }
-                '0'..='9' if !self.is_escaped && (self.in_braces || self.in_brackets) => {
-                    self.in_number = true;
-                    true
-                }
-                '0'..='9' if self.in_quotes => {
-                    self.is_escaped = false;
-                    true
-                }
-                '.' if self.in_number && !self.is_escaped => true,
-                '.' if self.in_quotes => {
-                    self.is_escaped = false;
-                    true
-                }
-                _ => {
-                    self.in_number = false;
-                    self.is_escaped = false;
-                    self.in_quotes
-                }
-            })
-            .collect()
+                _ => {} // Discard noise
+            }
+        }
+        
+        // Final flush
+        if !self.literal_buffer.is_empty() {
+             let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
+             if valid && self.expect == Expectation::Value {
+                 output.push_str(&self.literal_buffer);
+             }
+        }
+
+        output
+    }
+
+    fn transition_after_value(&mut self) {
+        self.expect = Expectation::CommaOrEnd;
+        if self.stack.is_empty() {
+            self.expect = Expectation::Done;
+        }
     }
 }
 
@@ -163,7 +224,7 @@ mod tests {
 
     #[test]
     fn cleans_simple_object_with_noise() {
-        let resp = "random prefix {\"label\": \"Tech\", \"duration\": 1275.0} trailing";
+        let resp = "random prefix {\"label\": other chars \"Tech\", should be 12 trimmed \"duration\": 1275.0} trailing";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
         assert_eq!(cleaned, "{\"label\":\"Tech\",\"duration\":1275.0}");
@@ -171,7 +232,7 @@ mod tests {
 
     #[test]
     fn preserves_brackets_and_quotes_inside() {
-        let resp = "### [{\"label\": \"A [bracket] test\", \"with_num\": 1234}] ###";
+        let resp = "### [{\"label\": \"A [bracket] test\", # \"with_num\": 1234!Ld}] ###";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
         assert_eq!(
@@ -182,7 +243,7 @@ mod tests {
 
     #[test]
     fn handles_escaped_quotes_inside_string() {
-        let resp = "!! {\"Number\": 1567,      \"label\": \"He said \\\"hi\\\"\"} !!";
+        let resp = "!! {\"Number\": 1567,   1.-   \"label\": \"He said \\\"hi\\\"\"} !!";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
         assert_eq!(
