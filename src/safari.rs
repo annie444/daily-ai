@@ -97,6 +97,20 @@ pub async fn get_safari_history(duration: &Duration) -> AppResult<Vec<SafariHist
 
     let safari_history = history_items
         .into_iter()
+        .filter(|(item, _)| {
+            let mut url = item.url.to_lowercase();
+            url = url.replace("https://", "");
+            url = url.replace("http://", "");
+            let domain = url.rsplit_once('/').map(|(base, _)| base).unwrap_or(&url);
+            let (domain, path) = domain.split_once('/').unwrap_or((domain, ""));
+            !domain.contains("oauth")
+                && !domain.contains("login")
+                && !path.contains("auth")
+                && !path.contains("signin")
+                && !domain.contains("sso")
+                && !path.contains("callback")
+                && !domain.contains("duosecurity")
+        })
         .map(|(item, visits)| {
             // Use the first visit (most recent, due to order_by_desc) to drive title and timestamp.
             let last_visited = visits.first().map_or(mid, |visit| {
