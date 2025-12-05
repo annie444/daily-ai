@@ -38,7 +38,7 @@ async fn build_cluster_output<C: Config>(
 
     let header_span = info_span!("Labeling URL groups...");
     header_span.pb_set_message("Labeling...");
-    header_span.pb_set_finish_message("Embedding complete");
+    header_span.pb_set_finish_message("Labeling complete");
     header_span.pb_set_length(grouped.len() as u64);
     header_span.pb_set_style(
         &ProgressStyle::default_bar()
@@ -73,6 +73,9 @@ async fn build_cluster_output<C: Config>(
             urls: misc,
         });
     }
+
+    drop(header_span_enter);
+    drop(header_span);
 
     Ok(clusters)
 }

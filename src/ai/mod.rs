@@ -33,6 +33,8 @@ pub(super) struct ResponseCleaner<'cleaner> {
     in_quotes: bool,
     /// State tracking for escape characters (`\`)
     is_escaped: bool,
+    /// State tracking for numeric values
+    in_number: bool,
 }
 
 impl<'cleaner> ResponseCleaner<'cleaner> {
@@ -44,6 +46,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
             in_brackets: false,
             in_quotes: false,
             is_escaped: false,
+            in_number: false,
         }
     }
 
@@ -85,6 +88,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     true
                 }
                 '[' if !self.in_quotes && !self.is_escaped => {
+                    self.in_number = false;
                     self.in_brackets = true;
                     true
                 }
@@ -93,6 +97,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     true
                 }
                 ']' if !self.in_quotes && !self.is_escaped => {
+                    self.in_number = false;
                     self.in_brackets = false;
                     true
                 }
@@ -101,6 +106,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     true
                 }
                 '{' if !self.in_quotes && !self.is_escaped => {
+                    self.in_number = false;
                     self.in_braces = true;
                     true
                 }
@@ -109,6 +115,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     true
                 }
                 '}' if !self.in_quotes && !self.is_escaped => {
+                    self.in_number = false;
                     self.in_braces = false;
                     true
                 }
@@ -121,10 +128,25 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     true
                 }
                 ',' if self.in_brackets || self.in_quotes || self.in_braces => {
+                    self.in_number = false;
+                    self.is_escaped = false;
+                    true
+                }
+                '0'..='9' if !self.is_escaped && (self.in_braces || self.in_brackets) => {
+                    self.in_number = true;
+                    true
+                }
+                '0'..='9' if self.in_quotes => {
+                    self.is_escaped = false;
+                    true
+                }
+                '.' if self.in_number && !self.is_escaped => true,
+                '.' if self.in_quotes => {
                     self.is_escaped = false;
                     true
                 }
                 _ => {
+                    self.in_number = false;
                     self.is_escaped = false;
                     self.in_quotes
                 }
@@ -139,10 +161,10 @@ mod tests {
 
     #[test]
     fn cleans_simple_object_with_noise() {
-        let resp = "random prefix {\"label\": \"Tech\"} trailing";
+        let resp = "random prefix {\"label\": \"Tech\", \"duration\": 1275.0} trailing";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
-        assert_eq!(cleaned, "{\"label\":\"Tech\"}");
+        assert_eq!(cleaned, "{\"label\":\"Tech\",\"duration\":1275.0}");
     }
 
     #[test]
