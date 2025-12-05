@@ -65,7 +65,8 @@ fn get_safari_history_db_path() -> PathBuf {
 async fn connect_to_db<P: AsRef<Path> + std::fmt::Debug>(
     db_path: P,
 ) -> AppResult<DatabaseConnection> {
-    let opt = ConnectOptions::new(format!("sqlite://{}", db_path.as_ref().display()));
+    let mut opt = ConnectOptions::new(format!("sqlite://{}", db_path.as_ref().display()));
+    opt.sqlx_logging(false);
     trace!("Connecting to Safari History database");
     let db = Database::connect(opt).await?;
     Ok(db)

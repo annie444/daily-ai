@@ -62,9 +62,6 @@ async fn build_cluster_output<C: Config>(
         Span::current().pb_inc(1);
     }
 
-    drop(header_span_enter);
-    drop(header_span);
-
     if !misc.is_empty() {
         info!("Labeling miscellaneous URLs...");
         let label = label_url_cluster(client, &misc).await?;
@@ -74,8 +71,8 @@ async fn build_cluster_output<C: Config>(
         });
     }
 
-    drop(header_span_enter);
-    drop(header_span);
+    std::mem::drop(header_span_enter);
+    std::mem::drop(header_span);
 
     Ok(clusters)
 }

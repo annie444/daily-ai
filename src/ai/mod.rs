@@ -5,6 +5,7 @@ pub mod tools;
 
 use async_openai::Client;
 use async_openai::config::{Config, OpenAIConfig};
+use tracing::info;
 
 /// Build an async-openai client pointed at an LM Studio-compatible server.
 #[tracing::instrument(name = "Connecting to local LLM server", level = "debug")]
@@ -40,6 +41,7 @@ pub(super) struct ResponseCleaner<'cleaner> {
 impl<'cleaner> ResponseCleaner<'cleaner> {
     /// Create a new ResponseCleaner instance.
     pub fn new(response: &'cleaner str) -> Self {
+        info!("Cleaning AI response: {response}");
         Self {
             response,
             in_braces: false,
@@ -169,17 +171,23 @@ mod tests {
 
     #[test]
     fn preserves_brackets_and_quotes_inside() {
-        let resp = "### [{\"label\": \"A [bracket] test\"}] ###";
+        let resp = "### [{\"label\": \"A [bracket] test\", \"with_num\": 1234}] ###";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
-        assert_eq!(cleaned, "[{\"label\":\"A [bracket] test\"}]");
+        assert_eq!(
+            cleaned,
+            "[{\"label\":\"A [bracket] test\",\"with_num\":1234}]"
+        );
     }
 
     #[test]
     fn handles_escaped_quotes_inside_string() {
-        let resp = "!! {\"label\": \"He said \\\"hi\\\"\"} !!";
+        let resp = "!! {\"Number\": 1567,      \"label\": \"He said \\\"hi\\\"\"} !!";
         let mut cleaner = ResponseCleaner::new(resp);
         let cleaned = cleaner.clean();
-        assert_eq!(cleaned, "{\"label\":\"He said \\\"hi\\\"\"}");
+        assert_eq!(
+            cleaned,
+            "{\"Number\":1567,\"label\":\"He said \\\"hi\\\"\"}"
+        );
     }
 }
