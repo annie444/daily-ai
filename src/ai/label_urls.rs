@@ -147,7 +147,7 @@ pub async fn label_url_cluster<C: Config>(
         // Handle each tool call in sequence and feed results back to the model.
         for call in function_calls {
             match call.name.as_str() {
-                name if name == FetchUrl::name() => {
+                name if name == FetchUrl::NAME => {
                     input_items.extend(FetchUrl::process(call, &()).await);
                 }
                 _ => input_items.extend(unknown_tool(call)),

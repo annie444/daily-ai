@@ -59,19 +59,14 @@ struct GetDiff {
     /// Path to the repo
     pub repo: PathBuf,
     /// Optional path to the specific file to retrieve the diff for
+    #[serde(default)]
     pub file_path: Option<PathBuf>,
 }
 
 impl CustomTool for GetDiff {
     type Context<'a> = Vec<GitRepoHistory>;
-
-    fn name() -> &'static str {
-        "get_diff"
-    }
-
-    fn description() -> &'static str {
-        "Retrieve the complete diff of changes in a repository."
-    }
+    const NAME: &'static str = "get_diff";
+    const DESCRIPTION: &'static str = "Retrieve the complete diff of changes in a repository.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context.iter().find(|r| r.diff.repo_path == self.repo) {
@@ -196,14 +191,8 @@ struct GetRepo {
 
 impl CustomTool for GetRepo {
     type Context<'a> = Vec<GitRepoHistory>;
-
-    fn name() -> &'static str {
-        "get_repo"
-    }
-
-    fn description() -> &'static str {
-        "Retrieve the complete history of a repository."
-    }
+    const NAME: &'static str = "get_repo";
+    const DESCRIPTION: &'static str = "Retrieve the complete history of a repository.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context.iter().find(|r| r.diff.repo_path == self.repo) {
@@ -238,19 +227,14 @@ struct GetCommitMessages {
     /// Path to the repo
     pub repo: String,
     /// Maximum number of commit messages to retrieve
+    #[serde(default)]
     pub max_messages: Option<usize>,
 }
 
 impl CustomTool for GetCommitMessages {
     type Context<'a> = Vec<GitRepoHistory>;
-
-    fn name() -> &'static str {
-        "get_commit_messages"
-    }
-
-    fn description() -> &'static str {
-        "Get the list of commit messages collected."
-    }
+    const NAME: &'static str = "get_commit_messages";
+    const DESCRIPTION: &'static str = "Get the list of commit messages collected.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context
@@ -291,19 +275,14 @@ struct GetBrowserHistory {
     /// The group(s)/categor(y/ies) of URLs to retrieve
     pub groups: Option<Vec<String>>,
     /// Maximum number of URLs to retrieve
+    #[serde(default)]
     pub max_urls: Option<usize>,
 }
 
 impl CustomTool for GetBrowserHistory {
     type Context<'a> = Vec<UrlCluster>;
-
-    fn name() -> &'static str {
-        "get_browser_history"
-    }
-
-    fn description() -> &'static str {
-        "Get the browser history."
-    }
+    const NAME: &'static str = "get_browser_history";
+    const DESCRIPTION: &'static str = "Get the browser history.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let filtered_clusters: Vec<UrlCluster> = match &self.groups {
@@ -347,27 +326,26 @@ impl CustomTool for GetBrowserHistory {
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 struct GetShellHistory {
     /// Optional starting timestamp to retrieve history from
+    #[serde(default)]
     pub start_time: Option<String>,
     /// Optional ending timestamp to retrieve history to
+    #[serde(default)]
     pub end_time: Option<String>,
     /// Maximum number of shell history entries to retrieve
+    #[serde(default)]
     pub max_entries: Option<usize>,
     /// Optional filter for specific commands
+    #[serde(default)]
     pub command: Option<String>,
     /// Optional filter for specific directories
+    #[serde(default)]
     pub directory: Option<PathBuf>,
 }
 
 impl CustomTool for GetShellHistory {
     type Context<'a> = Vec<ShellHistoryEntry>;
-
-    fn name() -> &'static str {
-        "get_shell_history"
-    }
-
-    fn description() -> &'static str {
-        "Get the shell history."
-    }
+    const NAME: &'static str = "get_shell_history";
+    const DESCRIPTION: &'static str = "Get the shell history.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let mut history: Vec<ShellHistoryEntry> = if let Some(start_time) = &self.start_time {
@@ -590,24 +568,24 @@ pub async fn generate_summary<C: Config>(
         // Handle each tool call in order and feed results back into the conversation.
         for call in function_calls {
             match call.name.as_str() {
-                name if name == FetchUrl::name() => {
+                name if name == FetchUrl::NAME => {
                     input_items.extend(FetchUrl::process(call, &()).await);
                 }
-                name if name == GetDiff::name() => {
+                name if name == GetDiff::NAME => {
                     input_items.extend(GetDiff::process(call, &context.commit_history).await);
                 }
-                name if name == GetRepo::name() => {
+                name if name == GetRepo::NAME => {
                     input_items.extend(GetRepo::process(call, &context.commit_history).await);
                 }
-                name if name == GetCommitMessages::name() => {
+                name if name == GetCommitMessages::NAME => {
                     input_items
                         .extend(GetCommitMessages::process(call, &context.commit_history).await);
                 }
-                name if name == GetBrowserHistory::name() => {
+                name if name == GetBrowserHistory::NAME => {
                     input_items
                         .extend(GetBrowserHistory::process(call, &context.safari_history).await);
                 }
-                name if name == GetShellHistory::name() => {
+                name if name == GetShellHistory::NAME => {
                     input_items
                         .extend(GetShellHistory::process(call, &context.shell_history).await);
                 }

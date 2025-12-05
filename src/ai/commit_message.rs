@@ -60,14 +60,8 @@ pub struct GetFile {
 
 impl CustomTool for GetFile {
     type Context<'a> = CommitMessageToolContext<'a>;
-
-    fn name() -> &'static str {
-        "get_file"
-    }
-
-    fn description() -> &'static str {
-        "Retrieve the contents of a file"
-    }
+    const NAME: &'static str = "get_file";
+    const DESCRIPTION: &'static str = "Retrieve the contents of a file";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         match get_file(
@@ -101,14 +95,8 @@ pub struct GetPatch {
 
 impl CustomTool for GetPatch {
     type Context<'a> = CommitMessageToolContext<'a>;
-
-    fn name() -> &'static str {
-        "get_patch"
-    }
-
-    fn description() -> &'static str {
-        "Retrieve a patch for a file"
-    }
+    const NAME: &'static str = "get_patch";
+    const DESCRIPTION: &'static str = "Retrieve a patch for a file";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         match get_patch(
@@ -248,12 +236,12 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
         // Handle each tool call in order and feed results back into the conversation.
         for call in function_calls {
             match call.name.as_str() {
-                name if name == GetFile::name() => {
+                name if name == GetFile::NAME => {
                     input_items.extend(
                         GetFile::process(call, &CommitMessageToolContext { repo, diff }).await,
                     );
                 }
-                name if name == GetPatch::name() => {
+                name if name == GetPatch::NAME => {
                     input_items.extend(
                         GetPatch::process(call, &CommitMessageToolContext { repo, diff }).await,
                     );

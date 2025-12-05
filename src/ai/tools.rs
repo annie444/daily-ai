@@ -14,9 +14,8 @@ pub trait CustomTool:
     Serialize + for<'de> serde::Deserialize<'de> + JsonSchema + Send + Sync
 {
     type Context<'a>: ?Sized;
-
-    fn name() -> &'static str;
-    fn description() -> &'static str;
+    const NAME: &'static str;
+    const DESCRIPTION: &'static str;
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String);
 
@@ -26,9 +25,9 @@ pub trait CustomTool:
 
     fn definition() -> FunctionTool {
         FunctionTool {
-            name: Self::name().to_string(),
+            name: Self::NAME.to_string(),
             parameters: Some(Self::parameters()),
-            description: Some(Self::description().to_string()),
+            description: Some(Self::DESCRIPTION.to_string()),
             strict: None,
         }
     }
@@ -41,7 +40,7 @@ pub trait CustomTool:
         match serde_path_to_error::deserialize(jd) {
             Ok(cm) => Ok(cm),
             Err(e) => {
-                error!("Failed to deserialize url label message: {e}");
+                error!("Failed to deserialize args for {} message: {e}", Self::NAME);
                 error!("Response content was: {output}");
                 error!("Failed to parse JSON at path: {}", e.path());
                 Err(e.into_inner().into())
@@ -104,21 +103,17 @@ pub struct FetchUrl {
     /// URL to fetch.
     pub url: String,
     /// Optional starting line number to fetch from.
+    #[serde(default)]
     pub starting_line: Option<usize>,
     /// Optional maximum number of lines to fetch.
+    #[serde(default)]
     pub max_lines: Option<usize>,
 }
 
 impl CustomTool for FetchUrl {
     type Context<'a> = ();
-
-    fn name() -> &'static str {
-        "fetch_url"
-    }
-
-    fn description() -> &'static str {
-        "Fetches the content of a URL."
-    }
+    const NAME: &'static str = "fetch_url";
+    const DESCRIPTION: &'static str = "Fetches the content of a URL.";
 
     async fn call(&self, _context: &Self::Context<'_>) -> (OutputStatus, String) {
         let resp = match reqwest::get(&self.url).await {
