@@ -23,11 +23,159 @@ use crate::git::{CommitMeta, GitRepoHistory};
 use crate::shell::ShellHistoryEntry;
 use crate::time_utils::system_time_to_offset_datetime;
 
-static SUMMARY_PROMPT: &str = std::include_str!("summary_prompt.txt");
+static SUMMARY_PROMPT: &str = std::include_str!("full_summary/summary_prompt.txt");
+static HIGHLIGHTS_PROMPT: &str = std::include_str!("full_summary/highlights_prompt.txt");
+static TIME_BREAKDOWN_PROMPT: &str = std::include_str!("full_summary/time_breakdown_prompt.txt");
+static COMMON_GROUPS_PROMPT: &str = std::include_str!("full_summary/common_groups_prompt.txt");
+static REPO_SUMMARIES_PROMPT: &str = std::include_str!("full_summary/repo_summaries_prompt.txt");
+static SHELL_OVERVIEW_PROMPT: &str = std::include_str!("full_summary/shell_overview_prompt.txt");
+
+trait Query: JsonSchema + Serialize + for<'de> Deserialize<'de> {
+    const PROMPT: &'static str;
+
+    fn title() -> String {
+        let schema = schema_for!(Self);
+        schema.get("title").unwrap().as_str().unwrap().to_string()
+    }
+
+    fn response_format() -> ResponseFormatJsonSchema {
+        let schema = schema_for!(Self);
+        let title = schema.get("title").unwrap().as_str().unwrap();
+        let description = schema.get("description").unwrap().as_str().unwrap();
+        ResponseFormatJsonSchema {
+            description: Some(description.to_string()),
+            schema: Some(schema_for!(Self).as_value().to_owned()),
+            name: title.to_string(),
+            strict: None,
+        }
+    }
+
+    fn prompt() -> &'static str {
+        Self::PROMPT
+    }
+
+    fn from_str(s: &str) -> AppResult<Self> {
+        let jd = &mut serde_json::Deserializer::from_str(s);
+        match serde_path_to_error::deserialize(jd) {
+            Ok(res) => Ok(res),
+            Err(e) => {
+                error!(
+                    "Failed to deserialize query response into {}: {e}",
+                    Self::title()
+                );
+                error!("Response content was: {s}");
+                error!("Failed to parse JSON at path: {}", e.path());
+                Err(e.into_inner().into())
+            }
+        }
+    }
+}
+
+macro_rules! impl_json_schema {
+    ($struct_name:ident, $prompt:ident) => {
+        impl Query for $struct_name {
+            const PROMPT: &'static str = $prompt;
+        }
+    };
+}
+
+/// # common_groups
+/// Identify common projects or categories of work the changes belong to.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct CommonGroupsQuery {
+    /// List of common groups
+    pub common_groups: Vec<String>,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(CommonGroupsQuery, COMMON_GROUPS_PROMPT);
+
+/// # summary
+/// Generate a comprehensive summary of the work done based on the provided context.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct SummaryQuery {
+    /// The summary
+    pub summary: String,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(SummaryQuery, SUMMARY_PROMPT);
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct Highlight {
+    /// A highlight title
+    pub title: String,
+    /// A highlight summary
+    pub summary: String,
+}
+
+/// # highlights
+/// Highlights of the work done.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct HighlightsQuery {
+    /// List of highlights
+    pub highlights: Vec<Highlight>,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(HighlightsQuery, HIGHLIGHTS_PROMPT);
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct RepoSummary {
+    /// The repository path
+    pub repo: PathBuf,
+    /// The summary
+    pub summary: String,
+}
+
+/// # repo_summaries
+/// Summaries of changes made per repository.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct RepoSummaryQuery {
+    /// List of repo summaries
+    pub repo_summaries: Vec<RepoSummary>,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(RepoSummaryQuery, REPO_SUMMARIES_PROMPT);
+
+/// # shell_overview
+/// Summaries of shell history and operations performed.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct ShellOverviewQuery {
+    /// Overview of shell history
+    pub shell_overview: String,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(ShellOverviewQuery, SHELL_OVERVIEW_PROMPT);
+
+/// # time_breakdown
+/// Breakdown of time spent on different tasks.
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct TimeBreakdownQuery {
+    /// The time breakdown
+    pub time_breakdown: Vec<String>,
+    /// Any specific notes
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+impl_json_schema!(TimeBreakdownQuery, TIME_BREAKDOWN_PROMPT);
 
 /// # work_summary
 /// Collection of summaries and highlights about the work done.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Default)]
 pub struct WorkSummary {
     /// Summary of changes made. Should be a concise couple of paragraphs.
     pub summary: String,
@@ -42,7 +190,7 @@ pub struct WorkSummary {
     pub common_groups: Vec<String>,
     /// Summary of commits made per project or module.
     #[serde(default)]
-    pub commits_per_project: Vec<String>,
+    pub repo_summaries: Vec<String>,
     /// Overview of shell operations performed. Should be a concise paragraph or two.
     #[serde(default)]
     pub shell_overview: String,
@@ -405,6 +553,7 @@ pub struct MinifiedContext {
     pub shell_history: Vec<ShellHistoryEntry>,
     pub safari_history: Vec<UrlCluster>,
     pub commit_history: Vec<MinifiedGitRepoHistory>,
+    pub notes: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -440,6 +589,125 @@ impl From<&Context> for MinifiedContext {
             shell_history: ctx.shell_history[..shell_hist_len].to_vec(),
             safari_history,
             commit_history,
+            notes: vec![],
+        }
+    }
+}
+
+pub enum QueryType {
+    Summary,
+    Highlights,
+    RepoSummary,
+    ShellOverview,
+    TimeBreakdown,
+    CommonGroups,
+}
+
+pub enum QueryResponse {
+    Summary(SummaryQuery),
+    Highlights(HighlightsQuery),
+    RepoSummary(RepoSummaryQuery),
+    ShellOverview(ShellOverviewQuery),
+    TimeBreakdown(TimeBreakdownQuery),
+    CommonGroups(CommonGroupsQuery),
+}
+
+impl QueryType {
+    pub fn response_format(&self) -> ResponseFormatJsonSchema {
+        match self {
+            QueryType::Summary => SummaryQuery::response_format(),
+            QueryType::Highlights => HighlightsQuery::response_format(),
+            QueryType::RepoSummary => RepoSummaryQuery::response_format(),
+            QueryType::ShellOverview => ShellOverviewQuery::response_format(),
+            QueryType::TimeBreakdown => TimeBreakdownQuery::response_format(),
+            QueryType::CommonGroups => CommonGroupsQuery::response_format(),
+        }
+    }
+
+    pub fn prompt(&self) -> &'static str {
+        match self {
+            QueryType::Summary => SummaryQuery::prompt(),
+            QueryType::Highlights => HighlightsQuery::prompt(),
+            QueryType::RepoSummary => RepoSummaryQuery::prompt(),
+            QueryType::ShellOverview => ShellOverviewQuery::prompt(),
+            QueryType::TimeBreakdown => TimeBreakdownQuery::prompt(),
+            QueryType::CommonGroups => CommonGroupsQuery::prompt(),
+        }
+    }
+
+    pub fn get_response(&self, s: &str) -> AppResult<QueryResponse> {
+        match self {
+            QueryType::Summary => Ok(QueryResponse::Summary(SummaryQuery::from_str(s)?)),
+            QueryType::Highlights => Ok(QueryResponse::Highlights(HighlightsQuery::from_str(s)?)),
+            QueryType::RepoSummary => {
+                Ok(QueryResponse::RepoSummary(RepoSummaryQuery::from_str(s)?))
+            }
+            QueryType::ShellOverview => Ok(QueryResponse::ShellOverview(
+                ShellOverviewQuery::from_str(s)?,
+            )),
+            QueryType::TimeBreakdown => Ok(QueryResponse::TimeBreakdown(
+                TimeBreakdownQuery::from_str(s)?,
+            )),
+            QueryType::CommonGroups => {
+                Ok(QueryResponse::CommonGroups(CommonGroupsQuery::from_str(s)?))
+            }
+        }
+    }
+}
+
+impl QueryResponse {
+    pub fn extract_notes(&self) -> Vec<String> {
+        match self {
+            QueryResponse::Summary(q) => q.notes.clone(),
+            QueryResponse::Highlights(q) => q.notes.clone(),
+            QueryResponse::RepoSummary(q) => q.notes.clone(),
+            QueryResponse::ShellOverview(q) => q.notes.clone(),
+            QueryResponse::TimeBreakdown(q) => q.notes.clone(),
+            QueryResponse::CommonGroups(q) => q.notes.clone(),
+        }
+    }
+
+    pub fn update_work_summary(&self, ws: &mut WorkSummary) {
+        match self {
+            QueryResponse::Summary(q) => {
+                ws.summary = q.summary.clone();
+            }
+            QueryResponse::Highlights(q) => {
+                ws.highlights = q
+                    .highlights
+                    .iter()
+                    .map(|h| format!("{}: {}", h.title, h.summary))
+                    .collect();
+            }
+            QueryResponse::RepoSummary(q) => {
+                ws.repo_summaries = q
+                    .repo_summaries
+                    .iter()
+                    .map(|rs| {
+                        let parts = rs.repo.to_string_lossy().to_string();
+                        let parts_len = parts.split('/').count();
+                        let repo_name = if parts_len >= 2 {
+                            format!(
+                                "{}/{}",
+                                parts.split('/').nth_back(1).unwrap(),
+                                parts.split('/').next_back().unwrap()
+                            )
+                        } else {
+                            parts
+                        };
+                        format!("Repo {}: {}", repo_name, rs.summary)
+                    })
+                    .collect();
+            }
+            QueryResponse::ShellOverview(q) => {
+                ws.shell_overview = q.shell_overview.clone();
+            }
+            QueryResponse::TimeBreakdown(q) => {
+                ws.time_breakdown = q.time_breakdown.clone();
+            }
+            QueryResponse::CommonGroups(q) => {
+                ws.common_groups = q.common_groups.clone();
+            }
         }
     }
 }
@@ -455,25 +723,18 @@ pub async fn generate_summary<C: Config>(
     context: &Context,
 ) -> AppResult<WorkSummary> {
     // Kick off first turn with diff summary and commit prompt.
-    let input_context = MinifiedContext::from(context);
-    let mut input_items: Vec<InputItem> = vec![InputItem::Item(Item::Message(MessageItem::Input(
-        InputMessage {
-            content: vec![InputContent::InputText(InputTextContent {
-                text: serde_json::to_string_pretty(&input_context)?,
-            })],
-            role: InputRole::User,
-            status: None,
-        },
-    )))];
-    input_items.push(InputItem::Item(Item::Message(MessageItem::Input(
-        InputMessage {
-            content: vec![InputContent::InputText(InputTextContent {
-                text: SUMMARY_PROMPT.to_string(),
-            })],
-            role: InputRole::System,
-            status: None,
-        },
-    ))));
+    let mut input_context = MinifiedContext::from(context);
+    let queries: Vec<QueryType> = vec![
+        QueryType::CommonGroups,
+        QueryType::Highlights,
+        QueryType::TimeBreakdown,
+        QueryType::RepoSummary,
+        QueryType::ShellOverview,
+        QueryType::Summary,
+    ];
+
+    let mut work_summary = WorkSummary::default();
+    let mut notes: Vec<String> = vec![];
     let mut previous_response_id: Option<String> = None;
     let tools = vec![
         Tool::Function(FetchUrl::definition()),
@@ -484,113 +745,126 @@ pub async fn generate_summary<C: Config>(
         Tool::Function(GetShellHistory::definition()),
     ];
 
-    loop {
-        let request = CreateResponse {
-            model: Some("openai/gpt-oss-20b".to_string()),
-            input: InputParam::Items(input_items.clone()),
-            background: Some(false),
-            instructions: Some(SUMMARY_PROMPT.to_string()),
-            parallel_tool_calls: Some(false),
-            reasoning: Some(Reasoning {
-                effort: Some(ReasoningEffort::Medium),
-                summary: None,
-            }),
-            store: Some(true),
-            stream: Some(false),
-            temperature: Some(0.05),
-            text: Some(ResponseTextParam {
-                format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
-                    description: Some(
-                        "Collection of summaries and highlights about the work done".to_string(),
-                    ),
-                    schema: Some(schema_for!(WorkSummary).as_value().to_owned()),
-                    name: "work_summary".to_string(),
-                    strict: None,
+    for query in queries {
+        input_context.notes = notes.clone();
+
+        let mut input_items: Vec<InputItem> = vec![
+            InputItem::Item(Item::Message(MessageItem::Input(InputMessage {
+                content: vec![InputContent::InputText(InputTextContent {
+                    text: serde_json::to_string_pretty(&input_context)?,
+                })],
+                role: InputRole::User,
+                status: None,
+            }))),
+            InputItem::Item(Item::Message(MessageItem::Input(InputMessage {
+                content: vec![InputContent::InputText(InputTextContent {
+                    text: query.prompt().to_string(),
+                })],
+                role: InputRole::System,
+                status: None,
+            }))),
+        ];
+
+        loop {
+            let request = CreateResponse {
+                model: Some("openai/gpt-oss-20b".to_string()),
+                input: InputParam::Items(input_items.clone()),
+                background: Some(false),
+                instructions: Some(query.prompt().to_string()),
+                parallel_tool_calls: Some(false),
+                reasoning: Some(Reasoning {
+                    effort: Some(ReasoningEffort::High),
+                    summary: None,
                 }),
-                verbosity: None,
-            }),
-            tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
-            tools: Some(tools.clone()),
-            top_logprobs: Some(0),
-            top_p: Some(0.1),
-            truncation: Some(Truncation::Disabled),
-            previous_response_id: previous_response_id.clone(),
-            ..Default::default()
-        };
+                store: Some(true),
+                stream: Some(false),
+                temperature: Some(0.05),
+                text: Some(ResponseTextParam {
+                    format: TextResponseFormatConfiguration::JsonSchema(query.response_format()),
+                    verbosity: None,
+                }),
+                tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
+                tools: Some(tools.clone()),
+                top_logprobs: Some(0),
+                top_p: Some(0.1),
+                truncation: Some(Truncation::Disabled),
+                previous_response_id: previous_response_id.clone(),
+                ..Default::default()
+            };
 
-        let response = client.responses().create(request).await?;
-        debug!("AI Response: {:?}", response);
-        previous_response_id = Some(response.id.clone());
+            let response = client.responses().create(request).await?;
+            debug!("AI Response: {:?}", response);
+            previous_response_id = Some(response.id.clone());
 
-        let function_calls: Vec<FunctionToolCall> = response
-            .output
-            .iter()
-            .filter_map(|item| {
-                if let OutputItem::FunctionCall(fc) = item {
-                    Some(fc.clone())
-                } else {
-                    None
-                }
-            })
-            .collect();
+            let function_calls: Vec<FunctionToolCall> = response
+                .output
+                .iter()
+                .filter_map(|item| {
+                    if let OutputItem::FunctionCall(fc) = item {
+                        Some(fc.clone())
+                    } else {
+                        None
+                    }
+                })
+                .collect();
 
-        if function_calls.is_empty() {
-            let mut response_content = String::new();
-            for out in &response.output {
-                if let OutputItem::Message(msg) = out {
-                    for content in &msg.content {
-                        match content {
-                            OutputMessageContent::OutputText(text) => {
-                                response_content.push_str(&text.text)
-                            }
-                            OutputMessageContent::Refusal(RefusalContent { refusal }) => {
-                                error!("AI refused prompt: {}", refusal);
+            if function_calls.is_empty() {
+                let mut response_content = String::new();
+                for out in &response.output {
+                    if let OutputItem::Message(msg) = out {
+                        for content in &msg.content {
+                            match content {
+                                OutputMessageContent::OutputText(text) => {
+                                    response_content.push_str(&text.text)
+                                }
+                                OutputMessageContent::Refusal(RefusalContent { refusal }) => {
+                                    error!("AI refused prompt: {}", refusal);
+                                }
                             }
                         }
                     }
                 }
+                trace!("Raw response content: {}", response_content);
+                let response_content = ResponseCleaner::new(&response_content).clean();
+                trace!("Cleaned response content: {}", response_content);
+                let query_response = query.get_response(&response_content)?;
+                query_response.update_work_summary(&mut work_summary);
+                notes.extend(query_response.extract_notes());
+                break;
             }
-            trace!("Raw response content: {}", response_content);
-            let response_content = ResponseCleaner::new(&response_content).clean();
-            trace!("Cleaned response content: {}", response_content);
-            let jd = &mut serde_json::Deserializer::from_str(&response_content);
-            match serde_path_to_error::deserialize(jd) {
-                Ok(ws) => return Ok(ws),
-                Err(e) => {
-                    error!("Failed to deserialize work summary: {}", e);
-                    error!("Response content was: {}", response_content);
-                    error!("Failed to parse JSON at path: {}", e.path());
-                    return Err(e.into_inner().into());
-                }
-            };
-        }
 
-        // Handle each tool call in order and feed results back into the conversation.
-        for call in function_calls {
-            match call.name.as_str() {
-                name if name == FetchUrl::NAME => {
-                    input_items.extend(FetchUrl::process(call, &()).await);
-                }
-                name if name == GetDiff::NAME => {
-                    input_items.extend(GetDiff::process(call, &context.commit_history).await);
-                }
-                name if name == GetRepo::NAME => {
-                    input_items.extend(GetRepo::process(call, &context.commit_history).await);
-                }
-                name if name == GetCommitMessages::NAME => {
-                    input_items
-                        .extend(GetCommitMessages::process(call, &context.commit_history).await);
-                }
-                name if name == GetBrowserHistory::NAME => {
-                    input_items
-                        .extend(GetBrowserHistory::process(call, &context.safari_history).await);
-                }
-                name if name == GetShellHistory::NAME => {
-                    input_items
-                        .extend(GetShellHistory::process(call, &context.shell_history).await);
-                }
-                _ => input_items.extend(unknown_tool(call)),
-            };
+            // Handle each tool call in order and feed results back into the conversation.
+            for call in function_calls {
+                match call.name.as_str() {
+                    name if name == FetchUrl::NAME => {
+                        input_items.extend(FetchUrl::process(call, &()).await);
+                    }
+                    name if name == GetDiff::NAME => {
+                        input_items.extend(GetDiff::process(call, &context.commit_history).await);
+                    }
+                    name if name == GetRepo::NAME => {
+                        input_items.extend(GetRepo::process(call, &context.commit_history).await);
+                    }
+                    name if name == GetCommitMessages::NAME => {
+                        input_items.extend(
+                            GetCommitMessages::process(call, &context.commit_history).await,
+                        );
+                    }
+                    name if name == GetBrowserHistory::NAME => {
+                        input_items.extend(
+                            GetBrowserHistory::process(call, &context.safari_history).await,
+                        );
+                    }
+                    name if name == GetShellHistory::NAME => {
+                        input_items
+                            .extend(GetShellHistory::process(call, &context.shell_history).await);
+                    }
+                    _ => input_items.extend(unknown_tool(call)),
+                };
+            }
         }
     }
+
+    work_summary.notes = notes;
+    Ok(work_summary)
 }

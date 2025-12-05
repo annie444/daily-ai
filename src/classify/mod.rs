@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use async_openai::{Client, config::Config};
 use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
-use tracing::{Span, debug, info, info_span, trace};
+use tracing::{debug, info, info_span, trace};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
 
@@ -59,7 +59,7 @@ async fn build_cluster_output<C: Config>(
             label: label.label,
             urls,
         });
-        Span::current().pb_inc(1);
+        header_span.pb_inc(1);
     }
 
     if !misc.is_empty() {

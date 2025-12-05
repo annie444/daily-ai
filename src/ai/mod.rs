@@ -64,7 +64,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
 
     pub fn clean(&mut self) -> String {
         let mut output = String::with_capacity(self.response.len());
-        
+
         for c in self.response.chars() {
             if self.is_escaped {
                 self.is_escaped = false;
@@ -81,7 +81,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                 } else if c == '"' {
                     self.in_quotes = false;
                     output.push(c);
-                    
+
                     if self.expect == Expectation::Key {
                         self.expect = Expectation::Colon;
                     } else {
@@ -98,16 +98,16 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
 
             // Handle Number termination
             if self.in_number {
-                 match c {
-                     '0'..='9' | '.' | '-' | '+' | 'e' | 'E' => {
-                         output.push(c);
-                         continue;
-                     }
-                     _ => {
-                         self.in_number = false;
-                         self.transition_after_value();
-                     }
-                 }
+                match c {
+                    '0'..='9' | '.' | '-' | '+' | 'e' | 'E' => {
+                        output.push(c);
+                        continue;
+                    }
+                    _ => {
+                        self.in_number = false;
+                        self.transition_after_value();
+                    }
+                }
             }
 
             // Handle Literal termination
@@ -116,21 +116,21 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     self.literal_buffer.push(c);
                     continue;
                 } else {
-                     let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
-                     if valid && self.expect == Expectation::Value {
-                         output.push_str(&self.literal_buffer);
-                         self.transition_after_value();
-                     }
-                     self.literal_buffer.clear();
+                    let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
+                    if valid && self.expect == Expectation::Value {
+                        output.push_str(&self.literal_buffer);
+                        self.transition_after_value();
+                    }
+                    self.literal_buffer.clear();
                 }
             }
-            
+
             // Check literal start
             if c.is_ascii_alphabetic() {
                 self.literal_buffer.push(c);
                 continue;
             }
-            
+
             // Check number start
             if (c == '-' || c.is_ascii_digit()) && self.expect == Expectation::Value {
                 self.in_number = true;
@@ -155,21 +155,23 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     }
                 }
                 '}' => {
-                    if let Some(Container::Object) = self.stack.last() {
-                         if self.expect == Expectation::Key || self.expect == Expectation::CommaOrEnd {
-                             self.stack.pop();
-                             self.transition_after_value();
-                             output.push(c);
-                         }
+                    if let Some(Container::Object) = self.stack.last()
+                        && (self.expect == Expectation::Key
+                            || self.expect == Expectation::CommaOrEnd)
+                    {
+                        self.stack.pop();
+                        self.transition_after_value();
+                        output.push(c);
                     }
                 }
                 ']' => {
-                    if let Some(Container::Array) = self.stack.last() {
-                         if self.expect == Expectation::Value || self.expect == Expectation::CommaOrEnd {
-                             self.stack.pop();
-                             self.transition_after_value();
-                             output.push(c);
-                         }
+                    if let Some(Container::Array) = self.stack.last()
+                        && (self.expect == Expectation::Value
+                            || self.expect == Expectation::CommaOrEnd)
+                    {
+                        self.stack.pop();
+                        self.transition_after_value();
+                        output.push(c);
                     }
                 }
                 '"' => {
@@ -185,26 +187,26 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
                     }
                 }
                 ',' => {
-                    if self.expect == Expectation::CommaOrEnd {
-                        if let Some(container) = self.stack.last() {
-                            match container {
-                                Container::Object => self.expect = Expectation::Key,
-                                Container::Array => self.expect = Expectation::Value,
-                            }
-                            output.push(c);
+                    if self.expect == Expectation::CommaOrEnd
+                        && let Some(container) = self.stack.last()
+                    {
+                        match container {
+                            Container::Object => self.expect = Expectation::Key,
+                            Container::Array => self.expect = Expectation::Value,
                         }
+                        output.push(c);
                     }
                 }
                 _ => {} // Discard noise
             }
         }
-        
+
         // Final flush
         if !self.literal_buffer.is_empty() {
-             let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
-             if valid && self.expect == Expectation::Value {
-                 output.push_str(&self.literal_buffer);
-             }
+            let valid = matches!(self.literal_buffer.as_str(), "true" | "false" | "null");
+            if valid && self.expect == Expectation::Value {
+                output.push_str(&self.literal_buffer);
+            }
         }
 
         output

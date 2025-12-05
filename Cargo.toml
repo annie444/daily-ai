@@ -71,7 +71,6 @@ ndarray-rand = "0.16.0"
 base64 = "0.22.1"
 murmur3 = "0.5.2"
 bincode = "2.0.1"
-nom = "8.0.0"
 
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
 candle-core = { version = "0.9.1", features = ["metal"] }

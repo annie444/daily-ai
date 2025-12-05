@@ -9,7 +9,7 @@ use futures::StreamExt;
 use murmur3::murmur3_x86_128;
 use tokenizers::tokenizer::Tokenizer;
 use tokio::io::AsyncWriteExt;
-use tracing::{Span, debug, info_span, warn};
+use tracing::{debug, info_span, warn};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
 
@@ -124,7 +124,7 @@ impl BertEmbedder {
                     })?;
                     open_file.write_all(&chunk).await?;
                     open_file.flush().await?;
-                    Span::current().pb_inc(chunk.len() as u64);
+                    header_span.pb_inc(chunk.len() as u64);
                 }
                 open_file.sync_all().await?;
                 open_file.shutdown().await?;
@@ -291,7 +291,7 @@ impl BertEmbedder {
             for (i, t) in texts.iter().enumerate() {
                 let emb = this.embed_text_blocking(t)?;
                 embeddings.push((items[i].clone(), emb));
-                Span::current().pb_inc(1);
+                header_span.pb_inc(1);
             }
             std::mem::drop(header_span_enter);
             std::mem::drop(header_span);
