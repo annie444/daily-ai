@@ -735,7 +735,6 @@ pub async fn generate_summary<C: Config>(
 
     let mut work_summary = WorkSummary::default();
     let mut notes: Vec<String> = vec![];
-    let mut previous_response_id: Option<String> = None;
     let tools = vec![
         Tool::Function(FetchUrl::definition()),
         Tool::Function(GetDiff::definition()),
@@ -746,6 +745,7 @@ pub async fn generate_summary<C: Config>(
     ];
 
     for query in queries {
+        let mut previous_response_id: Option<String> = None;
         input_context.notes = notes.clone();
 
         let mut input_items: Vec<InputItem> = vec![
