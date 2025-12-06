@@ -4,45 +4,45 @@ You will receive a list of URLs and page titles that belong to a single cluster.
 Your task is to produce a short, high-level label that describes the shared theme of the URLs,
 and return it as a JSON object in the format:
 
+```
 { "label": "Your Generated Label" }
+```
 
-=========================
-PRIMARY GOAL
-=========================
+# PRIMARY GOAL
+
 Create a short, high-level topic label that summarizes the main purpose or theme shared
 by the URLs in the cluster.
 
 The label must:
+
 - Be factual and grounded in the URLs and titles provided.
 - Reflect what the user was researching, reading, or troubleshooting.
 - Be concise (ideally 2–6 words).
 - Be general enough to cover all URLs.
 - Be specific enough to be useful for summarizing technical work.
 
-=========================
-ALLOWED LABEL STYLES
-=========================
+# ALLOWED LABEL STYLES
+
 Examples of acceptable labels (your output must follow similar style):
 
-CephFS Troubleshooting
-Rust Embedded Development
-Kubernetes Networking
-Machine Learning Research
-Ansible Automation
-PostgreSQL Configuration
-Linux Kernel Debugging
-OpenShift Gateway API
-Authentication and SSO
-Fashion Rental Business Ops
+- CephFS Troubleshooting
+- Rust Embedded Development
+- Kubernetes Networking
+- Machine Learning Research
+- Ansible Automation
+- PostgreSQL Configuration
+- Linux Kernel Debugging
+- OpenShift Gateway API
+- Authentication and SSO
+- Fashion Rental Business Ops
 
 The label should be:
+
 - A noun phrase or topic category
 - Title-case
 - Not a sentence
 
-=========================
-CONTENT RULES
-=========================
+# CONTENT RULES
 
 1. DO NOT fabricate topics or content not present in the URLs.
 2. DO NOT guess user intent beyond what is clearly indicated by the URLs.
@@ -51,37 +51,36 @@ CONTENT RULES
 5. DO NOT include quotes, markdown, or extra text.
 6. DO NOT output anything except the JSON object.
 
-=========================
-CLASSIFICATION GUIDELINES
-=========================
+# CLASSIFICATION GUIDELINES
 
 To determine the theme:
+
 - Look for recurring technical domains (Ceph, Rust, Kubernetes, FreeIPA, etc.).
 - Look for documentation sites (docs.rs, ceph.com, kubernetes.io, etc.).
 - Look for evidence of development, debugging, or research activity.
-- When URLs mix topics, choose the *highest-level unifying category*.
+- When URLs mix topics, choose the _highest-level unifying category_.
 
 Examples:
-CephFS docs + ceph-health issues → "CephFS Troubleshooting"
-Rust embedded-hal + Embassy docs → "Rust Embedded Development"
-IPA + Kerberos + SSO → "Identity & Authentication"
-Random personal browsing → "General Web Browsing"
 
-=========================
-OUTPUT FORMAT
-=========================
+- CephFS docs + ceph-health issues → "CephFS Troubleshooting"
+- Rust embedded-hal + Embassy docs → "Rust Embedded Development"
+- IPA + Kerberos + SSO → "Identity & Authentication"
+- Random personal browsing → "General Web Browsing"
+
+# OUTPUT FORMAT
 
 You must output ONLY a JSON object with this structure:
 
+```
 { "label": "Your Generated Label" }
+```
 
 No extra characters. No prose. No preamble. No explanation.
 
-=========================
-HARD REQUIREMENTS
-=========================
+# HARD REQUIREMENTS
 
 You must produce:
+
 - Exactly one JSON object
 - Exactly one field: "label"
 - The value must be a short, meaningful topic label

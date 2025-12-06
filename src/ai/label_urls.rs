@@ -6,19 +6,20 @@ use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
     CreateResponse, FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole,
     Item, MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort,
-    RefusalContent, ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
-    Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
+    RefusalContent, ResponseTextParam, TextResponseFormatConfiguration, Tool, ToolChoiceOptions,
+    ToolChoiceParam, Truncation,
 };
-use schemars::{JsonSchema, schema_for};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, trace};
+use tracing::{debug, error};
 
-use super::ResponseCleaner;
-use super::tools::{CustomTool, FetchUrl, unknown_tool};
-use crate::AppResult;
+use super::query::Query;
+use super::tools::fetch::FetchUrl;
+use super::tools::{CustomTool, unknown_tool};
 use crate::safari::SafariHistoryItem;
+use crate::{AppResult, impl_query};
 
-static LABEL_URLS_PROMPT: &str = std::include_str!("label_urls_prompt.txt");
+static LABEL_URLS_PROMPT: &str = std::include_str!("prompts/label_urls_prompt.md");
 
 /// Label returned by the model for a cluster of URLs.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -32,6 +33,8 @@ impl Display for UrlLabel {
         write!(f, "{}", self.label)
     }
 }
+
+impl_query!(UrlLabel, LABEL_URLS_PROMPT);
 
 /// Label a cluster of URLs using the model; may call back into the `fetch_url` tool.
 #[tracing::instrument(
@@ -80,12 +83,7 @@ pub async fn label_url_cluster<C: Config>(
             stream: Some(false),
             temperature: Some(0.05),
             text: Some(ResponseTextParam {
-                format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
-                    description: Some("Label for the given list of URLs".to_string()),
-                    schema: Some(schema_for!(UrlLabel).as_value().to_owned()),
-                    name: "url_label".to_string(),
-                    strict: None,
-                }),
+                format: TextResponseFormatConfiguration::JsonSchema(UrlLabel::response_format()),
                 verbosity: None,
             }),
             tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
@@ -129,19 +127,7 @@ pub async fn label_url_cluster<C: Config>(
                     }
                 }
             }
-            trace!("Raw response content: {}", response_content);
-            let response_content = ResponseCleaner::new(&response_content).clean();
-            trace!("Cleaned response content: {}", response_content);
-            let jd = &mut serde_json::Deserializer::from_str(&response_content);
-            match serde_path_to_error::deserialize(jd) {
-                Ok(cm) => return Ok(cm),
-                Err(e) => {
-                    error!("Failed to deserialize url label message: {}", e);
-                    error!("Response content was: {}", response_content);
-                    error!("Failed to parse JSON at path: {}", e.path());
-                    return Err(e.into_inner().into());
-                }
-            };
+            return UrlLabel::from_str(&response_content);
         }
 
         // Handle each tool call in sequence and feed results back to the model.

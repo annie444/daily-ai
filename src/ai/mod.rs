@@ -1,25 +1,47 @@
 pub mod commit_message;
 pub mod label_urls;
+pub mod query;
 pub mod summary;
 pub mod tools;
 
-use async_openai::Client;
-use async_openai::config::{Config, OpenAIConfig};
 use tracing::info;
 
-/// Build an async-openai client pointed at an LM Studio-compatible server.
-#[tracing::instrument(name = "Connecting to local LLM server", level = "debug")]
-pub fn get_lm_studio_client<S: AsRef<str> + std::fmt::Debug>(
-    server: S,
-    port: u16,
-) -> Client<Box<dyn Config>> {
-    let config = Box::new(OpenAIConfig::default().with_api_base(format!(
-        "http://{}:{}/v1",
-        server.as_ref(),
-        port
-    ))) as Box<dyn Config>;
+pub trait SchemaInfo: Sized {
+    fn schema_value() -> serde_json::Value;
+    fn title() -> String;
+    fn description() -> String;
+    fn schema() -> schemars::Schema;
+}
 
-    Client::with_config(config)
+impl<T> SchemaInfo for T
+where
+    T: for<'de> serde::Deserialize<'de> + schemars::JsonSchema,
+{
+    fn schema() -> schemars::Schema {
+        schemars::schema_for!(Self)
+    }
+
+    fn title() -> String {
+        Self::schema()
+            .get("title")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string()
+    }
+
+    fn description() -> String {
+        Self::schema()
+            .get("description")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string()
+    }
+
+    fn schema_value() -> serde_json::Value {
+        Self::schema().as_value().to_owned()
+    }
 }
 
 /// A utility to clean up responses from language models to extract valid JSON.
@@ -38,8 +60,7 @@ enum Container {
     Array,
 }
 
-pub(super) struct ResponseCleaner<'cleaner> {
-    response: &'cleaner str,
+pub(super) struct ResponseCleaner {
     stack: Vec<Container>,
     expect: Expectation,
     in_quotes: bool,
@@ -48,11 +69,9 @@ pub(super) struct ResponseCleaner<'cleaner> {
     literal_buffer: String,
 }
 
-impl<'cleaner> ResponseCleaner<'cleaner> {
-    pub fn new(response: &'cleaner str) -> Self {
-        info!("Cleaning AI response: {response}");
+impl ResponseCleaner {
+    pub fn new() -> Self {
         Self {
-            response,
             stack: Vec::new(),
             expect: Expectation::Value,
             in_quotes: false,
@@ -62,10 +81,23 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
         }
     }
 
-    pub fn clean(&mut self) -> String {
-        let mut output = String::with_capacity(self.response.len());
+    fn reset(&mut self) {
+        self.stack.clear();
+        self.expect = Expectation::Value;
+        self.in_quotes = false;
+        self.is_escaped = false;
+        self.in_number = false;
+        self.literal_buffer.clear();
+    }
 
-        for c in self.response.chars() {
+    pub fn clean<S>(&mut self, response: S) -> String
+    where
+        S: AsRef<str> + std::fmt::Debug + std::fmt::Display,
+    {
+        info!("Cleaning AI response: {response}");
+        let mut output = String::with_capacity(response.as_ref().len());
+
+        for c in response.as_ref().chars() {
             if self.is_escaped {
                 self.is_escaped = false;
                 if self.in_quotes {
@@ -209,6 +241,7 @@ impl<'cleaner> ResponseCleaner<'cleaner> {
             }
         }
 
+        self.reset();
         output
     }
 
@@ -227,16 +260,16 @@ mod tests {
     #[test]
     fn cleans_simple_object_with_noise() {
         let resp = "random prefix {\"label\": other chars \"Tech\", should be 12 trimmed \"duration\": 1275.0} trailing";
-        let mut cleaner = ResponseCleaner::new(resp);
-        let cleaned = cleaner.clean();
+        let mut cleaner = ResponseCleaner::new();
+        let cleaned = cleaner.clean(resp);
         assert_eq!(cleaned, "{\"label\":\"Tech\",\"duration\":1275.0}");
     }
 
     #[test]
     fn preserves_brackets_and_quotes_inside() {
         let resp = "### [{\"label\": \"A [bracket] test\", # \"with_num\": 1234!Ld}] ###";
-        let mut cleaner = ResponseCleaner::new(resp);
-        let cleaned = cleaner.clean();
+        let mut cleaner = ResponseCleaner::new();
+        let cleaned = cleaner.clean(resp);
         assert_eq!(
             cleaned,
             "[{\"label\":\"A [bracket] test\",\"with_num\":1234}]"
@@ -246,8 +279,8 @@ mod tests {
     #[test]
     fn handles_escaped_quotes_inside_string() {
         let resp = "!! {\"Number\": 1567,   1.-   \"label\": \"He said \\\"hi\\\"\"} !!";
-        let mut cleaner = ResponseCleaner::new(resp);
-        let cleaned = cleaner.clean();
+        let mut cleaner = ResponseCleaner::new();
+        let cleaned = cleaner.clean(resp);
         assert_eq!(
             cleaned,
             "{\"Number\":1567,\"label\":\"He said \\\"hi\\\"\"}"

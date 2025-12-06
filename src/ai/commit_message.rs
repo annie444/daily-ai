@@ -1,26 +1,26 @@
 use std::fmt::{Display, Formatter};
-use std::path::PathBuf;
 
 use async_openai::Client;
 use async_openai::config::Config;
 use async_openai::types::evals::InputTextContent;
 use async_openai::types::responses::{
     CreateResponse, FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole,
-    Item, MessageItem, OutputItem, OutputMessageContent, OutputStatus, Reasoning, ReasoningEffort,
-    RefusalContent, ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
-    Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
+    Item, MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort,
+    RefusalContent, ResponseTextParam, TextResponseFormatConfiguration, Tool, ToolChoiceOptions,
+    ToolChoiceParam, Truncation,
 };
 use git2::{Diff, Repository};
-use schemars::{JsonSchema, schema_for};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, trace};
+use tracing::{debug, error};
 
-use super::ResponseCleaner;
+use super::query::Query;
+use super::tools::commit::{CommitMessageToolContext, GetFile, GetPatch};
 use super::tools::{CustomTool, unknown_tool};
-use crate::AppResult;
-use crate::git::diff::{get_diff_summary, get_file, get_patch};
+use crate::git::diff::get_diff_summary;
+use crate::{AppResult, impl_query};
 
-static COMMIT_MESSAGE_PROMPT: &str = std::include_str!("commit_message_prompt.txt");
+static COMMIT_MESSAGE_PROMPT: &str = std::include_str!("prompts/commit_message_prompt.md");
 
 /// Commit message output from the model: summary plus optional body.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -41,79 +41,7 @@ impl Display for CommitMessage {
     }
 }
 
-pub struct CommitMessageToolContext<'a> {
-    pub repo: &'a Repository,
-    pub diff: &'a Diff<'a>,
-}
-
-/// # get_file
-/// Retrieve a file or a segment of a file from the repository.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct GetFile {
-    /// Path to the file
-    pub path: PathBuf,
-    /// Optional starting line of the file (for partial retrieval)
-    pub start_line: Option<usize>,
-    /// Optional ending line of the file (for partial retrieval)
-    pub end_line: Option<usize>,
-}
-
-impl CustomTool for GetFile {
-    type Context<'a> = CommitMessageToolContext<'a>;
-    const NAME: &'static str = "get_file";
-    const DESCRIPTION: &'static str = "Retrieve the contents of a file";
-
-    async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
-        match get_file(
-            context.repo,
-            context.diff,
-            &self.path,
-            self.start_line,
-            self.end_line,
-        ) {
-            Ok(content) => (OutputStatus::Completed, content),
-            Err(e) => {
-                let error_msg = format!("Error retrieving file {:?}: {}", self.path, e);
-                error!("{}", error_msg);
-                (OutputStatus::Incomplete, error_msg)
-            }
-        }
-    }
-}
-
-/// # get_patch
-/// Retrieve a patch or a segment of a patch from the repository.
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct GetPatch {
-    /// Path to the file the patch applies to
-    pub path: PathBuf,
-    /// Optional starting line of the patch (for partial retrieval)
-    pub start_line: Option<usize>,
-    /// Optional ending line of the patch (for partial retrieval)
-    pub end_line: Option<usize>,
-}
-
-impl CustomTool for GetPatch {
-    type Context<'a> = CommitMessageToolContext<'a>;
-    const NAME: &'static str = "get_patch";
-    const DESCRIPTION: &'static str = "Retrieve a patch for a file";
-
-    async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
-        match get_patch(
-            context.diff,
-            &self.path,
-            self.start_line.map(|n| n as u32),
-            self.end_line.map(|n| n as u32),
-        ) {
-            Ok(content) => (OutputStatus::Completed, content),
-            Err(e) => {
-                let error_msg = format!("Error retrieving patch for {:?}: {}", self.path, e);
-                error!("{}", error_msg);
-                (OutputStatus::Incomplete, error_msg)
-            }
-        }
-    }
-}
+impl_query!(CommitMessage, COMMIT_MESSAGE_PROMPT);
 
 /// Generate a commit message using the model, optionally calling back into file/patch tools.
 #[tracing::instrument(
@@ -169,12 +97,9 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
             stream: Some(false),
             temperature: Some(0.05),
             text: Some(ResponseTextParam {
-                format: TextResponseFormatConfiguration::JsonSchema(ResponseFormatJsonSchema {
-                    description: Some("Commit message with summary and optional body".to_string()),
-                    schema: Some(schema_for!(CommitMessage).as_value().to_owned()),
-                    name: "commit_message".to_string(),
-                    strict: None,
-                }),
+                format: TextResponseFormatConfiguration::JsonSchema(
+                    CommitMessage::response_format(),
+                ),
                 verbosity: None,
             }),
             tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
@@ -218,19 +143,7 @@ pub async fn generate_commit_message<'c, 'd, C: Config>(
                     }
                 }
             }
-            trace!("Raw response content: {}", response_content);
-            let response_content = ResponseCleaner::new(&response_content).clean();
-            trace!("Cleaned response content: {}", response_content);
-            let jd = &mut serde_json::Deserializer::from_str(&response_content);
-            match serde_path_to_error::deserialize(jd) {
-                Ok(cm) => return Ok(cm),
-                Err(e) => {
-                    error!("Failed to deserialize commit message: {}", e);
-                    error!("Response content was: {}", response_content);
-                    error!("Failed to parse JSON at path: {}", e.path());
-                    return Err(e.into_inner().into());
-                }
-            };
+            return CommitMessage::from_str(&response_content);
         }
 
         // Handle each tool call in order and feed results back into the conversation.

@@ -29,9 +29,7 @@ async fn main() -> AppResult<()> {
 
     logging::setup_logger(args.cmd.get_verbosity());
 
-    let client = ai::get_lm_studio_client("localhost", 1234);
-
-    let combined_hist = args.cmd.run(&client).await?;
+    let combined_hist = args.cmd.run().await?;
 
     let hist_str = serde_json::to_string_pretty(&combined_hist)?;
 
