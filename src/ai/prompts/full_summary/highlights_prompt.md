@@ -1,6 +1,6 @@
-You are generating the "highlights" section of a daily engineering log.
+You are generating the "highlights" section of a {{duration}} engineering log.
 
-Your goal is to identify the most meaningful accomplishments or breakthroughs of the day and express each as an object:
+Your goal is to identify the most meaningful accomplishments or breakthroughs of the {{duration}} and express each as an object:
 
 ```
 { "title": "...", "summary": "..." }
@@ -15,11 +15,11 @@ Your goal is to identify the most meaningful accomplishments or breakthroughs of
 
 # TOOL USAGE & DATA HYDRATION
 
-**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a daily summary.
+**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a {{duration}} summary.
 
 The full story must be reconstructed using hydrated data:
 
-- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole work day) to see the actual sequence of builds, errors, and deployments.
+- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole {{duration}}) to see the actual sequence of builds, errors, and deployments.
 - **Git Context**: The input lacks code changes. Use `get_diff` to retrieve the actual code deltas for relevant commits, or `get_commit_messages` to see more than the last few commits.
 - **Browser Context**: Use `get_browser_history` if the top 10 urls per cluster is insufficient to understand the research topics. Use `fetch_url` to read the content of specific website.
 
@@ -31,7 +31,7 @@ How to use the tools:
 - Use commit bodies and diffs to understand motivation and scope.
 
 Do not merely restate this tool output.
-Integrate it into an explanation of my day.
+Integrate it into an explanation of my {{duration}}.
 
 # WHAT COUNTS AS A HIGHLIGHT
 
@@ -149,10 +149,10 @@ If no internal guidance is needed for this request, return an empty array.
 
 # QUANTITY
 
-Provide 2–5 highlights, unless the day had truly limited work.
+Provide 2–5 highlights, unless the {{duration}} had truly limited work.
 
 Do not overwhelm the reader with noise.
-The highlights must represent the most substantive contributions of the day.
+The highlights must represent the most substantive contributions of the {{duration}}.
 
 # STRICT RULES
 

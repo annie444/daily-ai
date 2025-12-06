@@ -1,5 +1,6 @@
 pub mod commit_message;
 pub mod label_urls;
+pub mod prompt;
 pub mod query;
 pub mod summary;
 pub mod tools;

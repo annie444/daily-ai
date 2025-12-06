@@ -233,14 +233,14 @@ impl QueryType {
         }
     }
 
-    pub fn prompt(&self) -> &'static str {
+    pub fn prompt(&self, vars: &std::collections::HashMap<&str, &str>) -> String {
         match self {
-            QueryType::Summary => SummaryQuery::prompt(),
-            QueryType::Highlights => HighlightsQuery::prompt(),
-            QueryType::RepoSummary => RepoSummaryQuery::prompt(),
-            QueryType::ShellOverview => ShellOverviewQuery::prompt(),
-            QueryType::TimeBreakdown => TimeBreakdownQuery::prompt(),
-            QueryType::CommonGroups => CommonGroupsQuery::prompt(),
+            QueryType::Summary => SummaryQuery::prompt(vars),
+            QueryType::Highlights => HighlightsQuery::prompt(vars),
+            QueryType::RepoSummary => RepoSummaryQuery::prompt(vars),
+            QueryType::ShellOverview => ShellOverviewQuery::prompt(vars),
+            QueryType::TimeBreakdown => TimeBreakdownQuery::prompt(vars),
+            QueryType::CommonGroups => CommonGroupsQuery::prompt(vars),
         }
     }
 
@@ -330,6 +330,7 @@ impl QueryResponse {
 pub async fn generate_summary<C: Config>(
     client: &Client<C>,
     context: &Context,
+    template_vars: &std::collections::HashMap<&str, &str>,
 ) -> AppResult<WorkSummary> {
     // Kick off first turn with diff summary and commit prompt.
     let mut input_context = MinifiedContext::from(context);
@@ -367,7 +368,7 @@ pub async fn generate_summary<C: Config>(
             }))),
             InputItem::Item(Item::Message(MessageItem::Input(InputMessage {
                 content: vec![InputContent::InputText(InputTextContent {
-                    text: query.prompt().to_string(),
+                    text: query.prompt(template_vars),
                 })],
                 role: InputRole::System,
                 status: None,
@@ -379,7 +380,7 @@ pub async fn generate_summary<C: Config>(
                 model: Some("openai/gpt-oss-20b".to_string()),
                 input: InputParam::Items(input_items.clone()),
                 background: Some(false),
-                instructions: Some(query.prompt().to_string()),
+                instructions: Some(query.prompt(template_vars)),
                 parallel_tool_calls: Some(false),
                 reasoning: Some(Reasoning {
                     effort: Some(ReasoningEffort::High),

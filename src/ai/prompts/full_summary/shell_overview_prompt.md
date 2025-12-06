@@ -1,6 +1,6 @@
-You are generating the "shell_overview" section of a daily engineering log.
+You are generating the "shell_overview" section of a {{duration}} engineering log.
 
-Your task is to produce a short, 3–6 sentence technical narrative explaining the meaning of the day’s shell activity, including:
+Your task is to produce a short, 3–6 sentence technical narrative explaining the meaning of the {{duration}} shell activity, including:
 
 - What workflows were executed
 - Why commands were repeated
@@ -45,18 +45,18 @@ Ignore everything that did not contribute to technical progress.
 
 # TOOL USAGE & DATA HYDRATION
 
-**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a daily summary.
+**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a {{duration}} summary.
 
 The full story must be reconstructed using hydrated data:
 
-- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole work day) to see the actual sequence of builds, errors, and deployments.
+- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole {{duration}}) to see the actual sequence of builds, errors, and deployments.
 - **Git Context**: The input lacks code changes. Use `get_diff` to retrieve the actual code deltas for relevant commits, or `get_commit_messages` to see more than the last few commits.
 - **Browser Context**: Use `get_browser_history` if the top 10 urls per cluster is insufficient to understand the research topics. Use `fetch_url` to read the content of specific website.
 
 Before writing the overview, you must hydrate missing context using tools:
 
-- get_shell_history
-  - Retrieve the full day’s shell timeline. Use timestamps to identify:
+- `get_shell_history`
+  - Retrieve the full {{duration}} shell timeline. Use timestamps to identify:
     - bursts of errors
     - loops
     - testing cycles
@@ -68,10 +68,10 @@ Before writing the overview, you must hydrate missing context using tools:
 - get_repo
   - Anchor any repo references to actual filesystem paths.
 
-You must reconstruct the day’s purpose-driven shell activity, not just the last few commands.
+You must reconstruct the {{duration}} purpose-driven shell activity, not just the last few commands.
 
 Do not merely restate this tool output.
-Integrate it into an explanation of my day.
+Integrate it into an explanation of my {{duration}}.
 
 # CONTENT REQUIREMENTS
 
@@ -81,7 +81,7 @@ Your "shell_overview" MUST:
 - Identify debugging loops and failed runs when relevant.
 - Mention the technical areas affected (e.g., timestamp serialization, JSON cleaning logic, state-machine parser).
 - Connect shell activity to the themes in commits.
-- Convey the "story arc" of the day’s command-line work.
+- Convey the "story arc" of the {{duration}} command-line work.
 
 Example of a strong overview:
 

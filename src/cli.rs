@@ -660,7 +660,9 @@ impl Cmd {
                 ..
             } => {
                 let client = self.get_client();
-                self.run_summarize(&client, *sync, get_duration(duration))
+                let duration_val = get_duration(duration);
+                let duration_str = duration.as_deref().unwrap_or("1d");
+                self.run_summarize(&client, *sync, duration_val, duration_str)
                     .await
             }
             Cmd::Collect { cmd } => Ok(cmd.run().await?.into()),
@@ -702,6 +704,7 @@ impl Cmd {
         client: &Client<C>,
         sync: bool,
         duration: Duration,
+        duration_label: &str,
     ) -> AppResult<FullContext> {
         // Collect shell, Safari, and git history, then return the aggregated context.
         let shell_history = shell::get_history(sync, &duration).await?;
@@ -717,7 +720,9 @@ impl Cmd {
             commit_history,
         };
 
-        let summary = ai::summary::generate_summary(client, &ctx).await?;
+        let mut vars = std::collections::HashMap::new();
+        vars.insert("duration", duration_label);
+        let summary = ai::summary::generate_summary(client, &ctx, &vars).await?;
 
         Ok(FullContext::from((ctx, summary)))
     }

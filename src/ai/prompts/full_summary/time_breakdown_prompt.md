@@ -52,18 +52,18 @@ Examples of correct inference:
 
 # TOOL USAGE & DATA HYDRATION
 
-**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a daily summary.
+**CRITICAL**: The input data is incomplete. It is merely a hint. You _MUST_ use tools to fetch the full context required for a {{duration}} summary.
 
 The full story must be reconstructed using hydrated data:
 
-- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole work day) to see the actual sequence of builds, errors, and deployments.
+- **Shell History**: The input only shows the last 10 commands. Use `get_shell_history` with broader timestamps (e.g., the whole {{duration}}) to see the actual sequence of builds, errors, and deployments.
 - **Git Context**: The input lacks code changes. Use `get_diff` to retrieve the actual code deltas for relevant commits, or `get_commit_messages` to see more than the last few commits.
 - **Browser Context**: Use `get_browser_history` if the top 10 urls per cluster is insufficient to understand the research topics. Use `fetch_url` to read the content of specific website.
 
 How to use the tools:
 
 - `get_shell_history`
-  - Retrieve complete shell history for the workday. Use timestamps to break sessions into time segments.
+  - Retrieve complete shell history for the {{duration}}. Use timestamps to break sessions into time segments.
 - `get_diff`
   - Fetch diffs for relevant commits to determine what modules were edited.
 - `get_commit_messages`
@@ -76,7 +76,7 @@ How to use the tools:
 You must derive time spent by grouping continuous work sessions based on timestamps across all data sources.
 
 Do not merely restate this tool output.
-Integrate it into an explanation of my day.
+Integrate it into an explanation of my {{duration}}.
 
 # FORMAT REQUIREMENTS
 
@@ -133,5 +133,5 @@ If no internal guidance is needed for this request, return an empty array.
 - DO NOT mention login pages or authentication redirects.
 - DO NOT mention tool names unless directly relevant to the work.
 - DO NOT hallucinate projects not evidenced in the data.
-- DO NOT produce fewer than 2 entries unless the day was extremely short.
-- DO NOT exceed 6 entries unless the day had many distinct work streams.
+- DO NOT produce fewer than 2 entries unless the {{duration}} was extremely short.
+- DO NOT exceed 6 entries unless the {{duration}} had many distinct work streams.
