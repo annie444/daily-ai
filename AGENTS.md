@@ -11,7 +11,7 @@
 - **Error Handling**: Use `crate::error::AppResult` and `AppError`. Extend `AppError` using `thiserror` for new error types.
 - **Logging**: Use `tracing` macros (`info!`, `debug!`, `error!`) instead of `println!`.
 - **Async**: Use `tokio` for async runtime. Ensure functions are `async` where appropriate.
-- **Database**: Use `sea-orm` entities (in `src/entity`).
+- **Database**: Use `sqlx` for database queries (read-only SQLite connections).
 - **Imports**: Group imports by crate. Prefer explicit imports over `*`.
 - **Naming**: Snake_case for variables/functions; PascalCase for structs/enums/traits.
 - **New Files**: Register new modules in `mod.rs`.

@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
-use async_openai::{Client, config::Config};
+use async_openai::Client;
+use async_openai::config::Config;
 use git2::{Commit, DiffOptions, Oid, Repository, Revwalk, Status, StatusOptions, Tree};
 use serde::{Deserialize, Serialize};
 use time::{Duration, OffsetDateTime};

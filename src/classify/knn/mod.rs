@@ -6,10 +6,8 @@ mod utils;
 use std::cmp::Ordering;
 
 use ndarray::prelude::*;
-use ndarray_rand::{
-    RandomExt, rand,
-    rand_distr::{Distribution, Uniform},
-};
+use ndarray_rand::rand_distr::{Distribution, Uniform};
+use ndarray_rand::{RandomExt, rand};
 use tracing::warn;
 
 use crate::AppResult;

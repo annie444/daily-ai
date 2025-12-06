@@ -3,74 +3,82 @@ name = "daily-ai"
 version = "0.1.0"
 edition = "2024"
 
+[workspace]
+members = ["crates/local-embedder", "crates/dirs", "crates/include-zstd"]
+
+[features]
+default = []
+local-ml = ["dep:daily-ai-local-embedder"]
+
 [dependencies]
-sea-orm = { version = "2.0.0-rc", features = [
-  "sqlx-sqlite",
+daily-ai-local-embedder = { path = "crates/local-embedder", optional = true }
+daily-ai-dirs = { path = "crates/dirs" }
+daily-ai-include-zstd = { path = "crates/include-zstd" }
+sqlx = { version = "0.8", features = [
   "runtime-tokio-rustls",
-  "macros",
+  "sqlite",
+  "time",
 ] }
-clap = { version = "4.5.53", features = ["derive", "color"] }
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
-thiserror = "2.0.17"
-tokio = { version = "1.48.0", features = [
+clap = { version = "4", features = ["derive", "color"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = [
   "macros",
   "net",
   "process",
   "rt-multi-thread",
   "io-util",
 ] }
-git2 = "0.20.2"
+git2 = "0.20"
 async-openai = "0.31.0-alpha.11"
-schemars = "1.1.0"
-tracing = { version = "0.1.41", features = ["attributes", "std"] }
-tracing-subscriber = { version = "0.3.20", features = [
+schemars = "1"
+tracing = { version = "0.1", features = ["attributes", "std"] }
+tracing-subscriber = { version = "0.3", features = [
   "env-filter",
   "local-time",
 ] }
-tracing-indicatif = "0.3.13"
-tracing-unwrap = { version = "1.0.1", features = ["log-location"] }
-serde_path_to_error = "0.1.20"
-atuin-client = "18.10.0"
-atuin-history = "18.10.0"
-candle-core = "0.9.1"
-candle-nn = "0.9.1"
-tokenizers = { version = "0.22.1", features = ["rustls-tls"] }
-time = { version = "0.3.44", features = [
+tracing-indicatif = "0.3"
+serde_path_to_error = "0.1"
+atuin-client = "18.10"
+atuin-history = "18.10"
+time = { version = "0.3", features = [
   "serde-human-readable",
   "macros",
   "local-offset",
   "formatting",
   "parsing",
 ] }
-candle-transformers = "0.9.1"
-futures = "0.3.31"
-ndarray = "0.17.1"
-safetensors = "0.7.0"
-reqwest = { version = "0.12.24", default-features = false, features = [
+futures = "0.3"
+ndarray = "0.17"
+reqwest = { version = "0.12", default-features = false, features = [
   "charset",
   "http2",
   "system-proxy",
   "rustls-tls",
   "stream",
 ] }
-atuin-common = "18.10.0"
-atuin-kv = "18.10.0"
-atuin-scripts = "18.10.0"
-atuin-dotfiles = "18.10.0"
-html2md = "0.2.15"
-clap_complete = "4.5.61"
-clap_complete_nushell = "4.5.10"
-clap-verbosity-flag = { version = "3.0.4", default-features = false, features = [
+atuin-common = "18"
+atuin-kv = "18"
+atuin-scripts = "18"
+atuin-dotfiles = "18"
+html2md = "0.2"
+clap_complete = "4"
+clap_complete_nushell = "4"
+clap-verbosity-flag = { version = "3", default-features = false, features = [
   "tracing",
 ] }
-humantime = "2.3.0"
-ndarray-linalg = { version = "0.18.0", features = ["openblas-system"] }
-hdbscan = "0.12.0"
-ndarray-rand = "0.16.0"
-base64 = "0.22.1"
-murmur3 = "0.5.2"
-bincode = "2.0.1"
+humantime = "2"
+ndarray-linalg = { version = "0.18", features = ["openblas-system"] }
+hdbscan = "0.12"
+ndarray-rand = "0.16"
+murmur3 = "0.5"
+bincode = "2"
+zstd = { version = "0.13", default-features = false, features = [
+  "fat-lto",
+  "zdict_builder",
+  "arrays",
+] }
 
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
 candle-core = { version = "0.9.1", features = ["metal"] }
@@ -79,3 +87,9 @@ candle-transformers = { version = "0.9.1", features = ["metal"] }
 
 [patch.crates-io]
 async-openai = { git = "https://github.com/annie444/async-openai.git", branch = "main" }
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true
+opt-level = "z"

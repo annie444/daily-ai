@@ -79,8 +79,6 @@ pub struct GetShellHistory {
 
 impl CustomTool for GetDiff {
     type Context<'a> = Vec<GitRepoHistory>;
-    const NAME: &'static str = "get_diff";
-    const DESCRIPTION: &'static str = "Retrieve the complete diff of changes in a repository.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context.iter().find(|r| r.diff.repo_path == self.repo) {
@@ -196,8 +194,6 @@ impl CustomTool for GetDiff {
 
 impl CustomTool for GetRepo {
     type Context<'a> = Vec<GitRepoHistory>;
-    const NAME: &'static str = "get_repo";
-    const DESCRIPTION: &'static str = "Retrieve the complete history of a repository.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context.iter().find(|r| r.diff.repo_path == self.repo) {
@@ -227,8 +223,6 @@ impl CustomTool for GetRepo {
 
 impl CustomTool for GetCommitMessages {
     type Context<'a> = Vec<GitRepoHistory>;
-    const NAME: &'static str = "get_commit_messages";
-    const DESCRIPTION: &'static str = "Get the list of commit messages collected.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let repo_hist = match context
@@ -264,8 +258,6 @@ impl CustomTool for GetCommitMessages {
 
 impl CustomTool for GetBrowserHistory {
     type Context<'a> = Vec<UrlCluster>;
-    const NAME: &'static str = "get_browser_history";
-    const DESCRIPTION: &'static str = "Get the browser history.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let filtered_clusters: Vec<UrlCluster> = match &self.groups {
@@ -305,8 +297,6 @@ impl CustomTool for GetBrowserHistory {
 
 impl CustomTool for GetShellHistory {
     type Context<'a> = Vec<ShellHistoryEntry>;
-    const NAME: &'static str = "get_shell_history";
-    const DESCRIPTION: &'static str = "Get the shell history.";
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         let mut history: Vec<ShellHistoryEntry> = if let Some(start_time) = &self.start_time {

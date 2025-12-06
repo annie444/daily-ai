@@ -1,19 +1,15 @@
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use async_openai::Client;
 use async_openai::config::Config;
-use async_openai::types::evals::InputTextContent;
-use async_openai::types::responses::{
-    CreateResponse, FunctionToolCall, InputContent, InputItem, InputMessage, InputParam, InputRole,
-    Item, MessageItem, OutputItem, OutputMessageContent, Reasoning, ReasoningEffort,
-    RefusalContent, ResponseFormatJsonSchema, ResponseTextParam, TextResponseFormatConfiguration,
-    Tool, ToolChoiceOptions, ToolChoiceParam, Truncation,
-};
+use async_openai::types::responses::{FunctionToolCall, InputItem, Tool};
+use daily_ai_include_zstd::include_zstd;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error};
 
-use super::query::Query;
+use super::agent::Agent;
+use super::tools::ToolRegistry;
 use super::tools::fetch::FetchUrl;
 use super::tools::summary::{
     GetBrowserHistory, GetCommitMessages, GetDiff, GetRepo, GetShellHistory,
@@ -26,16 +22,16 @@ use crate::git::CommitMeta;
 use crate::impl_query;
 use crate::shell::ShellHistoryEntry;
 
-static SUMMARY_PROMPT: &str = std::include_str!("prompts/full_summary/summary_prompt.md");
-static HIGHLIGHTS_PROMPT: &str = std::include_str!("prompts/full_summary/highlights_prompt.md");
-static TIME_BREAKDOWN_PROMPT: &str =
-    std::include_str!("prompts/full_summary/time_breakdown_prompt.md");
-static COMMON_GROUPS_PROMPT: &str =
-    std::include_str!("prompts/full_summary/common_groups_prompt.md");
-static REPO_SUMMARIES_PROMPT: &str =
-    std::include_str!("prompts/full_summary/repo_summaries_prompt.md");
-static SHELL_OVERVIEW_PROMPT: &str =
-    std::include_str!("prompts/full_summary/shell_overview_prompt.md");
+static SUMMARY_PROMPT: &[u8] = include_zstd!("src/ai/prompts/full_summary/summary_prompt.md");
+static HIGHLIGHTS_PROMPT: &[u8] = include_zstd!("src/ai/prompts/full_summary/highlights_prompt.md");
+static TIME_BREAKDOWN_PROMPT: &[u8] =
+    include_zstd!("src/ai/prompts/full_summary/time_breakdown_prompt.md");
+static COMMON_GROUPS_PROMPT: &[u8] =
+    include_zstd!("src/ai/prompts/full_summary/common_groups_prompt.md");
+static REPO_SUMMARIES_PROMPT: &[u8] =
+    include_zstd!("src/ai/prompts/full_summary/repo_summaries_prompt.md");
+static SHELL_OVERVIEW_PROMPT: &[u8] =
+    include_zstd!("src/ai/prompts/full_summary/shell_overview_prompt.md");
 
 /// # common_groups
 /// Identify common projects or categories of work the changes belong to.
@@ -221,49 +217,6 @@ pub enum QueryResponse {
     CommonGroups(CommonGroupsQuery),
 }
 
-impl QueryType {
-    pub fn response_format(&self) -> ResponseFormatJsonSchema {
-        match self {
-            QueryType::Summary => SummaryQuery::response_format(),
-            QueryType::Highlights => HighlightsQuery::response_format(),
-            QueryType::RepoSummary => RepoSummaryQuery::response_format(),
-            QueryType::ShellOverview => ShellOverviewQuery::response_format(),
-            QueryType::TimeBreakdown => TimeBreakdownQuery::response_format(),
-            QueryType::CommonGroups => CommonGroupsQuery::response_format(),
-        }
-    }
-
-    pub fn prompt(&self, vars: &std::collections::HashMap<&str, &str>) -> String {
-        match self {
-            QueryType::Summary => SummaryQuery::prompt(vars),
-            QueryType::Highlights => HighlightsQuery::prompt(vars),
-            QueryType::RepoSummary => RepoSummaryQuery::prompt(vars),
-            QueryType::ShellOverview => ShellOverviewQuery::prompt(vars),
-            QueryType::TimeBreakdown => TimeBreakdownQuery::prompt(vars),
-            QueryType::CommonGroups => CommonGroupsQuery::prompt(vars),
-        }
-    }
-
-    pub fn get_response(&self, s: &str) -> AppResult<QueryResponse> {
-        match self {
-            QueryType::Summary => Ok(QueryResponse::Summary(SummaryQuery::from_str(s)?)),
-            QueryType::Highlights => Ok(QueryResponse::Highlights(HighlightsQuery::from_str(s)?)),
-            QueryType::RepoSummary => {
-                Ok(QueryResponse::RepoSummary(RepoSummaryQuery::from_str(s)?))
-            }
-            QueryType::ShellOverview => Ok(QueryResponse::ShellOverview(
-                ShellOverviewQuery::from_str(s)?,
-            )),
-            QueryType::TimeBreakdown => Ok(QueryResponse::TimeBreakdown(
-                TimeBreakdownQuery::from_str(s)?,
-            )),
-            QueryType::CommonGroups => {
-                Ok(QueryResponse::CommonGroups(CommonGroupsQuery::from_str(s)?))
-            }
-        }
-    }
-}
-
 impl QueryResponse {
     pub fn extract_notes(&self) -> Vec<String> {
         match self {
@@ -321,6 +274,45 @@ impl QueryResponse {
     }
 }
 
+struct SummaryToolRegistry;
+
+impl ToolRegistry for SummaryToolRegistry {
+    type Context<'a> = Context;
+
+    fn definitions() -> Vec<Tool> {
+        vec![
+            Tool::Function(FetchUrl::definition()),
+            Tool::Function(GetDiff::definition()),
+            Tool::Function(GetRepo::definition()),
+            Tool::Function(GetCommitMessages::definition()),
+            Tool::Function(GetBrowserHistory::definition()),
+            Tool::Function(GetShellHistory::definition()),
+        ]
+    }
+
+    async fn execute<'c>(call: FunctionToolCall, context: &Self::Context<'c>) -> Vec<InputItem> {
+        match call.name.as_str() {
+            name if name == FetchUrl::name() => FetchUrl::process(call, &()).await,
+            name if name == GetDiff::name() => {
+                GetDiff::process(call, &context.commit_history).await
+            }
+            name if name == GetRepo::name() => {
+                GetRepo::process(call, &context.commit_history).await
+            }
+            name if name == GetCommitMessages::name() => {
+                GetCommitMessages::process(call, &context.commit_history).await
+            }
+            name if name == GetBrowserHistory::name() => {
+                GetBrowserHistory::process(call, &context.safari_history).await
+            }
+            name if name == GetShellHistory::name() => {
+                GetShellHistory::process(call, &context.shell_history).await
+            }
+            _ => unknown_tool(call),
+        }
+    }
+}
+
 /// Generate a commit message using the model, optionally calling back into file/patch tools.
 #[tracing::instrument(
     name = "Generating the full summary of work done",
@@ -330,7 +322,7 @@ impl QueryResponse {
 pub async fn generate_summary<C: Config>(
     client: &Client<C>,
     context: &Context,
-    template_vars: &std::collections::HashMap<&str, &str>,
+    template_vars: &HashMap<&str, &str>,
 ) -> AppResult<WorkSummary> {
     // Kick off first turn with diff summary and commit prompt.
     let mut input_context = MinifiedContext::from(context);
@@ -345,131 +337,77 @@ pub async fn generate_summary<C: Config>(
 
     let mut work_summary = WorkSummary::default();
     let mut notes: Vec<String> = vec![];
-    let tools = vec![
-        Tool::Function(FetchUrl::definition()),
-        Tool::Function(GetDiff::definition()),
-        Tool::Function(GetRepo::definition()),
-        Tool::Function(GetCommitMessages::definition()),
-        Tool::Function(GetBrowserHistory::definition()),
-        Tool::Function(GetShellHistory::definition()),
-    ];
+    let agent = Agent::new(None);
 
     for query in queries {
-        let mut previous_response_id: Option<String> = None;
         input_context.notes = notes.clone();
+        let initial_user_message = serde_json::to_string_pretty(&input_context)?;
 
-        let mut input_items: Vec<InputItem> = vec![
-            InputItem::Item(Item::Message(MessageItem::Input(InputMessage {
-                content: vec![InputContent::InputText(InputTextContent {
-                    text: serde_json::to_string_pretty(&input_context)?,
-                })],
-                role: InputRole::User,
-                status: None,
-            }))),
-            InputItem::Item(Item::Message(MessageItem::Input(InputMessage {
-                content: vec![InputContent::InputText(InputTextContent {
-                    text: query.prompt(template_vars),
-                })],
-                role: InputRole::System,
-                status: None,
-            }))),
-        ];
+        let query_response = match query {
+            QueryType::Summary => QueryResponse::Summary(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, SummaryQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+            QueryType::Highlights => QueryResponse::Highlights(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, HighlightsQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+            QueryType::RepoSummary => QueryResponse::RepoSummary(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, RepoSummaryQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+            QueryType::ShellOverview => QueryResponse::ShellOverview(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, ShellOverviewQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+            QueryType::TimeBreakdown => QueryResponse::TimeBreakdown(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, TimeBreakdownQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+            QueryType::CommonGroups => QueryResponse::CommonGroups(
+                agent
+                    .run::<C, Context, SummaryToolRegistry, CommonGroupsQuery>(
+                        client,
+                        context,
+                        &initial_user_message,
+                        template_vars,
+                    )
+                    .await?,
+            ),
+        };
 
-        loop {
-            let request = CreateResponse {
-                model: Some("openai/gpt-oss-20b".to_string()),
-                input: InputParam::Items(input_items.clone()),
-                background: Some(false),
-                instructions: Some(query.prompt(template_vars)),
-                parallel_tool_calls: Some(false),
-                reasoning: Some(Reasoning {
-                    effort: Some(ReasoningEffort::High),
-                    summary: None,
-                }),
-                store: Some(true),
-                stream: Some(false),
-                temperature: Some(0.05),
-                text: Some(ResponseTextParam {
-                    format: TextResponseFormatConfiguration::JsonSchema(query.response_format()),
-                    verbosity: None,
-                }),
-                tool_choice: Some(ToolChoiceParam::Mode(ToolChoiceOptions::Auto)),
-                tools: Some(tools.clone()),
-                top_logprobs: Some(0),
-                top_p: Some(0.1),
-                truncation: Some(Truncation::Disabled),
-                previous_response_id: previous_response_id.clone(),
-                ..Default::default()
-            };
-
-            let response = client.responses().create(request).await?;
-            debug!("AI Response: {:?}", response);
-            previous_response_id = Some(response.id.clone());
-
-            let function_calls: Vec<FunctionToolCall> = response
-                .output
-                .iter()
-                .filter_map(|item| {
-                    if let OutputItem::FunctionCall(fc) = item {
-                        Some(fc.clone())
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-
-            if function_calls.is_empty() {
-                let mut response_content = String::new();
-                for out in &response.output {
-                    if let OutputItem::Message(msg) = out {
-                        for content in &msg.content {
-                            match content {
-                                OutputMessageContent::OutputText(text) => {
-                                    response_content.push_str(&text.text)
-                                }
-                                OutputMessageContent::Refusal(RefusalContent { refusal }) => {
-                                    error!("AI refused prompt: {}", refusal);
-                                }
-                            }
-                        }
-                    }
-                }
-                let query_response = query.get_response(&response_content)?;
-                query_response.update_work_summary(&mut work_summary);
-                notes.extend(query_response.extract_notes());
-                break;
-            }
-
-            // Handle each tool call in order and feed results back into the conversation.
-            for call in function_calls {
-                match call.name.as_str() {
-                    name if name == FetchUrl::NAME => {
-                        input_items.extend(FetchUrl::process(call, &()).await);
-                    }
-                    name if name == GetDiff::NAME => {
-                        input_items.extend(GetDiff::process(call, &context.commit_history).await);
-                    }
-                    name if name == GetRepo::NAME => {
-                        input_items.extend(GetRepo::process(call, &context.commit_history).await);
-                    }
-                    name if name == GetCommitMessages::NAME => {
-                        input_items.extend(
-                            GetCommitMessages::process(call, &context.commit_history).await,
-                        );
-                    }
-                    name if name == GetBrowserHistory::NAME => {
-                        input_items.extend(
-                            GetBrowserHistory::process(call, &context.safari_history).await,
-                        );
-                    }
-                    name if name == GetShellHistory::NAME => {
-                        input_items
-                            .extend(GetShellHistory::process(call, &context.shell_history).await);
-                    }
-                    _ => input_items.extend(unknown_tool(call)),
-                };
-            }
-        }
+        query_response.update_work_summary(&mut work_summary);
+        notes.extend(query_response.extract_notes());
     }
 
     work_summary.notes = notes;

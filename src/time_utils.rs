@@ -1,20 +1,8 @@
-use time::{Duration, OffsetDateTime, Time};
+use time::{Duration, OffsetDateTime};
 use tracing::trace;
 
 /// Seconds between Unix epoch (1970) and macOS epoch (2001).
 const MACOS_EPOCH_OFFSET: f64 = 978_307_200.0;
-
-/// Convert an `OffsetDateTime` to macOS timestamp (seconds since 2001-01-01) as f64.
-#[tracing::instrument(
-    name = "Converting standard date and time to a MacOS timestamp",
-    level = "debug"
-)]
-pub fn datetime_to_macos_time(dt: &OffsetDateTime) -> f64 {
-    let utc = dt.unix_timestamp_nanos();
-    let ts = unix_time_sec_to_macos_time(utc);
-    trace!("Converted datetime {} to macOS time {}", dt, ts);
-    ts
-}
 
 /// Convert Unix time in nanoseconds to macOS timestamp in seconds.
 #[tracing::instrument(
@@ -75,16 +63,6 @@ pub fn macos_to_datetime(macos_time: f64) -> OffsetDateTime {
     OffsetDateTime::from_unix_timestamp_nanos(secs).unwrap()
 }
 
-/// Midnight (00:00) today in UTC.
-#[tracing::instrument(
-    name = "Calculating the date and time of today at UTC midnight",
-    level = "debug"
-)]
-pub fn midnight_utc() -> OffsetDateTime {
-    let today = OffsetDateTime::now_utc();
-    OffsetDateTime::new_utc(today.date(), Time::MIDNIGHT)
-}
-
 #[tracing::instrument(name = "Converting SystemTime to OffsetDateTime", level = "debug")]
 pub fn system_time_to_offset_datetime(st: std::time::SystemTime) -> OffsetDateTime {
     let duration_since_epoch = st
@@ -108,23 +86,6 @@ mod tests {
         let macos = unix_time_sec_to_macos_time(nsecs);
         let back = macos_to_unix_time(macos);
         assert_eq!(back, nsecs);
-    }
-
-    #[test]
-    fn datetime_and_macos_roundtrip() {
-        let dt = OffsetDateTime::from_unix_timestamp(1_700_000_000).unwrap();
-        let macos = datetime_to_macos_time(&dt);
-        let back = macos_to_datetime(macos);
-        // Allow 1 microsecond drift due to float conversion
-        let delta = (back - dt).whole_microseconds().abs();
-        assert!(delta <= 1, "drift too large: {}µs", delta);
-    }
-
-    #[test]
-    fn midnight_is_midnight_utc() {
-        let mid = midnight_utc();
-        assert_eq!(mid.time(), Time::MIDNIGHT);
-        assert_eq!(mid.offset(), OffsetDateTime::now_utc().offset());
     }
 
     #[test]

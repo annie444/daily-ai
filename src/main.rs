@@ -2,8 +2,6 @@ pub(crate) mod ai;
 pub(crate) mod classify;
 pub(crate) mod cli;
 mod context;
-pub(crate) mod dirs;
-pub(crate) mod entity;
 mod error;
 pub(crate) mod git;
 mod io_utils;

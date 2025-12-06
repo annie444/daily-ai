@@ -2,11 +2,11 @@ use std::collections::HashMap;
 
 /// A template for AI prompts that supports variable substitution.
 pub struct PromptTemplate {
-    template: &'static str,
+    template: String,
 }
 
 impl PromptTemplate {
-    pub const fn new(template: &'static str) -> Self {
+    pub const fn new(template: String) -> Self {
         Self { template }
     }
 
@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn test_render() {
-        let t = PromptTemplate::new("Hello {{name}}, welcome to {{place}}!");
+        let t = PromptTemplate::new("Hello {{name}}, welcome to {{place}}!".to_string());
         let mut vars = HashMap::new();
         vars.insert("name", "Alice");
         vars.insert("place", "Wonderland");

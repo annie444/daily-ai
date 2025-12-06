@@ -1,0 +1,27 @@
+[package]
+name = "daily-ai-local-embedder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+daily-ai-dirs = { path = "../dirs" }
+candle-core = "0.9.1"
+candle-nn = "0.9.1"
+candle-transformers = "0.9.1"
+tokenizers = { version = "0.22.1", features = ["rustls-tls"] }
+safetensors = "0.7.0"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["stream"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-indicatif = "0.3"
+futures = "0.3"
+thiserror = "2"
+murmur3 = "0.5"
+bincode = "2"
+
+[target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
+candle-core = { version = "0.9.1", features = ["metal"] }
+candle-nn = { version = "0.9.1", features = ["metal"] }
+candle-transformers = { version = "0.9.1", features = ["metal"] }

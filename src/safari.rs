@@ -1,18 +1,14 @@
 use std::env;
 use std::path::{Path, PathBuf};
 
-use sea_orm::{
-    ColumnTrait, ConnectOptions, Database, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder,
-};
 use serde::{Deserialize, Serialize};
+use sqlx::sqlite::SqlitePoolOptions;
 use time::{Duration, OffsetDateTime};
 use tracing::{debug, trace};
 
 use crate::AppResult;
-use crate::entity::{history_items, history_visits};
-use crate::time_utils::{datetime_to_macos_time, macos_past_ts, macos_to_datetime, midnight_utc};
+use crate::time_utils::{macos_past_ts, macos_to_datetime};
 
-/// Minimal subset of Safari history we need for downstream processing.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SafariHistoryItem {
     pub url: String,
@@ -60,45 +56,53 @@ fn get_safari_history_db_path() -> PathBuf {
     .unwrap_or_else(|| PathBuf::from("/Users/username/Library/Safari/History.db"))
 }
 
-/// Open the Safari history sqlite database at the provided path.
-#[tracing::instrument(name = "Connecting to the Safari history database", level = "info")]
-async fn connect_to_db<P: AsRef<Path> + std::fmt::Debug>(
-    db_path: P,
-) -> AppResult<DatabaseConnection> {
-    let mut opt = ConnectOptions::new(format!("sqlite://{}", db_path.as_ref().display()));
-    opt.sqlx_logging(false);
-    trace!("Connecting to Safari History database");
-    let db = Database::connect(opt).await?;
-    Ok(db)
-}
-
 /// Fetch Safari history entries from the past 24 hours (UTC) ordered by most recent visit.
 #[tracing::instrument(name = "Fetching the Safari history", level = "info")]
 pub async fn get_safari_history(duration: &Duration) -> AppResult<Vec<SafariHistoryItem>> {
     let db_path = get_safari_history_db_path();
-    let db = connect_to_db(db_path).await?;
+    let conn_str = format!("sqlite://{}?mode=ro", db_path.display()); // Read-only mode
+    trace!("Connecting to Safari History database at {}", conn_str);
+
+    let pool = SqlitePoolOptions::new()
+        .connect(&conn_str)
+        .await
+        .map_err(|e| {
+            crate::error::AppError::Other(format!("Failed to connect to Safari DB: {e}"))
+        })?;
 
     trace!("Connected to Safari History database");
 
     let past_date = macos_past_ts(duration);
-    let history_items = history_items::Entity::find()
-        .find_with_related(history_visits::Entity)
-        .filter(history_visits::Column::VisitTime.gt(past_date))
-        .order_by_desc(history_visits::Column::VisitTime)
-        .all(&db)
-        .await?;
 
-    debug!("Fetched {} history items", history_items.len());
+    // We group by item ID to get unique URLs, taking the max visit time (latest).
+    // Note: 'visit_count' is in history_items.
+    let rows = sqlx::query_as::<_, (String, Option<String>, i64, f64)>(
+        r#"
+        SELECT 
+            i.url, 
+            v.title, 
+            i.visit_count, 
+            MAX(v.visit_time) as visit_time
+        FROM history_items i
+        JOIN history_visits v ON i.id = v.history_item
+        WHERE v.visit_time > ?
+        GROUP BY i.id
+        ORDER BY visit_time DESC
+        "#,
+    )
+    .bind(past_date)
+    .fetch_all(&pool)
+    .await
+    .map_err(|e| crate::error::AppError::Other(format!("Failed to query Safari history: {e}")))?;
+
+    debug!("Fetched {} history items", rows.len());
 
     trace!("Processing Safari history items");
 
-    let mid = midnight_utc();
-    let mid_macos = datetime_to_macos_time(&mid);
-
-    let safari_history = history_items
+    let safari_history: Vec<SafariHistoryItem> = rows
         .into_iter()
-        .filter(|(item, _)| {
-            let mut url = item.url.to_lowercase();
+        .filter(|(url, _, _, _)| {
+            let mut url = url.to_lowercase();
             url = url.replace("https://", "");
             url = url.replace("http://", "");
             let domain = url.rsplit_once('/').map(|(base, _)| base).unwrap_or(&url);
@@ -111,15 +115,12 @@ pub async fn get_safari_history(duration: &Duration) -> AppResult<Vec<SafariHist
                 && !path.contains("callback")
                 && !domain.contains("duosecurity")
         })
-        .map(|(item, visits)| {
-            // Use the first visit (most recent, due to order_by_desc) to drive title and timestamp.
-            let last_visited = visits.first().map_or(mid, |visit| {
-                macos_to_datetime(TryInto::<f64>::try_into(visit.visit_time).unwrap_or(mid_macos))
-            });
+        .map(|(url, title, visit_count, visit_time)| {
+            let last_visited = macos_to_datetime(visit_time);
             SafariHistoryItem {
-                url: item.url,
-                title: visits.first().and_then(|visit| visit.title.clone()),
-                visit_count: item.visit_count,
+                url,
+                title,
+                visit_count,
                 last_visited,
             }
         })

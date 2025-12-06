@@ -9,7 +9,7 @@ use tracing::error;
 use super::CustomTool;
 use crate::git::diff::{get_file, get_patch};
 
-pub struct CommitMessageToolContext<'a> {
+pub struct CommitContext<'a> {
     pub repo: &'a Repository,
     pub diff: &'a Diff<'a>,
 }
@@ -39,9 +39,7 @@ pub struct GetPatch {
 }
 
 impl CustomTool for GetFile {
-    type Context<'a> = CommitMessageToolContext<'a>;
-    const NAME: &'static str = "get_file";
-    const DESCRIPTION: &'static str = "Retrieve the contents of a file";
+    type Context<'a> = CommitContext<'a>;
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         match get_file(
@@ -62,9 +60,7 @@ impl CustomTool for GetFile {
 }
 
 impl CustomTool for GetPatch {
-    type Context<'a> = CommitMessageToolContext<'a>;
-    const NAME: &'static str = "get_patch";
-    const DESCRIPTION: &'static str = "Retrieve a patch for a file";
+    type Context<'a> = CommitContext<'a>;
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String) {
         match get_patch(

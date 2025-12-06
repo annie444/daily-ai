@@ -4,9 +4,9 @@ pub mod summary;
 
 use async_openai::types::responses::{
     FunctionCallOutput, FunctionCallOutputItemParam, FunctionTool, FunctionToolCall, InputItem,
-    Item, OutputStatus,
+    Item, OutputStatus, Tool,
 };
-use schemars::{JsonSchema, schema_for};
+use schemars::{JsonSchema, Schema, schema_for};
 use serde::Serialize;
 use serde_json::Value;
 use tracing::{error, trace, warn};
@@ -14,24 +14,57 @@ use tracing::{error, trace, warn};
 use super::ResponseCleaner;
 use crate::AppResult;
 
+pub trait ToolRegistry: Send + Sync {
+    type Context<'a>;
+
+    /// Return the list of tool definitions to send to the LLM.
+    fn definitions() -> Vec<Tool>;
+
+    /// Execute a tool call.
+    async fn execute<'c>(call: FunctionToolCall, context: &Self::Context<'c>) -> Vec<InputItem>;
+}
+
 pub trait CustomTool:
     Serialize + for<'de> serde::Deserialize<'de> + JsonSchema + Send + Sync
 {
     type Context<'a>: ?Sized;
-    const NAME: &'static str;
-    const DESCRIPTION: &'static str;
 
     async fn call(&self, context: &Self::Context<'_>) -> (OutputStatus, String);
 
+    fn schema() -> Schema {
+        schema_for!(Self)
+    }
+
     fn parameters() -> Value {
-        schema_for!(Self).as_value().to_owned()
+        Self::schema().as_value().to_owned()
+    }
+
+    fn name() -> String {
+        unsafe {
+            Self::schema()
+                .get("title")
+                .unwrap_unchecked()
+                .as_str()
+                .unwrap_unchecked()
+                .to_string()
+        }
+    }
+
+    fn description() -> Option<String> {
+        unsafe {
+            Self::schema()
+                .get("description")
+                .unwrap_unchecked()
+                .as_str()
+                .map(|s| s.to_string())
+        }
     }
 
     fn definition() -> FunctionTool {
         FunctionTool {
-            name: Self::NAME.to_string(),
+            name: Self::name(),
             parameters: Some(Self::parameters()),
-            description: Some(Self::DESCRIPTION.to_string()),
+            description: Self::description(),
             strict: None,
         }
     }
@@ -47,7 +80,10 @@ pub trait CustomTool:
         match serde_path_to_error::deserialize(jd) {
             Ok(cm) => Ok(cm),
             Err(e) => {
-                error!("Failed to deserialize args for {} message: {e}", Self::NAME);
+                error!(
+                    "Failed to deserialize args for {} message: {e}",
+                    Self::name()
+                );
                 error!("Response content was: {output}");
                 error!("Failed to parse JSON at path: {}", e.path());
                 Err(e.into_inner().into())
@@ -86,7 +122,8 @@ pub trait CustomTool:
     }
 }
 
-pub fn arbitrary_tool_error(call: FunctionToolCall, msg: &str) -> Vec<InputItem> {
+pub fn unknown_tool(call: FunctionToolCall) -> Vec<InputItem> {
+    let msg = format!("Unknown tool call: {}", &call.name);
     warn!(msg);
     let mut items = vec![InputItem::Item(Item::FunctionCall(call.clone()))];
     items.push(InputItem::Item(Item::FunctionCallOutput(
@@ -98,9 +135,4 @@ pub fn arbitrary_tool_error(call: FunctionToolCall, msg: &str) -> Vec<InputItem>
         },
     )));
     items
-}
-
-pub fn unknown_tool(call: FunctionToolCall) -> Vec<InputItem> {
-    let error_msg = format!("Unknown tool call: {}", &call.name);
-    arbitrary_tool_error(call, &error_msg)
 }

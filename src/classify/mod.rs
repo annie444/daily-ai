@@ -1,20 +1,24 @@
+#[cfg(feature = "local-ml")]
 pub(super) mod bert;
 pub(super) mod convert;
 pub(super) mod knn;
 pub(super) mod linalg;
+pub(super) mod openai;
 pub(super) mod pca;
+pub mod traits;
 
 use std::collections::HashMap;
 
 use async_openai::{Client, config::Config};
 use ndarray::prelude::*;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, info, info_span, trace};
+use tracing::{debug, info, info_span};
 use tracing_indicatif::span_ext::IndicatifSpanExt;
 use tracing_indicatif::style::ProgressStyle;
 
 use crate::AppResult;
 use crate::ai::label_urls::label_url_cluster;
+use crate::classify::traits::{Clusterer, Embedder};
 use crate::safari::SafariHistoryItem;
 
 /// Cluster of Safari URLs with a human-friendly label.
@@ -22,6 +26,88 @@ use crate::safari::SafariHistoryItem;
 pub struct UrlCluster {
     pub label: String,
     pub urls: Vec<SafariHistoryItem>,
+}
+
+pub struct HdbscanClusterer;
+
+impl Clusterer for HdbscanClusterer {
+    fn cluster(&self, embeddings: &Array2<f64>) -> AppResult<HashMap<usize, Vec<usize>>> {
+        // compute k-distance
+        let mut knn = knn::Knn::default();
+        knn.set_k(25).fit(embeddings)?;
+        debug!("Computed k-distance graph for k={}", knn.k);
+        let kdists = knn.distances(embeddings)?;
+        let dist_cols = kdists.ncols();
+        let kdists_slice: ArrayView1<f64> = kdists.slice(s![.., dist_cols - 1]);
+        let eps = linalg::elbow_kneedle(kdists_slice);
+        debug!("Chosen eps for DBSCAN: {}", eps);
+
+        // cluster with DBSCAN
+        let labels = linalg::cluster_embeddings(embeddings, eps, 5)?;
+
+        let mut map: HashMap<usize, Vec<usize>> = HashMap::new();
+        for (i, label) in labels.into_iter().enumerate() {
+            if label >= 0 {
+                map.entry(label as usize).or_default().push(i);
+            }
+        }
+        Ok(map)
+    }
+}
+
+pub struct Classifier<E, C> {
+    embedder: E,
+    clusterer: C,
+}
+
+impl<E: Embedder, C: Clusterer> Classifier<E, C> {
+    pub fn new(embedder: E, clusterer: C) -> Self {
+        Self {
+            embedder,
+            clusterer,
+        }
+    }
+
+    pub async fn classify<ConfigType: Config>(
+        &self,
+        client: &Client<ConfigType>,
+        items: Vec<SafariHistoryItem>,
+    ) -> AppResult<Vec<UrlCluster>> {
+        let texts: Vec<String> = items
+            .iter()
+            .map(|item| {
+                format!(
+                    "query: {} {}",
+                    item.title.as_deref().unwrap_or_default(),
+                    item.url
+                )
+            })
+            .collect();
+
+        let embeddings = self.embedder.embed(&texts).await?;
+
+        // Normalize
+        let embs_only = embeddings.clone();
+        let raw_arr: Array2<f64> = convert::embeddings_to_ndarray(&embs_only);
+        let arr: Array2<f64> = linalg::normalize_embedding(raw_arr);
+
+        // PCA reduce
+        let reduced: Array2<f64> = pca::pca_reduce(&arr, 25)?;
+
+        let clusters = self.clusterer.cluster(&reduced)?;
+
+        // Group items
+        let mut grouped: HashMap<usize, Vec<SafariHistoryItem>> = HashMap::new();
+        for (cid, indices) in clusters {
+            let mut cluster_items = Vec::new();
+            for idx in indices {
+                cluster_items.push(items[idx].clone());
+            }
+            grouped.insert(cid, cluster_items);
+        }
+
+        build_cluster_output(client, grouped).await
+    }
 }
 
 #[tracing::instrument(
@@ -83,96 +169,20 @@ pub async fn embed_urls<C: Config>(
     client: &Client<C>,
     urls: Vec<SafariHistoryItem>,
 ) -> AppResult<Vec<UrlCluster>> {
-    let starting_count = urls.len();
+    #[cfg(feature = "local-ml")]
+    let embedder = {
+        let e = bert::BertEmbedder::new_from_pretrained("intfloat/e5-small-v2").await;
+        // If local load fails (e.g. download error), we might fallback, but for now we just propagate
+        // However, if local-ml is enabled but fails, or if we want to support both...
+        // For this step, we will prioritize local if feature is on.
+        e?
+    };
 
-    let embedder = bert::BertEmbedder::new_from_pretrained("intfloat/e5-small-v2").await?;
-    let embeddings = embedder.embed_batch(&urls).await?;
+    #[cfg(not(feature = "local-ml"))]
+    let embedder =
+        openai::OAIEmbedder::new(client, "text-embedding-nomic-embed-text-v1.5".to_string());
 
-    // Normalize
-    let embs_only: Vec<Vec<f32>> = embeddings
-        .iter()
-        .map(|(_, v)| v.clone())
-        .collect::<Vec<Vec<f32>>>();
-    let flattened: Vec<f32> = embs_only.iter().flatten().copied().collect();
-    debug!(
-        "Embedding value range: min={} max={}",
-        flattened
-            .iter()
-            .copied()
-            .reduce(|a, b| a.min(b))
-            .unwrap_or(0.0),
-        flattened
-            .iter()
-            .copied()
-            .reduce(|a, b| a.max(b))
-            .unwrap_or(0.0)
-    );
-    let raw_arr: Array2<f64> = convert::embeddings_to_ndarray(&embs_only);
-    let arr: Array2<f64> = linalg::normalize_embedding(raw_arr);
-    debug!(
-        "Normalized embeddings range: min={} max={}",
-        arr.iter().copied().reduce(|a, b| a.min(b)).unwrap_or(0.0),
-        arr.iter().copied().reduce(|a, b| a.max(b)).unwrap_or(0.0)
-    );
-    debug!("Generated embeddings of shape: {:?}", arr.dim());
-    trace!(
-        "First 5 embeddings: {:?}",
-        &arr.slice(s![..2.min(arr.dim().0), ..2.min(arr.dim().1)])
-    );
-
-    // PCA reduce
-    let reduced: Array2<f64> = pca::pca_reduce(&arr, 25)?;
-    debug!("Reduced embeddings to shape: {:?}", reduced.dim());
-    trace!(
-        "Reduced embeddings sample: {:?}",
-        reduced.slice(s![..2.min(reduced.dim().0), ..2.min(reduced.dim().1)])
-    );
-
-    // compute k‐distance
-    let mut knn = knn::Knn::default();
-    knn.set_k(25).fit(&reduced)?;
-    debug!("Computed k‐distance graph for k={}", knn.k);
-    let kdists = knn.distances(&reduced)?;
-    let dist_cols = kdists.ncols();
-    let kdists_slice: ArrayView1<f64> = kdists.slice(s![.., dist_cols - 1]);
-    trace!(
-        "K‐distance sample: {:?}",
-        kdists_slice.slice(s![..10.min(kdists_slice.len())])
-    );
-    let eps = linalg::elbow_kneedle(kdists_slice);
-    debug!("Chosen eps for DBSCAN: {}", eps);
-
-    // cluster with DBSCAN
-    let labels = linalg::cluster_embeddings(&reduced, eps, 5)?;
-    debug!(
-        "Clustered embeddings into {} clusters",
-        labels
-            .iter()
-            .copied()
-            .collect::<std::collections::HashSet<_>>()
-            .len()
-    );
-    trace!(
-        "Cluster labels: {:?}",
-        labels
-            .iter()
-            .copied()
-            .collect::<std::collections::HashSet<_>>()
-    );
-    let clustered = linalg::group_by_cluster(&embeddings, labels);
-    let clustered_count: usize = clustered.values().map(|v| v.len()).sum();
-    debug!("Grouped URLs into {} clusters", clustered.len());
-    debug!(
-        "Clustered URL count: {}, original URL count: {}",
-        clustered_count, starting_count
-    );
-
-    info!(
-        "Generating preliminary labels for {} url groups",
-        clustered.len()
-    );
-
-    let ret = build_cluster_output(client, clustered).await?;
-
-    Ok(ret)
+    let clusterer = HdbscanClusterer;
+    let classifier = Classifier::new(embedder, clusterer);
+    classifier.classify(client, urls).await
 }

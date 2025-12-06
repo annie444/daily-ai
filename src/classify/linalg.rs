@@ -1,11 +1,9 @@
-use std::collections::HashMap;
-
 use hdbscan::{DistanceMetric, Hdbscan, HdbscanHyperParams, NnAlgorithm};
-use ndarray::{OwnedRepr, RemoveAxis, prelude::*};
+use ndarray::prelude::*;
+use ndarray::{OwnedRepr, RemoveAxis};
 use tracing::warn;
 
 use crate::AppResult;
-use crate::safari::SafariHistoryItem;
 
 pub fn row_norms<D>(
     x: &ArrayBase<OwnedRepr<f64>, D>,
@@ -70,22 +68,6 @@ pub fn cluster_embeddings(data: &Array2<f64>, eps: f64, min_size: usize) -> AppR
     Ok(hdbscan.cluster()?)
 }
 
-#[tracing::instrument(name = "Grouping links", level = "info", skip(urls, labels))]
-pub fn group_by_cluster(
-    urls: &[(SafariHistoryItem, Vec<f32>)],
-    labels: Vec<i32>,
-) -> HashMap<usize, Vec<SafariHistoryItem>> {
-    let mut map: HashMap<usize, Vec<SafariHistoryItem>> = HashMap::new();
-
-    for (i, label) in labels.into_iter().enumerate() {
-        map.entry(label as usize)
-            .or_default()
-            .push(urls[i].0.clone());
-    }
-
-    map
-}
-
 #[tracing::instrument(name = "Normalizing links", level = "info", skip(data))]
 pub fn normalize_embedding(data: Array2<f64>) -> Array2<f64> {
     let (norm, _) = ndarray_linalg::norm::normalize(data, ndarray_linalg::norm::NormalizeAxis::Row);
@@ -95,7 +77,6 @@ pub fn normalize_embedding(data: Array2<f64>) -> Array2<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use time::OffsetDateTime;
 
     #[test]
     fn row_norms_squared_and_unsquared() {
@@ -105,37 +86,6 @@ mod tests {
         assert_eq!(squared, arr1(&[25.0, 5.0]));
         assert!((unsquared[0] - 5.0).abs() < 1e-10);
         assert!((unsquared[1] - 5.0_f64.sqrt()).abs() < 1e-10);
-    }
-
-    #[test]
-    fn group_by_cluster_groups_urls() {
-        let urls = vec![
-            (
-                SafariHistoryItem {
-                    url: "a".into(),
-                    title: None,
-                    visit_count: 1,
-                    last_visited: OffsetDateTime::UNIX_EPOCH,
-                },
-                vec![0.0_f32],
-            ),
-            (
-                SafariHistoryItem {
-                    url: "b".into(),
-                    title: None,
-                    visit_count: 1,
-                    last_visited: OffsetDateTime::UNIX_EPOCH,
-                },
-                vec![1.0_f32],
-            ),
-        ];
-        let labels = vec![0, 1];
-
-        let grouped = group_by_cluster(&urls, labels);
-
-        assert_eq!(grouped.len(), 2);
-        assert_eq!(grouped.get(&0).unwrap()[0].url, "a");
-        assert_eq!(grouped.get(&1).unwrap()[0].url, "b");
     }
 
     #[test]

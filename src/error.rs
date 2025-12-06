@@ -8,7 +8,7 @@ pub enum AppError {
     #[error("Error parsing a number. {0}")]
     Parse(#[from] std::num::ParseIntError),
     #[error("Error handling the database. {0}")]
-    Database(#[from] sea_orm::DbErr),
+    Database(#[from] sqlx::Error),
     #[error("Error from git. {0}")]
     Git(#[from] git2::Error),
     #[error("Error serializing json. {0}")]
@@ -19,20 +19,10 @@ pub enum AppError {
     BufferWrite(#[from] std::fmt::Error),
     #[error("Unable to parse string. {0}")]
     Utf8Parse(#[from] std::str::Utf8Error),
-    #[error("Error from SQLite driver. {0}")]
-    Sqlx(#[from] sea_orm::sqlx::Error),
     #[error("{0}")]
     Other(String),
-    #[error("Unable to run local machine learning models. Here's what hugging face said: {0}")]
-    Candle(#[from] candle_core::Error),
     #[error("Uh oh! The runtime had a problem. Here's what happened: {0}")]
     TokioJoin(#[from] tokio::task::JoinError),
-    #[error("Something happened while tokenizing URLs. Here's the error: {0}")]
-    Tokenizer(#[from] tokenizers::Error),
-    #[error("Unable to run local machine learning models. Here's what Hugging Face says: {0}")]
-    Safetensors(#[from] safetensors::SafeTensorError),
-    #[error("A directory seems to be missing. Here's what the OS said: {0}")]
-    DirNotFound(String),
     #[error("Unable to convert HTTP header to a string. Here's what I found: {0}")]
     HeaderToStr(#[from] reqwest::header::ToStrError),
     #[error(
@@ -49,6 +39,8 @@ pub enum AppError {
     Linalg(#[from] ndarray_linalg::error::LinalgError),
     #[error("Something happened while grouping the URLs. This is the error: {0}")]
     Hdbscan(#[from] hdbscan::HdbscanError),
+    #[error("{0}")]
+    Dir(#[from] daily_ai_dirs::DirError),
 }
 
 /// Convenience alias for results that bubble `AppError`.

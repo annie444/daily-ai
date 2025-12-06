@@ -1,3 +1,4 @@
+pub mod agent;
 pub mod commit_message;
 pub mod label_urls;
 pub mod prompt;
@@ -23,21 +24,25 @@ where
     }
 
     fn title() -> String {
-        Self::schema()
-            .get("title")
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string()
+        unsafe {
+            Self::schema()
+                .get("title")
+                .unwrap_unchecked()
+                .as_str()
+                .unwrap_unchecked()
+                .to_string()
+        }
     }
 
     fn description() -> String {
-        Self::schema()
-            .get("description")
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .to_string()
+        unsafe {
+            Self::schema()
+                .get("description")
+                .unwrap_unchecked()
+                .as_str()
+                .unwrap_unchecked()
+                .to_string()
+        }
     }
 
     fn schema_value() -> serde_json::Value {

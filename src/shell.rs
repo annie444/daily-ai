@@ -1,14 +1,16 @@
 use std::path::PathBuf;
 
-use atuin_client::{
-    database::{Database, Sqlite},
-    encryption,
-    history::{History, store::HistoryStore},
-    record::{sqlite_store::SqliteStore, store::Store, sync},
-    settings::{FilterMode, Settings},
-};
+use atuin_client::database::{Database, Sqlite};
+use atuin_client::encryption;
+use atuin_client::history::History;
+use atuin_client::history::store::HistoryStore;
+use atuin_client::record::sqlite_store::SqliteStore;
+use atuin_client::record::store::Store;
+use atuin_client::record::sync;
+use atuin_client::settings::{FilterMode, Settings};
 use atuin_common::record::RecordId;
-use atuin_dotfiles::store::{AliasStore, var::VarStore};
+use atuin_dotfiles::store::AliasStore;
+use atuin_dotfiles::store::var::VarStore;
 use atuin_kv::store::KvStore;
 use atuin_scripts::store::ScriptStore;
 use serde::{Deserialize, Serialize};

@@ -9,7 +9,7 @@ use super::SchemaInfo;
 use crate::AppResult;
 
 pub trait Query: JsonSchema + Serialize + for<'de> Deserialize<'de> + SchemaInfo {
-    const PROMPT: &'static str;
+    const PROMPT: &'static [u8];
 
     fn response_format() -> ResponseFormatJsonSchema {
         ResponseFormatJsonSchema {
@@ -21,7 +21,12 @@ pub trait Query: JsonSchema + Serialize + for<'de> Deserialize<'de> + SchemaInfo
     }
 
     fn prompt(vars: &HashMap<&str, &str>) -> String {
-        crate::ai::prompt::PromptTemplate::new(Self::PROMPT).render(vars)
+        let prompt = unsafe {
+            String::from_utf8_unchecked(
+                zstd::decode_all(std::io::Cursor::new(Self::PROMPT)).unwrap_unchecked(),
+            )
+        };
+        crate::ai::prompt::PromptTemplate::new(prompt).render(vars)
     }
 
     fn from_str(s: &str) -> AppResult<Self> {
@@ -53,7 +58,7 @@ pub trait Query: JsonSchema + Serialize + for<'de> Deserialize<'de> + SchemaInfo
 macro_rules! impl_query {
     ($struct_name:ident, $prompt:ident) => {
         impl crate::ai::query::Query for $struct_name {
-            const PROMPT: &'static str = $prompt;
+            const PROMPT: &'static [u8] = $prompt;
         }
     };
 }

@@ -5,6 +5,8 @@ use tracing::error;
 
 use super::CustomTool;
 
+/// # fetch_url
+/// Fetch content from a specified URL, with options to limit the number of lines retrieved.
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct FetchUrl {
     /// URL to fetch.
@@ -19,8 +21,6 @@ pub struct FetchUrl {
 
 impl CustomTool for FetchUrl {
     type Context<'a> = ();
-    const NAME: &'static str = "fetch_url";
-    const DESCRIPTION: &'static str = "Fetches the content of a URL.";
 
     async fn call(&self, _context: &Self::Context<'_>) -> (OutputStatus, String) {
         let resp = match reqwest::get(&self.url).await {
